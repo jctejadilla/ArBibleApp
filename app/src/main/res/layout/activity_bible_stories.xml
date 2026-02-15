@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light"
+    tools:context=".BibleStories">
+
+    <!-- Header Section -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_circle_white"
+        android:elevation="2dp"
+        android:padding="12dp"
+        android:src="@android:drawable/ic_menu_revert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/text_dark" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Bible Stories"
+        android:textColor="@color/text_dark"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/btnBack"
+        app:layout_constraintStart_toEndOf="@+id/btnBack"
+        app:layout_constraintTop_toTopOf="@+id/btnBack" />
+
+    <!-- Search Bar -->
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_search_bar"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="12dp"
+        android:hint="Search stories..."
+        android:paddingHorizontal="16dp"
+        android:textColor="@color/text_dark"
+        android:textColorHint="@color/text_grey"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etSearch">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp">
+
+            <!-- Categories -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Categories"
+                android:textColor="@color/text_dark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_button_next"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="8dp"
+                        android:text="All"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_search_bar"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="8dp"
+                        android:text="Old Testament"
+                        android:textColor="@color/text_grey" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_search_bar"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="8dp"
+                        android:text="New Testament"
+                        android:textColor="@color/text_grey" />
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- Popular Stories Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Popular Stories"
+                android:textColor="@color/text_dark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Story Card Placeholders -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+
+                    <View
+                        android:id="@+id/storyThumb1"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/bg_rounded_card"
+                        android:alpha="0.3"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvStoryTitle1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="Story Title Placeholder"
+                        android:textColor="@color/text_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/storyThumb1"
+                        app:layout_constraintTop_toTopOf="@+id/storyThumb1" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="A brief description of the Bible story goes here..."
+                        android:textColor="@color/text_grey"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvStoryTitle1"
+                        app:layout_constraintTop_toBottomOf="@+id/tvStoryTitle1" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+
+                    <View
+                        android:id="@+id/storyThumb2"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/bg_rounded_card"
+                        android:alpha="0.3"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvStoryTitle2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="Story Title Placeholder"
+                        android:textColor="@color/text_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/storyThumb2"
+                        app:layout_constraintTop_toTopOf="@+id/storyThumb2" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="A brief description of the Bible story goes here..."
+                        android:textColor="@color/text_grey"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvStoryTitle2"
+                        app:layout_constraintTop_toBottomOf="@+id/tvStoryTitle2" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+
+                    <View
+                        android:id="@+id/storyThumb3"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/bg_rounded_card"
+                        android:alpha="0.3"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvStoryTitle3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="Story Title Placeholder"
+                        android:textColor="@color/text_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/storyThumb3"
+                        app:layout_constraintTop_toTopOf="@+id/storyThumb3" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="A brief description of the Bible story goes here..."
+                        android:textColor="@color/text_grey"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvStoryTitle3"
+                        app:layout_constraintTop_toBottomOf="@+id/tvStoryTitle3" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

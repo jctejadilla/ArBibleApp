@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light"
+    tools:context=".ArScan">
+
+    <!-- Camera Preview Placeholder (In a real app, this would be a PreviewView or SurfaceView) -->
+    <View
+        android:id="@+id/viewCameraPreview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E8F5E9" />
+
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_circle_white"
+        android:elevation="4dp"
+        android:padding="12dp"
+        android:src="@android:drawable/ic_menu_revert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/text_dark" />
+
+    <!-- Scanning Frame -->
+    <View
+        android:id="@+id/viewScanFrame"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:alpha="0.3"
+        android:background="@drawable/bg_scan_frame"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4" />
+
+    <!-- Instruction Card -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cardInstruction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/bg_white_card"
+        android:elevation="8dp"
+        android:padding="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/layoutControls"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            android:id="@+id/iconBg"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_rounded_card"
+            android:alpha="0.4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@android:drawable/btn_star_big_on"
+            app:layout_constraintBottom_toBottomOf="@+id/iconBg"
+            app:layout_constraintEnd_toEndOf="@+id/iconBg"
+            app:layout_constraintStart_toStartOf="@+id/iconBg"
+            app:layout_constraintTop_toTopOf="@+id/iconBg"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/tvInstructionTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Point at a Story Page"
+            android:textColor="@color/text_dark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iconBg"
+            app:layout_constraintTop_toTopOf="@+id/iconBg" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Align the camera with a Bible story page to bring it to life in AR"
+            android:textColor="@color/text_grey"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tvInstructionTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvInstructionTitle" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Bottom Controls -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutControls"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="#F8FBF9"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <View
+            android:id="@+id/btnGallery"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="40dp"
+            android:background="@drawable/bg_circle_white"
+            android:alpha="0.5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btnCapture"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:background="@drawable/bg_capture_button"
+            android:elevation="6dp"
+            android:padding="20dp"
+            android:src="@android:drawable/ic_menu_camera"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <View
+            android:id="@+id/btnRotate"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/bg_circle_white"
+            android:alpha="0.5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@android:drawable/ic_menu_rotate"
+            app:layout_constraintBottom_toBottomOf="@+id/btnRotate"
+            app:layout_constraintEnd_toEndOf="@+id/btnRotate"
+            app:layout_constraintStart_toStartOf="@+id/btnRotate"
+            app:layout_constraintTop_toTopOf="@+id/btnRotate"
+            app:tint="@color/text_dark" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

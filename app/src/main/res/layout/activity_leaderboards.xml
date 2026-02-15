@@ -1,0 +1,992 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light"
+    tools:context=".Leaderboards">
+
+    <!-- Header Section -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_circle_white"
+        android:elevation="2dp"
+        android:padding="12dp"
+        android:src="@android:drawable/ic_menu_revert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/text_dark" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Leaderboard"
+        android:textColor="@color/text_dark"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/btnBack"
+        app:layout_constraintTop_toTopOf="@+id/btnBack" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Top Performers This Month"
+        android:textColor="@color/text_grey"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/tvTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+    <View
+        android:id="@+id/viewTrophyBg"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_rounded_card"
+        android:alpha="0.4"
+        app:layout_constraintBottom_toBottomOf="@+id/tvSubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvTitle" />
+
+    <ImageView
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:src="@android:drawable/btn_star_big_on"
+        app:layout_constraintBottom_toBottomOf="@+id/viewTrophyBg"
+        app:layout_constraintEnd_toEndOf="@+id/viewTrophyBg"
+        app:layout_constraintStart_toStartOf="@+id/viewTrophyBg"
+        app:layout_constraintTop_toTopOf="@+id/viewTrophyBg"
+        app:tint="@color/text_dark" />
+
+    <!-- Summary Card -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cardSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_profile_header"
+        android:elevation="4dp"
+        android:padding="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvSubtitle">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Your Rank"
+                    android:textColor="#E0F2F1"
+                    android:textSize="12sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="12th"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="8dp"
+                android:background="#4DFFFFFF" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Your Points"
+                    android:textColor="#E0F2F1"
+                    android:textSize="12sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="1,240"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="8dp"
+                android:background="#4DFFFFFF" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="To Next Rank"
+                    android:textColor="#E0F2F1"
+                    android:textSize="12sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="280"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Leaderboard List -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardSummary">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Rank 1 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="2dp"
+                android:padding="16dp">
+
+                <View
+                    android:id="@+id/rank1"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_rank_1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/btn_star_big_on"
+                    app:layout_constraintBottom_toBottomOf="@+id/rank1"
+                    app:layout_constraintEnd_toEndOf="@+id/rank1"
+                    app:layout_constraintStart_toStartOf="@+id/rank1"
+                    app:layout_constraintTop_toTopOf="@+id/rank1"
+                    app:tint="@color/white" />
+
+                <View
+                    android:id="@+id/avatar1"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rank1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Sarah Johnson"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avatar1"
+                    app:layout_constraintTop_toTopOf="@+id/avatar1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 24 quizzes"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/name1"
+                    app:layout_constraintTop_toBottomOf="@+id/name1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2450"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name1" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Rank 2 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="2dp"
+                android:padding="16dp">
+
+                <View
+                    android:id="@+id/rank2"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_rank_2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/avatar2"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rank2"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Michael Chen"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avatar2"
+                    app:layout_constraintTop_toTopOf="@+id/avatar2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 22 quizzes"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/name2"
+                    app:layout_constraintTop_toBottomOf="@+id/name2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2280"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name2" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Rank 3 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="2dp"
+                android:padding="16dp">
+
+                <View
+                    android:id="@+id/rank3"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_rank_3"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/avatar3"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rank3"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Emma Rogers"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avatar3"
+                    app:layout_constraintTop_toTopOf="@+id/avatar3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 21 quizzes"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/name3"
+                    app:layout_constraintTop_toBottomOf="@+id/name3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2150"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name3" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Rank 4 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="2dp"
+                android:padding="16dp">
+
+                <View
+                    android:id="@+id/rank4"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_rank_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4"
+                    android:textColor="@color/text_grey"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/rank4"
+                    app:layout_constraintEnd_toEndOf="@+id/rank4"
+                    app:layout_constraintStart_toStartOf="@+id/rank4"
+                    app:layout_constraintTop_toTopOf="@+id/rank4" />
+
+                <View
+                    android:id="@+id/avatar4"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rank4"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="David Kim"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avatar4"
+                    app:layout_constraintTop_toTopOf="@+id/avatar4" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 19 quizzes"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/name4"
+                    app:layout_constraintTop_toBottomOf="@+id/name4" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1980"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name4" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name4" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Rank 5 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="2dp"
+                android:padding="16dp">
+
+                <View
+                    android:id="@+id/rank5"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_rank_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5"
+                    android:textColor="@color/text_grey"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/rank5"
+                    app:layout_constraintEnd_toEndOf="@+id/rank5"
+                    app:layout_constraintStart_toStartOf="@+id/rank5"
+                    app:layout_constraintTop_toTopOf="@+id/rank5" />
+
+                <View
+                    android:id="@+id/avatar5"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rank5"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Sophia Wilson"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avatar5"
+                    app:layout_constraintTop_toTopOf="@+id/avatar5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 18 quizzes"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/name5"
+                    app:layout_constraintTop_toBottomOf="@+id/name5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1850"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name5" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Rank 6 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="2dp"
+                android:padding="16dp">
+
+                <View
+                    android:id="@+id/rank6"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_rank_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6"
+                    android:textColor="@color/text_grey"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/rank6"
+                    app:layout_constraintEnd_toEndOf="@+id/rank6"
+                    app:layout_constraintStart_toStartOf="@+id/rank6"
+                    app:layout_constraintTop_toTopOf="@+id/rank6" />
+
+                <View
+                    android:id="@+id/avatar6"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rank6"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Joshua Brown"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avatar6"
+                    app:layout_constraintTop_toTopOf="@+id/avatar6" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 17 quizzes"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/name6"
+                    app:layout_constraintTop_toBottomOf="@+id/name6" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1720"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name6" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name6" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Rank 7 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="2dp"
+                android:padding="16dp">
+
+                <View
+                    android:id="@+id/rank7"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_rank_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="7"
+                    android:textColor="@color/text_grey"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/rank7"
+                    app:layout_constraintEnd_toEndOf="@+id/rank7"
+                    app:layout_constraintStart_toStartOf="@+id/rank7"
+                    app:layout_constraintTop_toTopOf="@+id/rank7" />
+
+                <View
+                    android:id="@+id/avatar7"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rank7"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Olivia Davis"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avatar7"
+                    app:layout_constraintTop_toTopOf="@+id/avatar7" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 16 quizzes"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/name7"
+                    app:layout_constraintTop_toBottomOf="@+id/name7" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1650"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name7" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name7" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Rank 8 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="2dp"
+                android:padding="16dp">
+
+                <View
+                    android:id="@+id/rank8"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_rank_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="8"
+                    android:textColor="@color/text_grey"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/rank8"
+                    app:layout_constraintEnd_toEndOf="@+id/rank8"
+                    app:layout_constraintStart_toStartOf="@+id/rank8"
+                    app:layout_constraintTop_toTopOf="@+id/rank8" />
+
+                <View
+                    android:id="@+id/avatar8"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rank8"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="James Miller"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avatar8"
+                    app:layout_constraintTop_toTopOf="@+id/avatar8" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 15 quizzes"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/name8"
+                    app:layout_constraintTop_toBottomOf="@+id/name8" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1580"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name8" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name8" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Rank 9 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="2dp"
+                android:padding="16dp">
+
+                <View
+                    android:id="@+id/rank9"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_rank_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="9"
+                    android:textColor="@color/text_grey"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/rank9"
+                    app:layout_constraintEnd_toEndOf="@+id/rank9"
+                    app:layout_constraintStart_toStartOf="@+id/rank9"
+                    app:layout_constraintTop_toTopOf="@+id/rank9" />
+
+                <View
+                    android:id="@+id/avatar9"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rank9"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Isabella Garcia"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avatar9"
+                    app:layout_constraintTop_toTopOf="@+id/avatar9" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 14 quizzes"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/name9"
+                    app:layout_constraintTop_toBottomOf="@+id/name9" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1420"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name9" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name9" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Rank 10 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="2dp"
+                android:padding="16dp">
+
+                <View
+                    android:id="@+id/rank10"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_rank_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10"
+                    android:textColor="@color/text_grey"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/rank10"
+                    app:layout_constraintEnd_toEndOf="@+id/rank10"
+                    app:layout_constraintStart_toStartOf="@+id/rank10"
+                    app:layout_constraintTop_toTopOf="@+id/rank10" />
+
+                <View
+                    android:id="@+id/avatar10"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rank10"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Ethan Martinez"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avatar10"
+                    app:layout_constraintTop_toTopOf="@+id/avatar10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 13 quizzes"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/name10"
+                    app:layout_constraintTop_toBottomOf="@+id/name10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1350"
+                    android:textColor="@color/primary_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name10" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name10" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light"
+    tools:context=".StudentProfile">
+
+    <!-- Top Header -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_circle_white"
+        android:elevation="2dp"
+        android:padding="12dp"
+        android:src="@android:drawable/ic_menu_revert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/text_dark" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Profile"
+        android:textColor="@color/text_dark"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/btnBack"
+        app:layout_constraintStart_toEndOf="@+id/btnBack"
+        app:layout_constraintTop_toTopOf="@+id/btnBack" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
+        app:layout_constraintTop_toBottomOf="@+id/btnBack">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
+
+            <!-- Main Header Card -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_profile_header"
+                android:elevation="4dp"
+                android:padding="24dp"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <View
+                    android:id="@+id/viewAvatarBg"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_white_card"
+                    android:alpha="0.3"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/ivAvatar"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_menu_myplaces"
+                    app:layout_constraintBottom_toBottomOf="@+id/viewAvatarBg"
+                    app:layout_constraintEnd_toEndOf="@+id/viewAvatarBg"
+                    app:layout_constraintStart_toStartOf="@+id/viewAvatarBg"
+                    app:layout_constraintTop_toTopOf="@+id/viewAvatarBg"
+                    app:tint="#673AB7" />
+
+                <TextView
+                    android:id="@+id/tvStudentLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="Student"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/viewAvatarBg"
+                    app:layout_constraintTop_toTopOf="@+id/viewAvatarBg" />
+
+                <TextView
+                    android:id="@+id/tvLevelLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Level 5 - Bible Explorer"
+                    android:textColor="#E0F2F1"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="@+id/tvStudentLabel"
+                    app:layout_constraintTop_toBottomOf="@+id/tvStudentLabel" />
+
+                <TextView
+                    android:id="@+id/tvLevelCurrent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="Level 5"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/viewAvatarBg" />
+
+                <TextView
+                    android:id="@+id/tvXPProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1,240 / 2,000 XP"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvLevelCurrent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <ProgressBar
+                    android:id="@+id/pbXP"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="8dp"
+                    android:progress="62"
+                    android:progressDrawable="@android:drawable/progress_horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/tvLevelCurrent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/tvStatsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Your Stats"
+                android:textColor="@color/text_dark"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardHeader" />
+
+            <GridLayout
+                android:id="@+id/gridStats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:columnCount="2"
+                app:layout_constraintTop_toBottomOf="@+id/tvStatsTitle">
+
+                <!-- Stories Completed -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="20dp">
+
+                    <ImageView
+                        android:id="@+id/iconStories"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_agenda"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/primary_green" />
+
+                    <TextView
+                        android:id="@+id/tvStoriesCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="8"
+                        android:textColor="@color/text_dark"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/iconStories" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Stories Completed"
+                        android:textColor="@color/text_grey"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvStoriesCount" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Quizzes Taken -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="20dp">
+
+                    <ImageView
+                        android:id="@+id/iconQuiz"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_help"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/primary_green" />
+
+                    <TextView
+                        android:id="@+id/tvQuizCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="12"
+                        android:textColor="@color/text_dark"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/iconQuiz" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Quizzes Taken"
+                        android:textColor="@color/text_grey"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvQuizCount" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Total XP -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="20dp">
+
+                    <ImageView
+                        android:id="@+id/iconXP"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_slideshow"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/primary_green" />
+
+                    <TextView
+                        android:id="@+id/tvXPCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="1,240"
+                        android:textColor="@color/text_dark"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/iconXP" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Total XP"
+                        android:textColor="@color/text_grey"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvXPCount" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Badges Earned -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="20dp">
+
+                    <ImageView
+                        android:id="@+id/iconBadges"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/btn_star_big_on"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/primary_green" />
+
+                    <TextView
+                        android:id="@+id/tvBadgesCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="4/8"
+                        android:textColor="@color/text_dark"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/iconBadges" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Badges Earned"
+                        android:textColor="@color/text_grey"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvBadgesCount" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </GridLayout>
+
+            <TextView
+                android:id="@+id/tvAchievementsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Achievements"
+                android:textColor="@color/text_dark"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gridStats" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4 of 8"
+                android:textColor="@color/text_grey"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvAchievementsTitle"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/layoutAchievementIcons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/tvAchievementsTitle">
+
+                <View
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.4" />
+
+                <View
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.4" />
+
+                <View
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.4" />
+
+                <View
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:alpha="0.4" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation (Shared) -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@color/white"
+        android:elevation="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_today"
+                app:tint="@color/text_grey" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textColor="@color/text_grey"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_agenda"
+                app:tint="@color/text_grey" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stories"
+                android:textColor="@color/text_grey"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/btn_star_big_on"
+                app:tint="@color/text_grey" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Leaderboard"
+                android:textColor="@color/text_grey"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_myplaces"
+                app:tint="@color/primary_green" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Profile"
+                android:textColor="@color/primary_green"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
