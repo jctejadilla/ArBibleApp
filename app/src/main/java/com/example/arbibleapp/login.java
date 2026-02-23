@@ -50,15 +50,20 @@ public class login extends AppCompatActivity {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Logging in as " + userType, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(login.this, StudentDashboard.class);
+            startActivity(intent);
+            finish();
+
+            /*if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             } else {
                 // Perform login logic based on userType
                 Toast.makeText(this, "Logging in as " + userType, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(login.this, MainActivity.class);
+                Intent intent = new Intent(login.this, StudentDashboard.class);
                 startActivity(intent);
                 finish();
-            }
+            }*/
         });
 
         tvRegister.setOnClickListener(v -> {

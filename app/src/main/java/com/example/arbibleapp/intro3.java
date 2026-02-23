@@ -26,14 +26,14 @@ public class intro3 extends AppCompatActivity {
 
         Button btnGetStarted = findViewById(R.id.btnGetStarted);
         btnGetStarted.setOnClickListener(v -> {
-            Intent intent = new Intent(intro3.this, MainActivity.class);
+            Intent intent = new Intent(intro3.this, login.class);
             startActivity(intent);
             finishAffinity();
         });
 
         TextView tvSkip = findViewById(R.id.tvSkip);
         tvSkip.setOnClickListener(v -> {
-            Intent intent = new Intent(intro3.this, MainActivity.class);
+            Intent intent = new Intent(intro3.this, login.class);
             startActivity(intent);
             finishAffinity();
         });

@@ -32,7 +32,7 @@ public class intro2 extends AppCompatActivity {
 
         TextView tvSkip = findViewById(R.id.tvSkip);
         tvSkip.setOnClickListener(v -> {
-            Intent intent = new Intent(intro2.this, MainActivity.class);
+            Intent intent = new Intent(intro2.this, login.class);
             startActivity(intent);
             finishAffinity();
         });

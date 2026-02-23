@@ -417,6 +417,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navStories"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -436,6 +437,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navLeaderboard"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -455,6 +457,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navProfile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

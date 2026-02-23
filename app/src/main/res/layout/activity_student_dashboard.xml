@@ -145,7 +145,10 @@
                     android:layout_margin="8dp"
                     android:background="@drawable/bg_white_card"
                     android:elevation="2dp"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:id="@+id/arScan"
+                    android:focusable="true"
+                    >
 
                     <View
                         android:id="@+id/iconAR"
@@ -199,7 +202,9 @@
                     android:layout_margin="8dp"
                     android:background="@drawable/bg_white_card"
                     android:elevation="2dp"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:id="@+id/bibleStories"
+                    android:focusable="true">
 
                     <View
                         android:id="@+id/iconStories"
@@ -253,7 +258,9 @@
                     android:layout_margin="8dp"
                     android:background="@drawable/bg_white_card"
                     android:elevation="2dp"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:id="@+id/leaderboard"
+                    android:focusable="true">
 
                     <View
                         android:id="@+id/iconLeaderboard"
@@ -307,7 +314,9 @@
                     android:layout_margin="8dp"
                     android:background="@drawable/bg_white_card"
                     android:elevation="2dp"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:id="@+id/attendance"
+                    android:focusable="true">
 
                     <View
                         android:id="@+id/iconAttendance"
@@ -371,7 +380,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/navHome">
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
@@ -386,6 +396,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navStories"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -405,6 +416,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navLeaderboard"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -424,6 +436,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navProfile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
