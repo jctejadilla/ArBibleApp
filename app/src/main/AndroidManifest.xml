@@ -5,7 +5,8 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +17,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ArBibleApp">
+        <activity
+            android:name=".TeacherQuizResultsByStory"
+            android:exported="false" />
+        <activity
+            android:name=".TeacherQuizResults"
+            android:exported="false" />
+        <activity
+            android:name=".TeacherDashboard"
+            android:exported="false" />
         <activity
             android:name=".BibleStories"
             android:exported="false" />

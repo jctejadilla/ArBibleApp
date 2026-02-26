@@ -125,12 +125,12 @@ public class ArScan extends AppCompatActivity {
 
             AugmentedImageDatabase db = new AugmentedImageDatabase(session);
             
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.marker1);
+            /*Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.marker1);
             if (bitmap != null) {
                 db.addImage("marker1", bitmap);
             } else {
                 Log.e("ArScan", "Could not load marker1 resource");
-            }
+            }*/
 
             config.setAugmentedImageDatabase(db);
             session.configure(config);
