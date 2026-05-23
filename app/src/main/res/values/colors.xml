@@ -6,4 +6,15 @@
     <color name="text_dark">#1D4A4B</color>
     <color name="text_grey">#757575</color>
     <color name="bg_light">#F7FBF9</color>
+    <color name="red">#C85F5F</color>
+    <color name="badge_yellow">#FFF9C4</color>
+    <color name="badge_orange">#FFE0B2</color>
+    <color name="badge_blue">#B3E5FC</color>
+    <color name="badge_purple">#E1BEE7</color>
+    <color name="badge_red">#FFCDD2</color>
+    <color name="badge_teal">#B2DFDB</color>
+    <color name="badge_indigo">#C5CAE9</color>
+    <color name="badge_pink">#F8BBD0</color>
+    <color name="badge_lime">#F0F4C3</color>
+    <color name="badge_cyan">#B2EBF2</color>
 </resources>

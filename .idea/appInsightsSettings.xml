@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.arbibleapp" />
+                  <option name="mobileSdkAppId" value="1:604405500102:android:9e52bfc4c5f24e0aa56fc7" />
+                  <option name="projectId" value="faithstream-ar" />
+                  <option name="projectNumber" value="604405500102" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

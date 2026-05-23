@@ -64,11 +64,12 @@
                 android:id="@+id/cardStreak"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="28dp"
                 android:background="@drawable/bg_rounded_card"
                 android:elevation="4dp"
                 android:padding="20dp"
-                app:layout_constraintTop_toBottomOf="@+id/tvStudentName">
+                app:layout_constraintTop_toBottomOf="@+id/tvStudentName"
+                tools:layout_editor_absoluteX="24dp">
 
                 <TextView
                     android:id="@+id/tvStreakLabel"
@@ -342,7 +343,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Attendance"
+                        android:text="QR Code"
                         android:textColor="@color/text_dark"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -353,7 +354,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Mark your presence"
+                        android:text="Show it to your teacher"
                         android:textColor="@color/text_grey"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="#F8F9FA">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvStoryTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="David and Goliath"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/pbScore"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:progress="95"
+            android:progressDrawable="@drawable/bg_score_progress"
+            app:layout_constraintEnd_toStartOf="@+id/tvScorePercent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvStoryTitle" />
+
+        <TextView
+            android:id="@+id/tvScorePercent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="95%"
+            android:textColor="@color/text_grey"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/pbScore"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/pbScore" />
+
+        <TextView
+            android:id="@+id/tvQuizMeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="May 18 (Sun)  •  3m 24s"
+            android:textColor="@color/text_grey"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pbScore" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

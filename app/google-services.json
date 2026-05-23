@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "604405500102",
+    "project_id": "faithstream-ar",
+    "storage_bucket": "faithstream-ar.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604405500102:android:9e52bfc4c5f24e0aa56fc7",
+        "android_client_info": {
+          "package_name": "com.example.arbibleapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMn0pt0wwzw-OJUUswDCDe2LX_CV0A224"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

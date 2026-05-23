@@ -9,7 +9,6 @@
     tools:context=".BibleStories">
 
     <!-- Header Section -->
-
     <ImageView
         android:id="@+id/btnBack"
         android:layout_width="48dp"
@@ -24,6 +23,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/text_dark" />
 
+    <!-- Search Bar -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
@@ -35,9 +35,9 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/btnBack"
         app:layout_constraintStart_toEndOf="@+id/btnBack"
-        app:layout_constraintTop_toTopOf="@+id/btnBack" />
+        app:layout_constraintTop_toTopOf="@+id/btnBack"
+        app:layout_constraintVertical_bias="1.0" />
 
-    <!-- Search Bar -->
     <EditText
         android:id="@+id/etSearch"
         android:layout_width="match_parent"
@@ -91,6 +91,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/btnAll"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_button_next"
@@ -100,6 +101,7 @@
                         android:textColor="@color/white" />
 
                     <TextView
+                        android:id="@+id/btnOldTestament"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
@@ -110,6 +112,7 @@
                         android:textColor="@color/text_grey" />
 
                     <TextView
+                        android:id="@+id/btnNewTestament"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
@@ -122,150 +125,178 @@
                 </LinearLayout>
             </HorizontalScrollView>
 
-            <!-- Popular Stories Section -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="Popular Stories"
+                android:text="Stories"
                 android:textColor="@color/text_dark"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- Story Card Placeholders -->
             <LinearLayout
+                android:id="@+id/containerStories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardCreationFall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_white_card"
                     android:elevation="2dp"
-                    android:padding="12dp">
-
-                    <View
-                        android:id="@+id/storyThumb1"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.3"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvStoryTitle1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Story Title Placeholder"
-                        android:textColor="@color/text_dark"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/storyThumb1"
-                        app:layout_constraintTop_toTopOf="@+id/storyThumb1" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="A brief description of the Bible story goes here..."
-                        android:textColor="@color/text_grey"
-                        android:textSize="13sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/tvStoryTitle1"
-                        app:layout_constraintTop_toBottomOf="@+id/tvStoryTitle1" />
-
+                    android:padding="12dp"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <View android:id="@+id/thumb1" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_adam" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle1" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Creation and the Fall" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb1" app:layout_constraintTop_toTopOf="@+id/thumb1" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="It begins with God creating the world, then Adam and Eve, and their subsequent disobedience..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle1" app:layout_constraintTop_toBottomOf="@+id/tvTitle1" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardFlood"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_white_card"
                     android:elevation="2dp"
                     android:padding="12dp">
-
-                    <View
-                        android:id="@+id/storyThumb2"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.3"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvStoryTitle2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Story Title Placeholder"
-                        android:textColor="@color/text_dark"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/storyThumb2"
-                        app:layout_constraintTop_toTopOf="@+id/storyThumb2" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="A brief description of the Bible story goes here..."
-                        android:textColor="@color/text_grey"
-                        android:textSize="13sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/tvStoryTitle2"
-                        app:layout_constraintTop_toBottomOf="@+id/tvStoryTitle2" />
-
+                    <View android:id="@+id/thumb2" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_noah" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle2" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Early Humanity and the Flood" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb2" app:layout_constraintTop_toTopOf="@+id/thumb2" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="This section covers the spread of sin through humanity, leading to God choosing Noah..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle2" app:layout_constraintTop_toBottomOf="@+id/tvTitle2" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardBabelAbraham"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_white_card"
                     android:elevation="2dp"
                     android:padding="12dp">
+                    <View android:id="@+id/thumb3" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_babel" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="The Tower of Babel and Abraham's Covenant" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb3" app:layout_constraintTop_toTopOf="@+id/thumb3" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="explains how humanity's pride led to the Tower of Babel, resulting in the division of languages..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle3" app:layout_constraintTop_toBottomOf="@+id/tvTitle3" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <View
-                        android:id="@+id/storyThumb3"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.3"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardExodus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+                    <View android:id="@+id/thumb4" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_slavery" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle4" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Slavery in Egypt and the Exodus" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb4" app:layout_constraintTop_toTopOf="@+id/thumb4" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="The narrative moves to the Israelites' enslavement in Egypt, Moses's call by God, the plagues..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle4" app:layout_constraintTop_toBottomOf="@+id/tvTitle4" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <TextView
-                        android:id="@+id/tvStoryTitle3"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Story Title Placeholder"
-                        android:textColor="@color/text_dark"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/storyThumb3"
-                        app:layout_constraintTop_toTopOf="@+id/storyThumb3" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardLawDesert"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+                    <View android:id="@+id/thumb5" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_law" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle5" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="The Law and Wandering in the Desert" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb5" app:layout_constraintTop_toTopOf="@+id/thumb5" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="God gives the Israelites the Law, including the Ten Commandments, at Mount Sinai..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle5" app:layout_constraintTop_toBottomOf="@+id/tvTitle5" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="A brief description of the Bible story goes here..."
-                        android:textColor="@color/text_grey"
-                        android:textSize="13sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/tvStoryTitle3"
-                        app:layout_constraintTop_toBottomOf="@+id/tvStoryTitle3" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardJudges"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+                    <View android:id="@+id/thumb6" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_land" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle6" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Entering the Promised Land and the Judges" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb6" app:layout_constraintTop_toTopOf="@+id/thumb6" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Joshua leads the new generation into the Promised Land, conquering Jericho..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle6" app:layout_constraintTop_toBottomOf="@+id/tvTitle6" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardMonarchy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+                    <View android:id="@+id/thumb7" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_monarchy" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle7" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="The Monarchy: Saul, David, and Solomon" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb7" app:layout_constraintTop_toTopOf="@+id/thumb7" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="The Israelites demand a king, and Saul is anointed, but he proves to be oppressive..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle7" app:layout_constraintTop_toBottomOf="@+id/tvTitle7" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardDivisionExile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+                    <View android:id="@+id/thumb8" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_division" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle8" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Division of the Kingdom and Exile" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb8" app:layout_constraintTop_toTopOf="@+id/thumb8" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="The kingdom splits into Israel and Judah, both succumbing to evil kings and idol worship..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle8" app:layout_constraintTop_toBottomOf="@+id/tvTitle8" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardReturnMessiah"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+                    <View android:id="@+id/thumb9" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_exile" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle9" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Return from Exile and Anticipation of the Messiah" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb9" app:layout_constraintTop_toTopOf="@+id/thumb9" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="After exile, the Israelites return to their land and rebuild the Temple..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle9" app:layout_constraintTop_toBottomOf="@+id/tvTitle9" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardBirthMinistry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+                    <View android:id="@+id/thumb10" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_conflict" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle10" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="The Birth and Ministry of Jesus" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb10" app:layout_constraintTop_toTopOf="@+id/thumb10" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Mary gives birth to Jesus in Bethlehem, fulfilling prophecies. Jesus's ministry begins..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle10" app:layout_constraintTop_toBottomOf="@+id/tvTitle10" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardConflictDeath"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+                    <View android:id="@+id/thumb11" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_conflict" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle11" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Conflict with the Pharisees and Jesus's Death" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb11" app:layout_constraintTop_toTopOf="@+id/thumb11" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Jesus's teachings and actions clash with the Pharisees. He enters Jerusalem..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle11" app:layout_constraintTop_toBottomOf="@+id/tvTitle11" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardResurrectionAscension"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_white_card"
+                    android:elevation="2dp"
+                    android:padding="12dp">
+                    <View android:id="@+id/thumb12" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_resurrection" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+                    <TextView android:id="@+id/tvTitle12" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Resurrection and Ascension" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb12" app:layout_constraintTop_toTopOf="@+id/thumb12" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="On the third day, Jesus rises from the dead, proving his victory over death..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle12" app:layout_constraintTop_toBottomOf="@+id/tvTitle12" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>

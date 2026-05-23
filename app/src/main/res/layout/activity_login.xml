@@ -23,13 +23,10 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="48dp"
-                android:background="@drawable/bg_rounded_card"
-                android:padding="20dp"
-                android:src="@android:drawable/ic_menu_camera"
+                android:src="@drawable/ic_app_logo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/white" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvWelcome"
@@ -56,38 +53,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvWelcome" />
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/toggleUserType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                app:checkedButton="@+id/btnStudent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvSubtitle"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <Button
-                    android:id="@+id/btnStudent"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Student"
-                    android:textAllCaps="false"
-                    app:strokeColor="@color/primary_green" />
-
-                <Button
-                    android:id="@+id/btnTeacher"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Teacher"
-                    android:textAllCaps="false"
-                    app:strokeColor="@color/primary_green" />
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
-
             <EditText
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
@@ -99,7 +64,7 @@
                 android:paddingHorizontal="16dp"
                 android:textColor="@color/text_dark"
                 android:textColorHint="@color/text_grey"
-                app:layout_constraintTop_toBottomOf="@+id/toggleUserType" />
+                app:layout_constraintTop_toBottomOf="@+id/tvSubtitle" />
 
             <EditText
                 android:id="@+id/etPassword"

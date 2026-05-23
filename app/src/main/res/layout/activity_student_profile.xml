@@ -80,7 +80,7 @@
                     app:tint="#673AB7" />
 
                 <TextView
-                    android:id="@+id/tvStudentLabel"
+                    android:id="@+id/tvStudentName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -96,42 +96,36 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Level 5 - Bible Explorer"
+                    android:text="Level 1 - Beginner"
                     android:textColor="#E0F2F1"
                     android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="@+id/tvStudentLabel"
-                    app:layout_constraintTop_toBottomOf="@+id/tvStudentLabel" />
-
-                <TextView
-                    android:id="@+id/tvLevelCurrent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:text="Level 5"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/viewAvatarBg" />
-
-                <TextView
-                    android:id="@+id/tvXPProgress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1,240 / 2,000 XP"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/tvLevelCurrent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintStart_toStartOf="@+id/tvStudentName"
+                    app:layout_constraintTop_toBottomOf="@+id/tvStudentName" />
 
                 <ProgressBar
-                    android:id="@+id/pbXP"
+                    android:id="@+id/pbXPLevel"
                     style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="8dp"
-                    android:layout_marginTop="8dp"
-                    android:progress="62"
+                    android:layout_marginTop="12dp"
+                    android:progress="0"
+                    android:progressTint="@color/white"
+                    android:progressBackgroundTint="#4DFFFFFF"
                     android:progressDrawable="@android:drawable/progress_horizontal"
-                    app:layout_constraintTop_toBottomOf="@+id/tvLevelCurrent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/tvLevelLabel"
+                    app:layout_constraintTop_toBottomOf="@+id/tvLevelLabel" />
+
+                <TextView
+                    android:id="@+id/tvXPProgressText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="0 / 250 XP"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="@+id/pbXPLevel"
+                    app:layout_constraintTop_toBottomOf="@+id/pbXPLevel" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -179,7 +173,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="8"
+                        android:text="0"
                         android:textColor="@color/text_dark"
                         android:textSize="28sp"
                         android:textStyle="bold"
@@ -221,7 +215,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="12"
+                        android:text="0"
                         android:textColor="@color/text_dark"
                         android:textSize="28sp"
                         android:textStyle="bold"
@@ -232,7 +226,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Quizzes Taken"
+                        android:text="Quizzes Passed"
                         android:textColor="@color/text_grey"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -250,35 +244,35 @@
                     android:padding="20dp">
 
                     <ImageView
-                        android:id="@+id/iconXP"
+                        android:id="@+id/iconAttendance"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@android:drawable/ic_menu_slideshow"
+                        android:src="@android:drawable/ic_menu_myplaces"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="@color/primary_green" />
 
                     <TextView
-                        android:id="@+id/tvXPCount"
+                        android:id="@+id/tvAttendanceCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="1,240"
+                        android:text="0"
                         android:textColor="@color/text_dark"
                         android:textSize="28sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iconXP" />
+                        app:layout_constraintTop_toBottomOf="@+id/iconAttendance" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Total XP"
+                        android:text="Sundays Attended"
                         android:textColor="@color/text_grey"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvXPCount" />
+                        app:layout_constraintTop_toBottomOf="@+id/tvAttendanceCount" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <!-- Badges Earned -->
@@ -301,11 +295,11 @@
                         app:tint="@color/primary_green" />
 
                     <TextView
-                        android:id="@+id/tvBadgesCount"
+                        android:id="@+id/tvBadgesSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="4/8"
+                        android:text="0/10"
                         android:textColor="@color/text_dark"
                         android:textSize="28sp"
                         android:textStyle="bold"
@@ -320,7 +314,7 @@
                         android:textColor="@color/text_grey"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvBadgesCount" />
+                        app:layout_constraintTop_toBottomOf="@+id/tvBadgesSummary" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </GridLayout>
@@ -338,55 +332,107 @@
                 app:layout_constraintTop_toBottomOf="@+id/gridStats" />
 
             <TextView
+                android:id="@+id/tvBadgesCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4 of 8"
+                android:text="0 of 10"
                 android:textColor="@color/text_grey"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/tvAchievementsTitle"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <LinearLayout
-                android:id="@+id/layoutAchievementIcons"
-                android:layout_width="match_parent"
+            <!-- Attendance Badges Group -->
+            <TextView
+                android:id="@+id/tvAttendanceGroupLabel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:text="Attendance Milestones"
+                android:textColor="@color/text_grey"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/tvAchievementsTitle"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <HorizontalScrollView
+                android:id="@+id/hsvAttendanceBadges"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@+id/tvAttendanceGroupLabel">
+
+                <LinearLayout
+                    android:id="@+id/layoutAttendanceBadges"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp">
+
+
+                <include layout="@layout/item_badge" android:id="@+id/badgeWorshipper" />
+                <include layout="@layout/item_badge" android:id="@+id/badgeDisciple" />
+                <include layout="@layout/item_badge" android:id="@+id/badgeFaithfulness" />
+                <include layout="@layout/item_badge" android:id="@+id/badgeGodsHouse" />
+                <include layout="@layout/item_badge" android:id="@+id/badgeSuperFaithful" />
+
+                </LinearLayout>
+        </HorizontalScrollView>
+
+            <!-- Quiz Badges Group -->
+            <TextView
+                android:id="@+id/tvQuizGroupLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Quiz Milestones"
+                android:textColor="@color/text_grey"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/hsvAttendanceBadges"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <HorizontalScrollView
+                android:id="@+id/hsvQuizBadges"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@+id/tvQuizGroupLabel">
+            <LinearLayout
+                android:id="@+id/layoutQuizBadges"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/tvAchievementsTitle">
+                app:layout_constraintTop_toBottomOf="@+id/tvQuizGroupLabel">
 
-                <View
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/bg_rounded_card"
-                    android:alpha="0.4" />
-
-                <View
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/bg_rounded_card"
-                    android:alpha="0.4" />
-
-                <View
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/bg_rounded_card"
-                    android:alpha="0.4" />
-
-                <View
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:background="@drawable/bg_rounded_card"
-                    android:alpha="0.4" />
+                <include layout="@layout/item_badge" android:id="@+id/badgeTryer" />
+                <include layout="@layout/item_badge" android:id="@+id/badgeLearner" />
+                <include layout="@layout/item_badge" android:id="@+id/badgeScholar" />
+                <include layout="@layout/item_badge" android:id="@+id/badgeExplorer" />
+                <include layout="@layout/item_badge" android:id="@+id/badgeChampion" />
 
             </LinearLayout>
+            </HorizontalScrollView>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_button_next"
+                android:text="Logout"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/hsvQuizBadges" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-    <!-- Bottom Navigation (Shared) -->
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"

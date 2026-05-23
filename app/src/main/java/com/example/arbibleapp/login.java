@@ -13,11 +13,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class login extends AppCompatActivity {
 
-    private String userType = "Student"; // Default
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,45 +32,63 @@ public class login extends AppCompatActivity {
             return insets;
         });
 
-        MaterialButtonToggleGroup toggleGroup = findViewById(R.id.toggleUserType);
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         EditText etEmail = findViewById(R.id.etEmail);
         EditText etPassword = findViewById(R.id.etPassword);
         Button btnLogin = findViewById(R.id.btnLogin);
         TextView tvRegister = findViewById(R.id.tvRegister);
-
-        toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (isChecked) {
-                if (checkedId == R.id.btnStudent) {
-                    userType = "Student";
-                } else if (checkedId == R.id.btnTeacher) {
-                    userType = "Teacher";
-                }
-            }
-        });
+        TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
-            Toast.makeText(this, "Logging in as " + userType, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(login.this, StudentDashboard.class);
-            startActivity(intent);
-            finish();
-
-            /*if (email.isEmpty() || password.isEmpty()) {
+            if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-            } else {
-                // Perform login logic based on userType
-                Toast.makeText(this, "Logging in as " + userType, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(login.this, StudentDashboard.class);
-                startActivity(intent);
-                finish();
-            }*/
+                return;
+            }
+
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            String uid = mAuth.getCurrentUser().getUid();
+
+                            db.collection("users").document(uid).update("password", password);
+
+                            db.collection("users").document(uid).get()
+                                    .addOnSuccessListener(documentSnapshot -> {
+                                        if (documentSnapshot.exists()) {
+                                            String userType = documentSnapshot.getString("userType");
+                                            if ("Teacher".equals(userType)) {
+                                                startActivity(new Intent(login.this, TeacherDashboard.class));
+                                            } else {
+                                                startActivity(new Intent(login.this, StudentDashboard.class));
+                                            }
+                                            finish();
+                                        } else {
+                                            Toast.makeText(login.this, "User data not found", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(login.this, "Error fetching user data", Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            Toast.makeText(login.this, "Login failed: " + task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
         });
 
         tvRegister.setOnClickListener(v -> {
-            // Intent to Register Activity (to be created)
-            Toast.makeText(this, "Redirecting to Register...", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(login.this, Register.class);
+            startActivity(intent);
+        });
+
+        tvForgotPassword.setOnClickListener(v->{
+            Intent intent = new Intent(login.this, ForgotPassword.class);
+            startActivity(intent);
         });
     }
 }

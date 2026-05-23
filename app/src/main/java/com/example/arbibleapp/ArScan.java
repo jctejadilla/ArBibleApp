@@ -1,225 +1,219 @@
 package com.example.arbibleapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 
-import com.google.ar.core.Anchor;
-import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.core.AugmentedImageDatabase;
+import com.google.ar.core.CameraConfig;
+import com.google.ar.core.CameraConfigFilter;
 import com.google.ar.core.Config;
-import com.google.ar.core.Frame;
-import com.google.ar.core.Session;
+import com.google.ar.core.Pose;
 import com.google.ar.core.TrackingState;
-import com.google.ar.core.exceptions.UnavailableApkTooOldException;
-import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
-import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
-import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
-import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
 
-import com.google.ar.sceneform.ArSceneView;
-import com.google.ar.sceneform.AnchorNode;
-import com.google.ar.sceneform.Node;
-import com.google.ar.sceneform.math.Vector3;
-import com.google.ar.sceneform.assets.RenderableSource;
-import com.google.ar.sceneform.rendering.ModelRenderable;
-import com.google.ar.sceneform.Scene;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 
-import java.util.Collection;
+import io.github.sceneview.ar.ArSceneView;
+import io.github.sceneview.ar.node.ArModelNode;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import kotlin.Unit;
 
 public class ArScan extends AppCompatActivity {
+    private ArSceneView sceneView;
+    private ArModelNode modelNode;
+    private ExtendedFloatingActionButton btnProceed;
+    
+    private List<String> clipModels = new ArrayList<>(Arrays.asList("adam1.glb"));
+    private int currentClipIndex = 0;
+    
+    private boolean isModelAnchored = false;
+    private boolean isModelReady = false;
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Toast.makeText(this, "Camera permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Camera permission is required for AR", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            });
 
-    private static final int CAMERA_PERMISSION_CODE = 1001;
-    private ArSceneView arSceneView;
-    private ModelRenderable modelRenderable;
-    private boolean modelPlaced = false;
-    private boolean isSessionSetup = false;
-    private boolean installRequested = false;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         setContentView(R.layout.activity_ar_scan);
 
-        arSceneView = findViewById(R.id.arSceneView);
+        sceneView = findViewById(R.id.sceneView);
+        btnProceed = findViewById(R.id.btnProceed);
 
-        if (checkCameraPermission()) {
-            setupSession();
-        } else {
-            requestCameraPermission();
-        }
-        
-        loadModel();
+        btnProceed.setOnClickListener(v -> {
+            Toast.makeText(this, "Proceeding to Quiz...", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(ArScan.this, QuizAdamEve.class);
+            startActivity(intent);
+            finish();
+        });
 
-        Scene scene = arSceneView.getScene();
-        scene.addOnUpdateListener(frameTime -> {
-            Frame frame = arSceneView.getArFrame();
-            if (frame == null) return;
-
-            Collection<AugmentedImage> images = frame.getUpdatedTrackables(AugmentedImage.class);
-
-            for (AugmentedImage image : images) {
-                if (image.getTrackingState() == TrackingState.TRACKING) {
-                    if (!modelPlaced && modelRenderable != null) {
-                        Anchor anchor = image.createAnchor(image.getCenterPose());
-                        placeModel(anchor, image);
-                        modelPlaced = true;
-                        Toast.makeText(this, "Marker detected!", Toast.LENGTH_SHORT).show();
-                    }
-                }
+        try {
+            for (String model : clipModels) {
+                InputStream is = getAssets().open(model);
+                is.close();
             }
+        } catch (IOException e) {
+            Toast.makeText(this, "Some model files NOT found in assets!", Toast.LENGTH_LONG).show();
+        }
+
+        checkCameraPermission();
+
+        updateButtonConstraints(getResources().getConfiguration().orientation);
+
+        getLifecycle().addObserver(sceneView);
+
+        modelNode = new ArModelNode(sceneView.getEngine());
+        modelNode.setVisible(false);
+        sceneView.addChild(modelNode);
+
+        loadClip(0);
+
+        sceneView.configureSession((session, config) -> {
+            config.setFocusMode(Config.FocusMode.AUTO);
+            config.setDepthMode(Config.DepthMode.DISABLED);
+
+            AugmentedImageDatabase database = new AugmentedImageDatabase(session);
+            try (InputStream is = getAssets().open("marker1.jpg")) {
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                database.addImage("marker1", bitmap, 0.2f);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error loading marker", Toast.LENGTH_SHORT).show();
+            }
+            config.setAugmentedImageDatabase(database);
+
+            return Unit.INSTANCE;
+        });
+
+        sceneView.setOnArSessionCreated(session -> {
+            CameraConfigFilter filter = new CameraConfigFilter(session);
+            filter.setTargetFps(EnumSet.of(CameraConfig.TargetFps.TARGET_FPS_30));
+            List<CameraConfig> configs = session.getSupportedCameraConfigs(filter);
+            if (!configs.isEmpty()) {
+                session.setCameraConfig(configs.get(0));
+            }
+            return Unit.INSTANCE;
+        });
+        
+        sceneView.getOnAugmentedImageUpdate().add(augmentedImage -> {
+            if (augmentedImage.getTrackingState() == TrackingState.TRACKING && !isModelAnchored && isModelReady) {
+                Pose liftPose = augmentedImage.getCenterPose().compose(Pose.makeTranslation(0, 0.1f, 0));
+                modelNode.setAnchor(augmentedImage.createAnchor(liftPose));
+                modelNode.setVisible(true);
+                isModelAnchored = true;
+                updateButtonsVisibility();
+                Toast.makeText(this, "Marker Found - Model Placed!", Toast.LENGTH_SHORT).show();
+            }
+            return Unit.INSTANCE;
         });
     }
 
-    private boolean checkCameraPermission() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    private void loadClip(int index) {
+        if (index >= clipModels.size()) return;
+
+        isModelReady = false;
+        btnProceed.setVisibility(View.GONE);
+
+        String modelFile = clipModels.get(index);
+
+        modelNode.loadModelGlbAsync(
+                modelFile,
+                true,
+                1.5f,
+                null,
+                ex -> {
+                    Toast.makeText(this, "Load Error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                    return Unit.INSTANCE;
+                },
+                instance -> {
+                    isModelReady = true;
+                    if (isModelAnchored) {
+                        modelNode.setVisible(true);
+                        updateButtonsVisibility();
+                    }
+
+                    modelNode.playAnimation(0, false);
+                    
+                    final long delayMillis = (instance.getAnimator().getAnimationCount() > 0)
+                            ? (long) (instance.getAnimator().getAnimationDuration(0) * 1000)
+                            : 10000;
+
+                    new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                        if (currentClipIndex < clipModels.size() - 1) {
+                            currentClipIndex++;
+                            loadClip(currentClipIndex);
+                        } else {
+                            updateButtonsVisibility();
+                        }
+                    }, delayMillis);
+
+                    return Unit.INSTANCE;
+                }
+        );
     }
 
-    private void requestCameraPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setupSession();
-                resumeArSceneView();
-            } else {
-                Toast.makeText(this, "Camera permission is required for AR", Toast.LENGTH_LONG).show();
-                finish();
-            }
-        }
-    }
-
-    private void setupSession() {
-        if (isSessionSetup) return;
-
-        try {
-            switch (ArCoreApk.getInstance().requestInstall(this, !installRequested)) {
-                case INSTALL_REQUESTED:
-                    installRequested = true;
-                    return;
-                case INSTALLED:
-                    break;
-            }
-
-            Session session = new Session(this);
-            Config config = new Config(session);
-            config.setFocusMode(Config.FocusMode.AUTO);
-            config.setUpdateMode(Config.UpdateMode.LATEST_CAMERA_IMAGE);
-
-            AugmentedImageDatabase db = new AugmentedImageDatabase(session);
-            
-            /*Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.marker1);
-            if (bitmap != null) {
-                db.addImage("marker1", bitmap);
-            } else {
-                Log.e("ArScan", "Could not load marker1 resource");
-            }*/
-
-            config.setAugmentedImageDatabase(db);
-            session.configure(config);
-            arSceneView.setupSession(session);
-            isSessionSetup = true;
-        } catch (UnavailableArcoreNotInstalledException | UnavailableUserDeclinedInstallationException e) {
-            Toast.makeText(this, "Please install ARCore", Toast.LENGTH_LONG).show();
-            finish();
-        } catch (UnavailableApkTooOldException e) {
-            Toast.makeText(this, "Please update ARCore", Toast.LENGTH_LONG).show();
-            finish();
-        } catch (UnavailableSdkTooOldException e) {
-            Toast.makeText(this, "Please update this app", Toast.LENGTH_LONG).show();
-            finish();
-        } catch (UnavailableDeviceNotCompatibleException e) {
-            Toast.makeText(this, "This device does not support AR", Toast.LENGTH_LONG).show();
-            finish();
-        } catch (Exception e) {
-            Log.e("ArScan", "Failed to setup AR session", e);
-            finish();
-        }
-    }
-
-    private void loadModel() {
-        ModelRenderable.builder()
-                .setSource(this, RenderableSource.builder()
-                        .setSource(this, Uri.parse("model.glb"), RenderableSource.SourceType.GLB)
-                        .setRecenterMode(RenderableSource.RecenterMode.CENTER)
-                        .build())
-                .setRegistryId("model.glb")
-                .build()
-                .thenAccept(renderable -> {
-                    modelRenderable = renderable;
-                    Log.d("ArScan", "Model loaded successfully");
-                })
-                .exceptionally(throwable -> {
-                    Log.e("ArScan", "Error loading model: " + throwable.getMessage());
-                    return null;
-                });
-    }
-
-    private void placeModel(Anchor anchor, AugmentedImage image) {
-        Log.d("ArScan", "Placing model on marker: " + image.getName());
-        
-        AnchorNode anchorNode = new AnchorNode(anchor);
-        anchorNode.setParent(arSceneView.getScene());
-
-        Node modelNode = new Node();
-        modelNode.setParent(anchorNode);
-        modelNode.setRenderable(modelRenderable);
-
-        modelNode.setLocalPosition(new Vector3(0.0f, 0.05f, 0.0f));
-        modelNode.setLocalScale(new Vector3(0.07f, 0.07f, 0.07f));
-        
-        Log.d("ArScan", "Model node attached to scene at: " + anchor.getPose().toString());
-    }
-
-    private void resumeArSceneView() {
-        if (arSceneView != null && isSessionSetup) {
-            try {
-                arSceneView.resume();
-            } catch (Exception e) {
-                Log.e("ArScan", "Error resuming ArSceneView", e);
-            }
+    private void updateButtonsVisibility() {
+        if (currentClipIndex >= clipModels.size() - 1) {
+            btnProceed.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (checkCameraPermission()) {
-            setupSession();
-            resumeArSceneView();
-        }
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateButtonConstraints(newConfig.orientation);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (arSceneView != null) {
-            arSceneView.pause();
+    private void updateButtonConstraints(int orientation) {
+        ConstraintLayout layout = findViewById(R.id.main_layout);
+        if (layout == null) return;
+
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(layout);
+
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            constraintSet.connect(R.id.btnProceed, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 64);
+            constraintSet.connect(R.id.btnProceed, ConstraintSet.START, ConstraintSet.GONE, ConstraintSet.START, 0);
+        } else {
+            constraintSet.connect(R.id.btnProceed, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 0);
+            constraintSet.connect(R.id.btnProceed, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, 0);
         }
+        constraintSet.applyTo(layout);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (arSceneView != null) {
-            arSceneView.destroy();
+    private void checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) 
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
     }
 }
