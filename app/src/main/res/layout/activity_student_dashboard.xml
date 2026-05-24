@@ -40,26 +40,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvWelcomeBack" />
 
-            <View
-                android:id="@+id/viewProfile"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:background="@drawable/bg_rounded_card"
-                android:alpha="0.4"
-                app:layout_constraintBottom_toBottomOf="@+id/tvStudentName"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvWelcomeBack" />
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@android:drawable/ic_menu_myplaces"
-                app:layout_constraintBottom_toBottomOf="@+id/viewProfile"
-                app:layout_constraintEnd_toEndOf="@+id/viewProfile"
-                app:layout_constraintStart_toStartOf="@+id/viewProfile"
-                app:layout_constraintTop_toTopOf="@+id/viewProfile"
-                app:tint="@color/text_dark" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cardStreak"
                 android:layout_width="match_parent"
@@ -248,62 +228,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tvStoriesTitle" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Leaderboard -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="16dp"
-                    android:id="@+id/leaderboard"
-                    android:focusable="true">
-
-                    <View
-                        android:id="@+id/iconLeaderboard"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@android:drawable/btn_star_big_on"
-                        app:layout_constraintBottom_toBottomOf="@+id/iconLeaderboard"
-                        app:layout_constraintEnd_toEndOf="@+id/iconLeaderboard"
-                        app:layout_constraintStart_toStartOf="@+id/iconLeaderboard"
-                        app:layout_constraintTop_toTopOf="@+id/iconLeaderboard"
-                        app:tint="@color/text_dark" />
-
-                    <TextView
-                        android:id="@+id/tvLeaderboardTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Leaderboard"
-                        android:textColor="@color/text_dark"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iconLeaderboard" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Top performers"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvLeaderboardTitle" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <!-- Attendance -->

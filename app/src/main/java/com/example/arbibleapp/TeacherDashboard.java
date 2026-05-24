@@ -26,7 +26,7 @@ import java.util.Locale;
 
 public class TeacherDashboard extends AppCompatActivity {
 
-    ConstraintLayout quizResult, bibleStories, leaderboard, attendance, classManagement;
+    ConstraintLayout quizResult, leaderboard;
     View viewProfile;
     LinearLayout navHome, navStudentsTab, navAttendanceTab, navAnalyticsTab;
     TextView tvTeacherName, tvTotalStudents, tvAvgXP, tvAttendanceRate, tvAvgQuiz, tvResetBadge;
@@ -56,10 +56,7 @@ public class TeacherDashboard extends AppCompatActivity {
         tvResetBadge = findViewById(R.id.tvResetBadge);
 
         quizResult = findViewById(R.id.cardQuizResults);
-        bibleStories = findViewById(R.id.cardBibleStories);
         leaderboard = findViewById(R.id.cardLeaderboard);
-        attendance = findViewById(R.id.cardAttendance);
-        classManagement = findViewById(R.id.cardClassManagement);
 
         viewProfile = findViewById(R.id.viewProfile);
 
@@ -72,10 +69,7 @@ public class TeacherDashboard extends AppCompatActivity {
         fetchMonthlyOverview();
 
         quizResult.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, TeacherQuizResults.class)));
-        bibleStories.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, BibleStories.class)));
         leaderboard.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, Leaderboards.class)));
-        attendance.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, attendance_teacher_main.class)));
-        classManagement.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, ClassManagement.class)));
 
         viewProfile.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, TeacherProfile.class)));
 

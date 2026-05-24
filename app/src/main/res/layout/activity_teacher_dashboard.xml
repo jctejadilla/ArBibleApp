@@ -42,8 +42,8 @@
 
             <View
                 android:id="@+id/viewProfile"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:background="@drawable/bg_rounded_card"
                 android:alpha="0.4"
                 app:layout_constraintBottom_toBottomOf="@+id/tvTeacherName"
@@ -51,8 +51,8 @@
                 app:layout_constraintTop_toTopOf="@+id/tvWelcomeBack" />
 
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="29dp"
+                android:layout_height="29dp"
                 android:src="@android:drawable/ic_menu_myplaces"
                 app:layout_constraintBottom_toBottomOf="@+id/viewProfile"
                 app:layout_constraintEnd_toEndOf="@+id/viewProfile"
@@ -240,118 +240,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:columnCount="2"
-                android:rowCount="3"
+                android:rowCount="1"
                 app:layout_constraintTop_toBottomOf="@+id/tvExplore">
-
-                <!-- Class Management -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cardClassManagement"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="16dp">
-
-                    <View
-                        android:id="@+id/iconClass"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        app:layout_constraintBottom_toBottomOf="@+id/iconClass"
-                        app:layout_constraintEnd_toEndOf="@+id/iconClass"
-                        app:layout_constraintStart_toStartOf="@+id/iconClass"
-                        app:layout_constraintTop_toTopOf="@+id/iconClass"
-                        app:tint="@color/text_dark" />
-
-                    <TextView
-                        android:id="@+id/tvClassTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="My Class"
-                        android:textColor="@color/text_dark"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iconClass" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Manage your students"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvClassTitle" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Bible Stories -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cardBibleStories"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="16dp">
-
-                    <View
-                        android:id="@+id/iconStories"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@android:drawable/ic_menu_agenda"
-                        app:layout_constraintBottom_toBottomOf="@+id/iconStories"
-                        app:layout_constraintEnd_toEndOf="@+id/iconStories"
-                        app:layout_constraintStart_toStartOf="@+id/iconStories"
-                        app:layout_constraintTop_toTopOf="@+id/iconStories"
-                        app:tint="@color/text_dark" />
-
-                    <TextView
-                        android:id="@+id/tvStoriesTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Bible Stories"
-                        android:textColor="@color/text_dark"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iconStories" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Browse story library"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvStoriesTitle" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <!-- Quiz Results -->
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -463,60 +353,6 @@
                         app:layout_constraintTop_toBottomOf="@+id/tvLeaderboardTitle" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- Attendance -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cardAttendance"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="16dp">
-
-                    <View
-                        android:id="@+id/iconAttendance"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@android:drawable/ic_menu_day"
-                        app:layout_constraintBottom_toBottomOf="@+id/iconAttendance"
-                        app:layout_constraintEnd_toEndOf="@+id/iconAttendance"
-                        app:layout_constraintStart_toStartOf="@+id/iconAttendance"
-                        app:layout_constraintTop_toTopOf="@+id/iconAttendance"
-                        app:tint="@color/text_dark" />
-
-                    <TextView
-                        android:id="@+id/tvAttendanceTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Attendance"
-                        android:textColor="@color/text_dark"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iconAttendance" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Track student presence"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvAttendanceTitle" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </GridLayout>
 

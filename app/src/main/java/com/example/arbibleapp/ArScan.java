@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -44,11 +45,14 @@ public class ArScan extends AppCompatActivity {
     private ArModelNode modelNode;
     private ExtendedFloatingActionButton btnProceed;
     
-    private List<String> clipModels = new ArrayList<>(Arrays.asList("adam1.glb"));
+    private String currentMarkerName = null;
     private int currentClipIndex = 0;
-    
-    private boolean isModelAnchored = false;
-    private boolean isModelReady = false;
+    private int currentSessionId = 0;
+
+    private final List<String> adamClips = Arrays.asList("adam1.glb");
+    private final List<String> floodClips = Arrays.asList("babel1.glb");
+    private final List<String> babelClips = Arrays.asList("babel1.glb");
+
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -70,20 +74,19 @@ public class ArScan extends AppCompatActivity {
         btnProceed = findViewById(R.id.btnProceed);
 
         btnProceed.setOnClickListener(v -> {
+            Class<?> targetQuiz;
+            if ("markerFlood".equals(currentMarkerName)) {
+                targetQuiz = QuizFlood.class;
+            } else if ("markerBabel".equals(currentMarkerName)) {
+                targetQuiz = QuizBabel.class;
+            } else {
+                targetQuiz = QuizAdamEve.class;
+            }
             Toast.makeText(this, "Proceeding to Quiz...", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(ArScan.this, QuizAdamEve.class);
+            Intent intent = new Intent(ArScan.this, targetQuiz);
             startActivity(intent);
             finish();
         });
-
-        try {
-            for (String model : clipModels) {
-                InputStream is = getAssets().open(model);
-                is.close();
-            }
-        } catch (IOException e) {
-            Toast.makeText(this, "Some model files NOT found in assets!", Toast.LENGTH_LONG).show();
-        }
 
         checkCameraPermission();
 
@@ -95,20 +98,15 @@ public class ArScan extends AppCompatActivity {
         modelNode.setVisible(false);
         sceneView.addChild(modelNode);
 
-        loadClip(0);
-
         sceneView.configureSession((session, config) -> {
             config.setFocusMode(Config.FocusMode.AUTO);
             config.setDepthMode(Config.DepthMode.DISABLED);
 
             AugmentedImageDatabase database = new AugmentedImageDatabase(session);
-            try (InputStream is = getAssets().open("marker1.jpg")) {
-                Bitmap bitmap = BitmapFactory.decodeStream(is);
-                database.addImage("marker1", bitmap, 0.2f);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error loading marker", Toast.LENGTH_SHORT).show();
-            }
+            addMarkerToDatabase(database, "markerAdam", "markerAdam.jpg");
+            addMarkerToDatabase(database, "markerFlood", "markerFlood.png");
+            addMarkerToDatabase(database, "markerBabel", "marketBabel.png");
+            
             config.setAugmentedImageDatabase(database);
 
             return Unit.INSTANCE;
@@ -125,66 +123,102 @@ public class ArScan extends AppCompatActivity {
         });
         
         sceneView.getOnAugmentedImageUpdate().add(augmentedImage -> {
-            if (augmentedImage.getTrackingState() == TrackingState.TRACKING && !isModelAnchored && isModelReady) {
-                Pose liftPose = augmentedImage.getCenterPose().compose(Pose.makeTranslation(0, 0.1f, 0));
-                modelNode.setAnchor(augmentedImage.createAnchor(liftPose));
-                modelNode.setVisible(true);
-                isModelAnchored = true;
-                updateButtonsVisibility();
-                Toast.makeText(this, "Marker Found - Model Placed!", Toast.LENGTH_SHORT).show();
+            String name = augmentedImage.getName();
+            if (augmentedImage.getTrackingState() == TrackingState.TRACKING) {
+                if (currentMarkerName == null || !currentMarkerName.equals(name)) {
+                    currentMarkerName = name;
+                    currentClipIndex = 0;
+                    currentSessionId++;
+                    
+                    sceneView.removeChild(modelNode);
+                    modelNode = new ArModelNode(sceneView.getEngine());
+                    modelNode.setVisible(false);
+                    sceneView.addChild(modelNode);
+
+                    loadClip(0, augmentedImage, currentSessionId);
+                } else {
+                    modelNode.setVisible(true);
+                }
+            } else if (name.equals(currentMarkerName)) {
+                modelNode.setVisible(false);
             }
             return Unit.INSTANCE;
         });
     }
 
-    private void loadClip(int index) {
-        if (index >= clipModels.size()) return;
+    private void addMarkerToDatabase(AugmentedImageDatabase database, String name, String fileName) {
+        try (InputStream is = getAssets().open(fileName)) {
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            database.addImage(name, bitmap, 0.2f);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-        isModelReady = false;
-        btnProceed.setVisibility(View.GONE);
+    private List<String> getCurrentClips() {
+        if ("markerAdam".equals(currentMarkerName)) return adamClips;
+        if ("markerFlood".equals(currentMarkerName)) return floodClips;
+        if ("markerBabel".equals(currentMarkerName)) return babelClips;
+        return new ArrayList<>();
+    }
+    
+    private void loadClip(int index, AugmentedImage augmentedImage, int sessionId) {
+        if (sessionId != currentSessionId) return;
 
-        String modelFile = clipModels.get(index);
+        List<String> clips = getCurrentClips();
+        if (index >= clips.size()) {
+            btnProceed.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        String modelFile = clips.get(index);
+        
+        if (index == 0) {
+            btnProceed.setVisibility(View.GONE);
+            modelNode.setVisible(false);
+        }
 
         modelNode.loadModelGlbAsync(
                 modelFile,
                 true,
-                1.5f,
+                0.30f,
                 null,
                 ex -> {
-                    Toast.makeText(this, "Load Error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                    if (sessionId == currentSessionId) {
+                        Toast.makeText(this, "Load Error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                     return Unit.INSTANCE;
                 },
                 instance -> {
-                    isModelReady = true;
-                    if (isModelAnchored) {
-                        modelNode.setVisible(true);
-                        updateButtonsVisibility();
-                    }
+                    if (sessionId != currentSessionId) return Unit.INSTANCE;
 
+                    if (augmentedImage != null) {
+                        Pose centerPose = augmentedImage.getCenterPose();
+                        modelNode.setAnchor(augmentedImage.createAnchor(centerPose));
+                    }
+                    
+                    modelNode.setVisible(true);
                     modelNode.playAnimation(0, false);
                     
-                    final long delayMillis = (instance.getAnimator().getAnimationCount() > 0)
+                    if (index == 0) {
+                        Toast.makeText(this, "Story Found!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    long animTime = (instance.getAnimator().getAnimationCount() > 0)
                             ? (long) (instance.getAnimator().getAnimationDuration(0) * 1000)
-                            : 10000;
+                            : 0;
+                    final long finalDuration = Math.max(animTime, 20000);
 
                     new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                        if (currentClipIndex < clipModels.size() - 1) {
+                        if (sessionId == currentSessionId && currentClipIndex == index) {
                             currentClipIndex++;
-                            loadClip(currentClipIndex);
-                        } else {
-                            updateButtonsVisibility();
+                            loadClip(currentClipIndex, null, sessionId);
                         }
-                    }, delayMillis);
+                    }, finalDuration);
 
                     return Unit.INSTANCE;
                 }
         );
-    }
-
-    private void updateButtonsVisibility() {
-        if (currentClipIndex >= clipModels.size() - 1) {
-            btnProceed.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override

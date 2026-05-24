@@ -1,5 +1,6 @@
 package com.example.arbibleapp;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,7 +10,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -138,18 +138,20 @@ public class BibleStories extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("ResourceAsColor")
     private void updateCategoryUI(TextView selectedBtn) {
         resetCategoryButton(btnAll);
         resetCategoryButton(btnOldTestament);
         resetCategoryButton(btnNewTestament);
 
         selectedBtn.setBackgroundResource(R.drawable.bg_button_next);
-        selectedBtn.setTextColor(getResources().getColor(R.color.white));
+        selectedBtn.setTextColor(R.color.white);
     }
 
+    @SuppressLint("ResourceAsColor")
     private void resetCategoryButton(TextView btn) {
         btn.setBackgroundResource(R.drawable.bg_search_bar);
-        btn.setTextColor(getResources().getColor(R.color.text_grey));
+        btn.setTextColor(R.color.text_grey);
     }
 
     private void showAllStories() {

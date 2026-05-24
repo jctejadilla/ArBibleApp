@@ -51,7 +51,6 @@ public class StudentDashboard extends AppCompatActivity {
 
         arScan = findViewById(R.id.arScan);
         bibleStories = findViewById(R.id.bibleStories);
-        leaderboard = findViewById(R.id.leaderboard);
         attendance = findViewById(R.id.attendance);
 
         viewProfile = findViewById(R.id.viewProfile);
@@ -66,7 +65,6 @@ public class StudentDashboard extends AppCompatActivity {
 
         arScan.setOnClickListener(v -> startActivity(new Intent(StudentDashboard.this, ArScan.class)));
         bibleStories.setOnClickListener(v -> startActivity(new Intent(StudentDashboard.this, BibleStories.class)));
-        leaderboard.setOnClickListener(v -> startActivity(new Intent(StudentDashboard.this, Leaderboards.class)));
         attendance.setOnClickListener(v -> {
             Intent intent = new Intent(StudentDashboard.this, Attendance.class);
             intent.putExtra("userType", "Student");
