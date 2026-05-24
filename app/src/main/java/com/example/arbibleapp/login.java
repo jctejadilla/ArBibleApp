@@ -2,6 +2,7 @@ package com.example.arbibleapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,6 +16,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class login extends AppCompatActivity {
 
@@ -54,25 +59,41 @@ public class login extends AppCompatActivity {
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
                             String uid = mAuth.getCurrentUser().getUid();
+                            String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
-                            db.collection("users").document(uid).update("password", password);
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("password", password);
+                            if (deviceId != null) {
+                                updates.put("activeDeviceId", deviceId);
+                            }
 
-                            db.collection("users").document(uid).get()
-                                    .addOnSuccessListener(documentSnapshot -> {
-                                        if (documentSnapshot.exists()) {
-                                            String userType = documentSnapshot.getString("userType");
-                                            if ("Teacher".equals(userType)) {
-                                                startActivity(new Intent(login.this, TeacherDashboard.class));
-                                            } else {
-                                                startActivity(new Intent(login.this, StudentDashboard.class));
-                                            }
-                                            finish();
-                                        } else {
-                                            Toast.makeText(login.this, "User data not found", Toast.LENGTH_SHORT).show();
-                                        }
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(login.this, "Error fetching user data", Toast.LENGTH_SHORT).show();
+                            db.collection("users").document(uid)
+                                    .set(updates, SetOptions.merge())
+                                    .addOnCompleteListener(updateTask -> {
+                                        if (isFinishing()) return;
+                                        
+                                        db.collection("users").document(uid).get()
+                                                .addOnSuccessListener(documentSnapshot -> {
+                                                    if (isFinishing()) return;
+                                                    
+                                                    if (documentSnapshot.exists()) {
+                                                        String userType = documentSnapshot.getString("userType");
+                                                        Intent intent;
+                                                        if ("Teacher".equals(userType)) {
+                                                            intent = new Intent(login.this, TeacherDashboard.class);
+                                                        } else {
+                                                            intent = new Intent(login.this, StudentDashboard.class);
+                                                        }
+                                                        startActivity(intent);
+                                                        finish();
+                                                    } else {
+                                                        Toast.makeText(login.this, "User data not found", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    if (isFinishing()) return;
+                                                    Toast.makeText(login.this, "Error fetching user data", Toast.LENGTH_SHORT).show();
+                                                });
                                     });
                         } else {
                             Toast.makeText(login.this, "Login failed: " + task.getException().getMessage(),

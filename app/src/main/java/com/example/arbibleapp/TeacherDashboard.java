@@ -2,6 +2,7 @@ package com.example.arbibleapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class TeacherDashboard extends AppCompatActivity {
     TextView tvTeacherName, tvTotalStudents, tvAvgXP, tvAttendanceRate, tvAvgQuiz, tvResetBadge;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private ListenerRegistration ssoListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +71,14 @@ public class TeacherDashboard extends AppCompatActivity {
         fetchUserData();
         fetchMonthlyOverview();
 
-        quizResult.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, TeacherQuizResults.class)));
-        leaderboard.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, Leaderboards.class)));
+        if (quizResult != null) quizResult.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, TeacherQuizResults.class)));
+        if (leaderboard != null) leaderboard.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, Leaderboards.class)));
 
-        viewProfile.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, TeacherProfile.class)));
+        if (viewProfile != null) viewProfile.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, TeacherProfile.class)));
 
-        navStudentsTab.setOnClickListener(v->{ startActivity(new Intent(TeacherDashboard.this, ClassManagement.class));});
-        navAttendanceTab.setOnClickListener(v->{ startActivity(new Intent(TeacherDashboard.this, attendance_teacher_main.class));});
-        navAnalyticsTab.setOnClickListener(v->{ startActivity(new Intent(TeacherDashboard.this, AnalyticsActivity.class));});
+        if (navStudentsTab != null) navStudentsTab.setOnClickListener(v->{ startActivity(new Intent(TeacherDashboard.this, ClassManagement.class));});
+        if (navAttendanceTab != null) navAttendanceTab.setOnClickListener(v->{ startActivity(new Intent(TeacherDashboard.this, attendance_teacher_main.class));});
+        if (navAnalyticsTab != null) navAnalyticsTab.setOnClickListener(v->{ startActivity(new Intent(TeacherDashboard.this, AnalyticsActivity.class));});
     }
 
     private void fetchUserData() {
@@ -83,18 +86,20 @@ public class TeacherDashboard extends AppCompatActivity {
             String uid = mAuth.getCurrentUser().getUid();
             db.collection("users").document(uid).get()
                     .addOnSuccessListener(documentSnapshot -> {
+                        if (isFinishing()) return;
                         if (documentSnapshot.exists()) {
                             String username = documentSnapshot.getString("username");
                             if (username == null || username.isEmpty()) {
                                 username = documentSnapshot.getString("fullName");
                             }
                             
-                            if (username != null && !username.isEmpty()) {
+                            if (username != null && !username.isEmpty() && tvTeacherName != null) {
                                 tvTeacherName.setText(username);
                             }
                         }
                     })
                     .addOnFailureListener(e -> {
+                        if (isFinishing()) return;
                         Toast.makeText(this, "Error fetching user data", Toast.LENGTH_SHORT).show();
                     });
         }
@@ -108,19 +113,20 @@ public class TeacherDashboard extends AppCompatActivity {
         cal.add(Calendar.MONTH, 1);
         cal.set(Calendar.DAY_OF_MONTH, 1);
         String nextMonth = new SimpleDateFormat("MMMM d", Locale.getDefault()).format(cal.getTime());
-        tvResetBadge.setText("Resets " + nextMonth);
+        if (tvResetBadge != null) tvResetBadge.setText("Resets " + nextMonth);
 
         db.collection("enrollments")
                 .whereEqualTo("teacherUid", teacherUid)
                 .get()
                 .addOnSuccessListener(enrollments -> {
+                    if (isFinishing()) return;
                     int studentCount = enrollments.size();
-                    tvTotalStudents.setText(String.valueOf(studentCount));
+                    if (tvTotalStudents != null) tvTotalStudents.setText(String.valueOf(studentCount));
 
                     if (studentCount == 0) {
-                        tvAvgXP.setText("0");
-                        tvAvgQuiz.setText("0%");
-                        tvAttendanceRate.setText("0%");
+                        if (tvAvgXP != null) tvAvgXP.setText("0");
+                        if (tvAvgQuiz != null) tvAvgQuiz.setText("0%");
+                        if (tvAttendanceRate != null) tvAttendanceRate.setText("0%");
                         return;
                     }
 
@@ -133,20 +139,22 @@ public class TeacherDashboard extends AppCompatActivity {
                             .whereIn("uid", studentUids)
                             .get()
                             .addOnSuccessListener(users -> {
+                                if (isFinishing()) return;
                                 long totalXP = 0;
                                 for (DocumentSnapshot user : users) {
                                     Long xp = user.getLong("totalXP");
                                     if (xp != null) totalXP += xp;
                                 }
-                                tvAvgXP.setText(String.format(Locale.getDefault(), "%,d", totalXP / studentCount));
+                                if (tvAvgXP != null) tvAvgXP.setText(String.format(Locale.getDefault(), "%,d", totalXP / studentCount));
                             });
 
                     db.collection("quiz_results")
                             .whereIn("studentUid", studentUids)
                             .get()
                             .addOnSuccessListener(results -> {
+                                if (isFinishing()) return;
                                 if (results.isEmpty()) {
-                                    tvAvgQuiz.setText("0%");
+                                    if (tvAvgQuiz != null) tvAvgQuiz.setText("0%");
                                     return;
                                 }
                                 double totalPercentage = 0;
@@ -159,9 +167,9 @@ public class TeacherDashboard extends AppCompatActivity {
                                         validResults++;
                                     }
                                 }
-                                if (validResults > 0) {
+                                if (validResults > 0 && tvAvgQuiz != null) {
                                     tvAvgQuiz.setText((int)(totalPercentage / validResults) + "%");
-                                } else {
+                                } else if (tvAvgQuiz != null) {
                                     tvAvgQuiz.setText("0%");
                                 }
                             });
@@ -183,6 +191,7 @@ public class TeacherDashboard extends AppCompatActivity {
                             .whereIn("studentUid", studentUids)
                             .get()
                             .addOnSuccessListener(attendanceDocs -> {
+                                if (isFinishing()) return;
                                 int totalAttendance = 0;
                                 String monthPrefix = new SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(new Date());
                                 for (DocumentSnapshot att : attendanceDocs) {
@@ -192,8 +201,55 @@ public class TeacherDashboard extends AppCompatActivity {
                                     }
                                 }
                                 int rate = (totalAttendance * 100) / (studentCount * finalSundays);
-                                tvAttendanceRate.setText(Math.min(100, rate) + "%");
+                                if (tvAttendanceRate != null) tvAttendanceRate.setText(Math.min(100, rate) + "%");
                             });
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkSingleSignOn();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (ssoListener != null) {
+            ssoListener.remove();
+            ssoListener = null;
+        }
+    }
+
+    private void checkSingleSignOn() {
+        if (mAuth.getCurrentUser() == null) return;
+
+        String currentDeviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        String uid = mAuth.getCurrentUser().getUid();
+
+        if (ssoListener != null) ssoListener.remove();
+
+        ssoListener = db.collection("users").document(uid).addSnapshotListener((snapshot, e) -> {
+            if (e != null || snapshot == null || !snapshot.exists()) return;
+
+            String activeId = snapshot.getString("activeDeviceId");
+            if (activeId != null && !activeId.equals(currentDeviceId)) {
+                if (ssoListener != null) ssoListener.remove();
+                mAuth.signOut();
+
+                Toast.makeText(this, "Logged in from another device. Session ended.", Toast.LENGTH_LONG).show();
+
+                Intent intent = new Intent(this, login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (ssoListener != null) ssoListener.remove();
     }
 }

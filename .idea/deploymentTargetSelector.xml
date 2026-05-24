@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-05-21T03:29:49.611082300Z">
+        <DropdownSelection timestamp="2026-05-24T12:41:22.518495400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=BAIJEQS8BILBNZGA" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Nokia\.android\avd\pixel_7_-_api_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>
