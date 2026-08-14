@@ -77,10 +77,11 @@
                     android:textColor="#E0F2F1"
                     android:textSize="12sp" />
                 <TextView
+                    android:id="@+id/tvTotalStories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="3"
+                    android:text="0"
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -105,10 +106,11 @@
                     android:textColor="#E0F2F1"
                     android:textSize="12sp" />
                 <TextView
+                    android:id="@+id/tvSubmissions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="8"
+                    android:text="0"
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -133,10 +135,11 @@
                     android:textColor="#E0F2F1"
                     android:textSize="12sp" />
                 <TextView
+                    android:id="@+id/tvAvgScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="88%"
+                    android:text="0%"
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -159,6 +162,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cardSummary">
 
         <TextView
+            android:id="@+id/tabAll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -168,6 +172,7 @@
             android:textColor="@color/text_grey" />
 
         <TextView
+            android:id="@+id/tabByStory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -179,299 +184,14 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- Submissions List Grouped By Story -->
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvQuizResultsByStory"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:clipToPadding="false"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layoutTabs">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Story Group 1 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/bg_input_field"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- Story Header -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
-
-                    <View
-                        android:id="@+id/iconBg1"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:alpha="0.3"
-                        android:background="@drawable/bg_rounded_card"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@android:drawable/ic_menu_agenda"
-                        app:layout_constraintBottom_toBottomOf="@+id/iconBg1"
-                        app:layout_constraintEnd_toEndOf="@+id/iconBg1"
-                        app:layout_constraintStart_toStartOf="@+id/iconBg1"
-                        app:layout_constraintTop_toTopOf="@+id/iconBg1"
-                        app:tint="@color/text_dark" />
-
-                    <TextView
-                        android:id="@+id/tvStoryName1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="David &amp; Goliath"
-                        android:textColor="@color/text_dark"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/iconBg1"
-                        app:layout_constraintTop_toTopOf="@+id/iconBg1" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="3 submissions"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="@+id/tvStoryName1"
-                        app:layout_constraintTop_toBottomOf="@+id/tvStoryName1" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Student Submissions for Story 1 -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/bg_white_card"
-                    android:padding="12dp">
-
-                    <View
-                        android:id="@+id/subAvatar1"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:alpha="0.2"
-                        android:background="@drawable/bg_rounded_card"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/subName1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="Sarah Johnson"
-                        android:textColor="@color/text_dark"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/subAvatar1"
-                        app:layout_constraintTop_toTopOf="@+id/subAvatar1" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2024-02-10 10:30 AM"
-                        android:textColor="@color/text_grey"
-                        android:textSize="11sp"
-                        app:layout_constraintStart_toStartOf="@+id/subName1"
-                        app:layout_constraintTop_toBottomOf="@+id/subName1" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_score_badge"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="4dp"
-                        android:text="5/5"
-                        android:textColor="@color/primary_green"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/bg_white_card"
-                    android:padding="12dp">
-
-                    <View
-                        android:id="@+id/subAvatar2"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:alpha="0.2"
-                        android:background="@drawable/bg_rounded_card"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/subName2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="Michael Chen"
-                        android:textColor="@color/text_dark"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/subAvatar2"
-                        app:layout_constraintTop_toTopOf="@+id/subAvatar2" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2024-02-10 10:45 AM"
-                        android:textColor="@color/text_grey"
-                        android:textSize="11sp"
-                        app:layout_constraintStart_toStartOf="@+id/subName2"
-                        app:layout_constraintTop_toBottomOf="@+id/subName2" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_score_badge"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="4dp"
-                        android:text="4/5"
-                        android:textColor="@color/primary_green"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </LinearLayout>
-
-            <!-- Story Group 2 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_input_field"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- Story Header -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
-
-                    <View
-                        android:id="@+id/iconBg2"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:alpha="0.3"
-                        android:background="@drawable/bg_rounded_card"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@android:drawable/ic_menu_agenda"
-                        app:layout_constraintBottom_toBottomOf="@+id/iconBg2"
-                        app:layout_constraintEnd_toEndOf="@+id/iconBg2"
-                        app:layout_constraintStart_toStartOf="@+id/iconBg2"
-                        app:layout_constraintTop_toTopOf="@+id/iconBg2"
-                        app:tint="@color/text_dark" />
-
-                    <TextView
-                        android:id="@+id/tvStoryName2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="The Good Samaritan"
-                        android:textColor="@color/text_dark"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/iconBg2"
-                        app:layout_constraintTop_toTopOf="@+id/iconBg2" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2 submissions"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="@+id/tvStoryName2"
-                        app:layout_constraintTop_toBottomOf="@+id/tvStoryName2" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Student Submissions for Story 2 -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_white_card"
-                    android:padding="12dp">
-
-                    <View
-                        android:id="@+id/subAvatar3"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:alpha="0.2"
-                        android:background="@drawable/bg_rounded_card"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/subName3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="Sarah Johnson"
-                        android:textColor="@color/text_dark"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/subAvatar3"
-                        app:layout_constraintTop_toTopOf="@+id/subAvatar3" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2024-02-09 2:30 PM"
-                        android:textColor="@color/text_grey"
-                        android:textSize="11sp"
-                        app:layout_constraintStart_toStartOf="@+id/subName3"
-                        app:layout_constraintTop_toBottomOf="@+id/subName3" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_score_badge"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="4dp"
-                        android:text="4/5"
-                        android:textColor="@color/primary_green"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
-    </ScrollView>
+        app:layout_constraintTop_toBottomOf="@+id/layoutTabs" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

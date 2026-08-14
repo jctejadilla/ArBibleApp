@@ -3,9 +3,11 @@ package com.example.arbibleapp;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -35,6 +37,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
+import dev.romainguy.kotlin.math.Float3;
 import io.github.sceneview.ar.ArSceneView;
 import io.github.sceneview.ar.node.ArModelNode;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -44,12 +47,13 @@ public class ArScan extends AppCompatActivity {
     private ArSceneView sceneView;
     private ArModelNode modelNode;
     private ExtendedFloatingActionButton btnProceed;
+    private MediaPlayer mediaPlayer;
     
     private String currentMarkerName = null;
     private int currentClipIndex = 0;
     private int currentSessionId = 0;
 
-    private final List<String> adamClips = Arrays.asList("adam1.glb");
+    private final List<String> adamClips = Arrays.asList("adam1.glb","adam2.glb","adam3.glb");
     private final List<String> floodClips = Arrays.asList("babel1.glb");
     private final List<String> babelClips = Arrays.asList("babel1.glb");
 
@@ -135,12 +139,13 @@ public class ArScan extends AppCompatActivity {
                     modelNode.setVisible(false);
                     sceneView.addChild(modelNode);
 
+                    stopNarration();
+                    if ("markerAdam".equals(name)) {
+                        playNarration("narration_adam.mp3");
+                    }
+
                     loadClip(0, augmentedImage, currentSessionId);
-                } else {
-                    modelNode.setVisible(true);
                 }
-            } else if (name.equals(currentMarkerName)) {
-                modelNode.setVisible(false);
             }
             return Unit.INSTANCE;
         });
@@ -178,10 +183,11 @@ public class ArScan extends AppCompatActivity {
             modelNode.setVisible(false);
         }
 
+
         modelNode.loadModelGlbAsync(
                 modelFile,
                 true,
-                0.30f,
+                0.25f,
                 null,
                 ex -> {
                     if (sessionId == currentSessionId) {
@@ -249,5 +255,44 @@ public class ArScan extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
+    }
+
+    private void playNarration(String fileName) {
+        try {
+            stopNarration();
+            mediaPlayer = new MediaPlayer();
+            AssetFileDescriptor afd = getAssets().openFd(fileName);
+            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopNarration() {
+        if (mediaPlayer != null) {
+            try {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+            } catch (IllegalStateException e) {
+            }
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopNarration();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopNarration();
     }
 }

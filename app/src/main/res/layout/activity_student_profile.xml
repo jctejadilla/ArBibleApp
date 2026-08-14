@@ -163,7 +163,7 @@
                         android:id="@+id/iconStories"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@android:drawable/ic_menu_agenda"
+                        android:src="@drawable/ic_story"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="@color/primary_green" />
@@ -205,7 +205,7 @@
                         android:id="@+id/iconQuiz"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@android:drawable/ic_menu_help"
+                        android:src="@drawable/ic_quiz"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="@color/primary_green" />
@@ -247,7 +247,7 @@
                         android:id="@+id/iconAttendance"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
+                        android:src="@drawable/ic_streak"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="@color/primary_green" />
@@ -452,7 +452,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_today"
+                android:src="@drawable/ic_home"
                 app:tint="@color/text_grey" />
             <TextView
                 android:layout_width="wrap_content"
@@ -472,7 +472,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_agenda"
+                android:src="@drawable/ic_story"
                 app:tint="@color/text_grey" />
             <TextView
                 android:layout_width="wrap_content"

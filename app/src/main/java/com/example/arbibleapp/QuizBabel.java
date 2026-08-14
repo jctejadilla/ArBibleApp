@@ -6,6 +6,7 @@ import android.os.CountDownTimer;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,6 +18,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,22 +47,30 @@ public class QuizBabel extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private boolean isTimeUp = false;
     private long startTime;
-    private int score = 0; // Tracks total points/XP
+    private int score = 0;
     private int floorsCleared = 0;
     private int floorWrongGuesses = 0;
     private final int TOTAL_FLOORS = 5;
     private int currentFloorIndex = 0;
 
     private final int[] babelImages = {
-            R.drawable.ic_babel,
-            R.drawable.ic_law,
-            R.drawable.ic_gold,
-            R.drawable.ic_land,
-            R.drawable.ic_monarchy
+            R.drawable.correct1,
+            R.drawable.correct2,
+            R.drawable.correct3,
+            R.drawable.correct4,
+            R.drawable.correct5,
+            R.drawable.correct6,
+            R.drawable.correct7,
+            R.drawable.correct8,
+            R.drawable.correct9,
+            R.drawable.correct10,
     };
     private final int[] oddOneOutImages = {
-            R.drawable.ic_adam,
-            R.drawable.ic_noah
+            R.drawable.odd1,
+            R.drawable.odd2,
+            R.drawable.odd3,
+            R.drawable.odd4,
+            R.drawable.odd5,
     };
 
     private List<LinearLayout> floorLayouts = new ArrayList<>();
@@ -114,7 +125,14 @@ public class QuizBabel extends AppCompatActivity {
     private void setupTower() {
         towerContainer.removeAllViews();
         floorLayouts.clear();
-        Random random = new Random();
+
+        List<Integer> masterBabel = new ArrayList<>();
+        for(int img : babelImages) masterBabel.add(img);
+        Collections.shuffle(masterBabel);
+
+        List<Integer> masterOdd = new ArrayList<>();
+        for(int img : oddOneOutImages) masterOdd.add(img);
+        Collections.shuffle(masterOdd);
 
         for (int f = TOTAL_FLOORS - 1; f >= 0; f--) {
             LinearLayout floorRow = new LinearLayout(this);
@@ -129,38 +147,49 @@ public class QuizBabel extends AppCompatActivity {
             floorRow.setLayoutParams(rowParams);
 
             List<BlockData> blocksInFloor = new ArrayList<>();
-            List<Integer> selectedBabel = new ArrayList<>();
 
-            for(int img : babelImages) selectedBabel.add(img);
-
-            Collections.shuffle(selectedBabel);
-
-            blocksInFloor.add(new BlockData(selectedBabel.get(0), true, f));
-            blocksInFloor.add(new BlockData(selectedBabel.get(1), true, f));
-
-            int oddImg = oddOneOutImages[random.nextInt(oddOneOutImages.length)];
-            blocksInFloor.add(new BlockData(oddImg, false, f));
+            blocksInFloor.add(new BlockData(masterBabel.get(f * 2), true, f));
+            blocksInFloor.add(new BlockData(masterBabel.get(f * 2 + 1), true, f));
+            blocksInFloor.add(new BlockData(masterOdd.get(f), false, f));
 
             Collections.shuffle(blocksInFloor);
 
             for (BlockData data : blocksInFloor) {
-                ImageView blockView = new ImageView(this);
+                FrameLayout container = new FrameLayout(this);
                 int size = (int) (100 * getResources().getDisplayMetrics().density);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
                 params.setMargins(8, 0, 8, 0);
-                blockView.setLayoutParams(params);
-                
-                blockView.setImageResource(data.imageRes);
-                blockView.setBackgroundResource(R.drawable.bg_white_card);
-                blockView.setPadding(15, 15, 15, 15);
-                blockView.setElevation(4f);
+                container.setLayoutParams(params);
+                container.setBackgroundResource(R.drawable.bg_white_card);
+                container.setElevation(4f);
+                container.setClipToOutline(true);
 
-                blockView.setOnClickListener(v -> {
+                ShapeableImageView blockView = new ShapeableImageView(this);
+                FrameLayout.LayoutParams imgParams = new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT
+                );
+                blockView.setLayoutParams(imgParams);
+                blockView.setImageResource(data.imageRes);
+                
+
+                blockView.setPadding(30, 30, 30, 30);
+                blockView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                
+
+                float imgRadius = 16 * getResources().getDisplayMetrics().density;
+                blockView.setShapeAppearanceModel(blockView.getShapeAppearanceModel()
+                        .toBuilder()
+                        .setAllCorners(CornerFamily.ROUNDED, imgRadius)
+                        .build());
+
+                container.setOnClickListener(v -> {
                     if (isTimeUp) return;
-                    handleBlockClick(data, blockView);
+                    handleBlockClick(data, container);
                 });
 
-                floorRow.addView(blockView);
+                container.addView(blockView);
+                floorRow.addView(container);
             }
 
             if (f > 0) {
@@ -172,7 +201,7 @@ public class QuizBabel extends AppCompatActivity {
         }
     }
 
-    private void handleBlockClick(BlockData data, ImageView view) {
+    private void handleBlockClick(BlockData data, View view) {
         if (data.floorIndex != currentFloorIndex) {
             Toast.makeText(this, "Complete the bottom floor first!", Toast.LENGTH_SHORT).show();
             return;
@@ -182,7 +211,10 @@ public class QuizBabel extends AppCompatActivity {
             floorsCleared++;
             int floorPoints = Math.max(0, 15 - (floorWrongGuesses * 5));
             score += floorPoints;
-            view.setBackgroundColor(Color.GREEN);
+
+            if (view.getBackground() != null) {
+                view.getBackground().mutate().setTint(Color.parseColor("#4CAF50")); 
+            }
 
             LinearLayout currentFloor = floorLayouts.get(currentFloorIndex);
             for(int i=0; i<currentFloor.getChildCount(); i++) {
@@ -203,7 +235,11 @@ public class QuizBabel extends AppCompatActivity {
             }
         } else {
             floorWrongGuesses++;
-            view.setBackgroundColor(Color.RED);
+
+            if (view.getBackground() != null) {
+                view.getBackground().mutate().setTint(Color.parseColor("#EF5350")); // Material Red
+            }
+
             view.setClickable(false);
             Toast.makeText(this, "That belongs to Babel! -5 XP potential.", Toast.LENGTH_SHORT).show();
         }

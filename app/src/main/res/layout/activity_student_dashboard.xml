@@ -199,7 +199,7 @@
                     <ImageView
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        android:src="@android:drawable/ic_menu_agenda"
+                        android:src="@drawable/ic_story"
                         app:layout_constraintBottom_toBottomOf="@+id/iconStories"
                         app:layout_constraintEnd_toEndOf="@+id/iconStories"
                         app:layout_constraintStart_toStartOf="@+id/iconStories"
@@ -255,7 +255,7 @@
                     <ImageView
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        android:src="@android:drawable/ic_menu_day"
+                        android:src="@drawable/ic_qr"
                         app:layout_constraintBottom_toBottomOf="@+id/iconAttendance"
                         app:layout_constraintEnd_toEndOf="@+id/iconAttendance"
                         app:layout_constraintStart_toStartOf="@+id/iconAttendance"
@@ -310,7 +310,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_today"
+                android:src="@drawable/ic_home"
                 app:tint="@color/primary_green" />
             <TextView
                 android:layout_width="wrap_content"
@@ -330,7 +330,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_agenda"
+                android:src="@drawable/ic_story"
                 app:tint="@color/text_grey" />
             <TextView
                 android:layout_width="wrap_content"

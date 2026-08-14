@@ -78,10 +78,11 @@
                     android:textColor="#E0F2F1"
                     android:textSize="12sp" />
                 <TextView
+                    android:id="@+id/tvTotalStories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="3"
+                    android:text="0"
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -106,10 +107,11 @@
                     android:textColor="#E0F2F1"
                     android:textSize="12sp" />
                 <TextView
+                    android:id="@+id/tvSubmissions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="8"
+                    android:text="0"
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -134,10 +136,11 @@
                     android:textColor="#E0F2F1"
                     android:textSize="12sp" />
                 <TextView
+                    android:id="@+id/tvAvgScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="88%"
+                    android:text="0%"
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -160,6 +163,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cardSummary">
 
         <TextView
+            android:id="@+id/tabAll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -171,6 +175,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tabByStory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -181,263 +186,15 @@
     </LinearLayout>
 
     <!-- Submissions List -->
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvQuizResults"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:clipToPadding="false"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layoutTabs">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Submission Item 1 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/bg_white_card"
-                android:elevation="2dp"
-                android:padding="16dp">
-
-                <View
-                    android:id="@+id/avatar1"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:alpha="0.2"
-                    android:background="@drawable/bg_rounded_card"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvName1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Emma Rodriguez"
-                    android:textColor="@color/text_dark"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@+id/tvScore1"
-                    app:layout_constraintStart_toEndOf="@+id/avatar1"
-                    app:layout_constraintTop_toTopOf="@+id/avatar1" />
-
-                <TextView
-                    android:id="@+id/tvId1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2024003"
-                    android:textColor="@color/text_grey"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="@+id/tvName1"
-                    app:layout_constraintTop_toBottomOf="@+id/tvName1" />
-
-                <LinearLayout
-                    android:id="@+id/layoutStory1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:background="@drawable/bg_search_bar"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="2dp"
-                    app:layout_constraintStart_toStartOf="@+id/tvName1"
-                    app:layout_constraintTop_toBottomOf="@+id/tvId1">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@android:drawable/ic_menu_agenda"
-                        app:tint="@color/text_grey" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="David &amp; Goliath"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tvScore1"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/bg_score_badge"
-                    android:gravity="center"
-                    android:text="5/5"
-                    android:textColor="@color/primary_green"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/avatar1">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@android:drawable/ic_menu_today"
-                        app:tint="@color/text_grey" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="2024-02-10 11:00 AM"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginStart="16dp"
-                        android:src="@android:drawable/ic_menu_recent_history"
-                        app:tint="@color/text_grey" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="3:45"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- Submission Item 2 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/bg_white_card"
-                android:elevation="2dp"
-                android:padding="16dp">
-
-                <View
-                    android:id="@+id/avatar2"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:alpha="0.2"
-                    android:background="@drawable/bg_rounded_card"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvName2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Michael Chen"
-                    android:textColor="@color/text_dark"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@+id/tvScore2"
-                    app:layout_constraintStart_toEndOf="@+id/avatar2"
-                    app:layout_constraintTop_toTopOf="@+id/avatar2" />
-
-                <TextView
-                    android:id="@+id/tvId2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2024002"
-                    android:textColor="@color/text_grey"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="@+id/tvName2"
-                    app:layout_constraintTop_toBottomOf="@+id/tvName2" />
-
-                <LinearLayout
-                    android:id="@+id/layoutStory2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:background="@drawable/bg_search_bar"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="2dp"
-                    app:layout_constraintStart_toStartOf="@+id/tvName2"
-                    app:layout_constraintTop_toBottomOf="@+id/tvId2">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@android:drawable/ic_menu_agenda"
-                        app:tint="@color/text_grey" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="David &amp; Goliath"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tvScore2"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/bg_score_badge"
-                    android:gravity="center"
-                    android:text="4/5"
-                    android:textColor="@color/primary_green"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/avatar2">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@android:drawable/ic_menu_today"
-                        app:tint="@color/text_grey" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="2024-02-10 10:45 AM"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp" />
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginStart="16dp"
-                        android:src="@android:drawable/ic_menu_recent_history"
-                        app:tint="@color/text_grey" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="5:12"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </LinearLayout>
-    </ScrollView>
+        app:layout_constraintTop_toBottomOf="@+id/layoutTabs"
+        tools:listitem="@layout/item_teacher_quiz_result" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

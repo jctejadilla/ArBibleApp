@@ -34,6 +34,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -62,6 +64,14 @@ public class AnalyticsActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     
     private final List<String> studentUids = new ArrayList<>();
+    private final Map<String, String> studentNames = new HashMap<>();
+    private final List<String> highEngagementNames = new ArrayList<>();
+    private final List<String> moderateEngagementNames = new ArrayList<>();
+    private final List<String> lowEngagementNames = new ArrayList<>();
+    
+    private final Map<String, List<String>> attendancePresentNames = new HashMap<>();
+    private final Map<String, List<String>> attendanceAbsentNames = new HashMap<>();
+    private final List<String> attendanceSundayLabels = new ArrayList<>();
 
     private com.google.firebase.firestore.ListenerRegistration resultsListener, sessionsListener;
 
@@ -197,6 +207,67 @@ public class AnalyticsActivity extends AppCompatActivity {
         pieChartEngagement.setTransparentCircleRadius(61f);
         pieChartEngagement.setEntryLabelColor(Color.BLACK);
         pieChartEngagement.setEntryLabelTextSize(12f);
+
+        pieChartEngagement.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                if (e instanceof PieEntry) {
+                    String label = ((PieEntry) e).getLabel();
+                    List<String> names;
+                    if ("High".equals(label)) names = highEngagementNames;
+                    else if ("Moderate".equals(label)) names = moderateEngagementNames;
+                    else names = lowEngagementNames;
+
+                    showStudentNamesDialog(label, names);
+                }
+            }
+
+            @Override
+            public void onNothingSelected() {}
+        });
+    }
+
+    private void showStudentNamesDialog(String category, List<String> names) {
+        if (names.isEmpty()) {
+            Toast.makeText(this, "No students in " + category + " engagement", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_engagement_details, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        TextView tvTitle = dialogView.findViewById(R.id.tvDialogTitle);
+        TextView tvSubtitle = dialogView.findViewById(R.id.tvDialogSubtitle);
+        LinearLayout layoutList = dialogView.findViewById(R.id.layoutStudentList);
+        View btnClose = dialogView.findViewById(R.id.btnClose);
+
+        tvTitle.setText(category + " Engagement");
+        tvSubtitle.setText(names.size() + " students in this category");
+
+        int indicatorColor;
+        if ("High".equals(category)) indicatorColor = Color.parseColor("#1D4A4B");
+        else if ("Moderate".equals(category)) indicatorColor = Color.parseColor("#8CB6A3");
+        else indicatorColor = Color.parseColor("#C85F5F");
+
+        for (String name : names) {
+            View itemView = getLayoutInflater().inflate(R.layout.item_engagement_dialog_student, layoutList, false);
+            TextView tvName = itemView.findViewById(R.id.tvStudentName);
+            View indicator = itemView.findViewById(R.id.viewIndicator);
+            
+            tvName.setText(name);
+            indicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(indicatorColor));
+            
+            layoutList.addView(itemView);
+        }
+
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
     private void loadEmptyXPData() {
@@ -217,24 +288,42 @@ public class AnalyticsActivity extends AppCompatActivity {
         db.collection("enrollments").whereEqualTo("teacherUid", teacherUid).get()
                 .addOnSuccessListener(enrollments -> {
                     studentUids.clear();
+                    studentNames.clear();
+                    List<String> uids = new ArrayList<>();
                     for (DocumentSnapshot doc : enrollments) {
                         String uid = doc.getString("studentUid");
-                        if (uid != null) studentUids.add(uid.trim());
+                        if (uid != null) uids.add(uid.trim());
                     }
                     
-                    if (!studentUids.isEmpty()) {
-                        loadXPData();
-                        loadQuizData();
-                        loadEngagementData();
-                        loadAttendanceData();
-                        loadStoryCompletionData();
-                    } else {
+                    if (uids.isEmpty()) {
                         Toast.makeText(this, "No students enrolled in your class.", Toast.LENGTH_SHORT).show();
                         barChartPerformance.setNoDataText("No students enrolled");
                         pieChartEngagement.setNoDataText("No students enrolled");
                         barChartPerformance.invalidate();
                         pieChartEngagement.invalidate();
+                        return;
                     }
+
+                    db.collection("users").whereIn("uid", uids).get()
+                        .addOnSuccessListener(users -> {
+                            for (DocumentSnapshot user : users) {
+                                String uid = user.getString("uid");
+                                String name = user.getString("username");
+                                if (name == null || name.isEmpty()) name = user.getString("fullName");
+                                if (uid != null && name != null) {
+                                    studentUids.add(uid);
+                                    studentNames.put(uid, name);
+                                }
+                            }
+
+                            if (!studentUids.isEmpty()) {
+                                loadXPData();
+                                loadQuizData();
+                                loadEngagementData();
+                                loadAttendanceData();
+                                loadStoryCompletionData();
+                            }
+                        });
                 });
     }
 
@@ -433,7 +522,9 @@ public class AnalyticsActivity extends AppCompatActivity {
                     }
 
                     int high = 0, moderate = 0, low = 0;
-                    boolean hasData = false;
+                    highEngagementNames.clear();
+                    moderateEngagementNames.clear();
+                    lowEngagementNames.clear();
 
                     for (String uid : studentUids) {
                         List<DocumentSnapshot> sRes = studentResults.get(uid);
@@ -442,7 +533,6 @@ public class AnalyticsActivity extends AppCompatActivity {
                         double interactionComponent = 0;
 
                         if (sRes != null && !sRes.isEmpty()) {
-                            hasData = true;
                             double totalPerc = 0;
                             long totalSec = 0;
                             for (DocumentSnapshot d : sRes) {
@@ -459,38 +549,61 @@ public class AnalyticsActivity extends AppCompatActivity {
                                         totalSec += (m * 60L) + s_;
                                     } catch (Exception ignored) {}
                                 }
-                            }
+                            }   
                             scoreComponent = (totalPerc / sRes.size()) * 0.4;
-                            timeComponent = Math.min(100.0, (totalSec / (double)sRes.size()) / 6.0) * 0.3;
-                            interactionComponent = Math.min(100.0, sRes.size() * 10.0) * 0.3;
+                            timeComponent = Math.min(100.0, (totalSec / (double)sRes.size()) / 1.8) * 0.3;
+                            interactionComponent = Math.min(100.0, sRes.size() * 20.0) * 0.3;
                         }
 
                         double totalEngagement = scoreComponent + timeComponent + interactionComponent;
-                        if (sRes != null && !sRes.isEmpty()) {
-                            if (totalEngagement >= 80) high++;
-                            else if (totalEngagement >= 50) moderate++;
-                            else low++;
+
+                        String studentName = studentNames.get(uid);
+                        if (studentName == null) studentName = "Unknown Student";
+
+                        if (totalEngagement >= 60) {
+                            high++;
+                            highEngagementNames.add(studentName);
+                        } else if (totalEngagement >= 35) {
+                            moderate++;
+                            moderateEngagementNames.add(studentName);
+                        } else {
+                            low++;
+                            lowEngagementNames.add(studentName);
                         }
                     }
 
-                    if (!hasData) {
-                        pieChartEngagement.setNoDataText("No engagement data yet");
+                    if (studentUids.isEmpty()) {
+                        pieChartEngagement.setNoDataText("No students enrolled");
                         pieChartEngagement.setData(null);
                         pieChartEngagement.invalidate();
                         return;
                     }
 
                     ArrayList<PieEntry> pieEntries = new ArrayList<>();
-                    if (high > 0) pieEntries.add(new PieEntry(high, "High"));
-                    if (moderate > 0) pieEntries.add(new PieEntry(moderate, "Moderate"));
-                    if (low > 0) pieEntries.add(new PieEntry(low, "Low"));
+                    ArrayList<Integer> colors = new ArrayList<>();
+
+                    if (high > 0) {
+                        pieEntries.add(new PieEntry(high, "High"));
+                        colors.add(Color.parseColor("#1D4A4B"));
+                    }
+                    if (moderate > 0) {
+                        pieEntries.add(new PieEntry(moderate, "Moderate"));
+                        colors.add(Color.parseColor("#8CB6A3"));
+                    }
+                    if (low > 0) {
+                        pieEntries.add(new PieEntry(low, "Low"));
+                        colors.add(Color.parseColor("#C85F5F"));
+                    }
+
+                    if (pieEntries.isEmpty()) {
+                        pieChartEngagement.setNoDataText("No engagement data yet");
+                        pieChartEngagement.setData(null);
+                        pieChartEngagement.invalidate();
+                        return;
+                    }
 
                     PieDataSet dataSet = new PieDataSet(pieEntries, "");
-                    dataSet.setColors(
-                        Color.parseColor("#1D4A4B"),
-                        Color.parseColor("#8CB6A3"),
-                        Color.parseColor("#C85F5F")
-                    );
+                    dataSet.setColors(colors);
                     dataSet.setSliceSpace(3f);
                     
                     PieData data = new PieData(dataSet);
@@ -528,6 +641,38 @@ public class AnalyticsActivity extends AppCompatActivity {
         barChartAttendance.getLegend().setHorizontalAlignment(com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment.CENTER);
         barChartAttendance.getLegend().setOrientation(com.github.mikephil.charting.components.Legend.LegendOrientation.HORIZONTAL);
         barChartAttendance.getLegend().setDrawInside(false);
+
+        barChartAttendance.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                int index = (int) e.getX();
+                if (index >= 0 && index < attendanceSundayLabels.size()) {
+                    String label = attendanceSundayLabels.get(index);
+                    String dateKey = null;
+
+                    for (String d : attendancePresentNames.keySet()) {
+                        try {
+                            Date dateObj = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(d);
+                            String checkLabel = new SimpleDateFormat("MMM d", Locale.getDefault()).format(dateObj);
+                            if (checkLabel.equals(label)) {
+                                dateKey = d;
+                                break;
+                            }
+                        } catch (Exception ignored) {}
+                    }
+
+                    if (dateKey != null) {
+                        boolean isPresentBar = h.getDataSetIndex() == 0;
+                        List<String> names = isPresentBar ? attendancePresentNames.get(dateKey) : attendanceAbsentNames.get(dateKey);
+                        String category = isPresentBar ? "Present" : "Absent";
+                        showStudentNamesDialog(category + " on " + label, names != null ? names : new ArrayList<>());
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected() {}
+        });
     }
 
     private void loadAttendanceData() {
@@ -537,12 +682,11 @@ public class AnalyticsActivity extends AppCompatActivity {
         List<String> labels = new ArrayList<>();
 
         Calendar cal = Calendar.getInstance();
-        // Go back to the most recent Sunday
+
         while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
             cal.add(Calendar.DAY_OF_MONTH, -1);
         }
 
-        // Get the last 4 Sundays
         for (int i = 0; i < 4; i++) {
             sundays.add(0, sdf.format(cal.getTime()));
             labels.add(0, labelSdf.format(cal.getTime()));
@@ -553,16 +697,23 @@ public class AnalyticsActivity extends AppCompatActivity {
                 .whereIn("date", sundays)
                 .get()
                 .addOnSuccessListener(results -> {
-                    Map<String, Integer> presentMap = new HashMap<>();
-                    for (String s : sundays) presentMap.put(s, 0);
+                    attendancePresentNames.clear();
+                    attendanceAbsentNames.clear();
+                    attendanceSundayLabels.clear();
+                    attendanceSundayLabels.addAll(labels);
+
+                    Map<String, List<String>> presentMap = new HashMap<>();
+                    for (String s : sundays) presentMap.put(s, new ArrayList<>());
 
                     for (DocumentSnapshot doc : results) {
                         String sUid = doc.getString("studentUid");
                         String date = doc.getString("date");
                         if (sUid != null && studentUids.contains(sUid) && date != null) {
-                            Integer current = presentMap.get(date);
+                            List<String> current = presentMap.get(date);
                             if (current != null) {
-                                presentMap.put(date, current + 1);
+                                String name = studentNames.get(sUid);
+                                if (name == null) name = "Unknown Student";
+                                if (!current.contains(name)) current.add(name);
                             }
                         }
                     }
@@ -573,20 +724,31 @@ public class AnalyticsActivity extends AppCompatActivity {
                     int totalStudents = studentUids.size();
 
                     for (int i = 0; i < sundays.size(); i++) {
-                        Integer p = presentMap.get(sundays.get(i));
-                        int present = p != null ? p : 0;
-                        int absent = Math.max(0, totalStudents - present);
+                        String date = sundays.get(i);
+                        List<String> presentList = presentMap.get(date);
+                        if (presentList == null) presentList = new ArrayList<>();
                         
-                        presentEntries.add(new BarEntry(i, (float) present));
-                        absentEntries.add(new BarEntry(i, (float) absent));
+                        List<String> absentList = new ArrayList<>();
+                        for (String uid : studentUids) {
+                            String name = studentNames.get(uid);
+                            if (name != null && !presentList.contains(name)) {
+                                absentList.add(name);
+                            }
+                        }
+
+                        attendancePresentNames.put(date, presentList);
+                        attendanceAbsentNames.put(date, absentList);
+                        
+                        presentEntries.add(new BarEntry(i, (float) presentList.size()));
+                        absentEntries.add(new BarEntry(i, (float) absentList.size()));
                     }
 
                     BarDataSet set1 = new BarDataSet(presentEntries, "present");
-                    set1.setColor(Color.parseColor("#00C853")); // Green
+                    set1.setColor(Color.parseColor("#00C853"));
                     set1.setDrawValues(false);
 
                     BarDataSet set2 = new BarDataSet(absentEntries, "absent");
-                    set2.setColor(Color.parseColor("#EF5350")); // Red
+                    set2.setColor(Color.parseColor("#EF5350"));
                     set2.setDrawValues(false);
 
                     BarData data = new BarData(set1, set2);
@@ -594,9 +756,8 @@ public class AnalyticsActivity extends AppCompatActivity {
                     float barSpace = 0.05f;
                     float barWidth = 0.25f;
 
-                    // Calculate Average Attendance for summary card
                     int totalPresent = 0;
-                    for (int p : presentMap.values()) totalPresent += p;
+                    for (List<String> p : presentMap.values()) totalPresent += p.size();
                     int totalPossible = studentUids.size() * sundays.size();
                     if (totalPossible > 0) {
                         tvAvgAttendanceValue.setText(totalPresent + "/" + totalPossible);
