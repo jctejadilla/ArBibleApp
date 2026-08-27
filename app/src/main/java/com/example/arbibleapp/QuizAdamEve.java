@@ -1,5 +1,6 @@
 package com.example.arbibleapp;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -115,7 +116,7 @@ public class QuizAdamEve extends AppCompatActivity {
         userSelections = new int[questionList.size()];
         Arrays.fill(userSelections, -1);
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> returnToDashboard());
 
         clearProgress();
         loadQuestion();
@@ -199,7 +200,7 @@ public class QuizAdamEve extends AppCompatActivity {
         rbOptionC.setText(currentQuestion.options[2]);
         rbOptionD.setText(currentQuestion.options[3]);
         tvQuestionCount.setText("Question " + (currentQuestionIndex + 1) + " of " + questionList.size());
-        
+
         progressBar.setMax(questionList.size());
         progressBar.setProgress(currentQuestionIndex + 1);
 
@@ -268,6 +269,14 @@ public class QuizAdamEve extends AppCompatActivity {
         }
     }
 
+    // Direktang babalik sa Student Dashboard at lilinisin ang Unity AR sa memory/stack
+    private void returnToDashboard() {
+        Intent intent = new Intent(QuizAdamEve.this, StudentDashboard.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
+    }
+
     private void saveQuizResult() {
         if (countDownTimer != null) countDownTimer.cancel();
         int tempScore = 0;
@@ -321,11 +330,11 @@ public class QuizAdamEve extends AppCompatActivity {
                             isQuizFinished = true;
                             clearProgress();
                             Toast.makeText(this, "Quiz Finished! Score: " + finalScore + "/" + questionList.size() + " (" + xpGained + " XP)", Toast.LENGTH_LONG).show();
-                            finish();
+                            returnToDashboard();
                         })
                         .addOnFailureListener(e -> {
                             Toast.makeText(this, "Error saving result", Toast.LENGTH_SHORT).show();
-                            finish();
+                            returnToDashboard();
                         });
             });
         } else {
@@ -333,7 +342,7 @@ public class QuizAdamEve extends AppCompatActivity {
             isQuizFinished = true;
             clearProgress();
             Toast.makeText(this, "Quiz Finished! Score: " + finalScore + "/" + questionList.size(), Toast.LENGTH_LONG).show();
-            finish();
+            returnToDashboard();
         }
     }
 }

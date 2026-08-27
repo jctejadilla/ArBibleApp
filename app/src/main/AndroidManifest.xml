@@ -29,7 +29,24 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ArBibleApp">
+        android:theme="@style/Theme.ArBibleApp"
+        tools:replace="android:theme">
+
+        <meta-data
+            android:name="com.google.ar.core.min_apk_version"
+            android:value="241930000"
+            tools:replace="android:value" />
+
+        <activity
+            android:name="com.unity3d.player.UnityPlayerGameActivity"
+            android:theme="@style/BaseUnityGameActivityTheme"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTask"
+            android:exported="false"
+            tools:replace="android:theme,android:hardwareAccelerated,android:exported"
+            tools:ignore="MissingClass" />
+
         <activity
             android:name=".AnalyticsActivity"
             android:exported="false" />
@@ -59,6 +76,7 @@
             android:exported="false" />
         <activity
             android:name=".QuizAdamEve"
+            android:launchMode="singleTask"
             android:exported="false" />
         <activity
             android:name=".TeacherProfile"
@@ -92,6 +110,7 @@
             android:exported="false" />
         <activity
             android:name=".StudentDashboard"
+            android:launchMode="singleTask"
             android:exported="false" />
         <activity
             android:name=".login"
@@ -107,7 +126,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -121,7 +139,6 @@
             tools:replace="android:screenOrientation"
             android:stateNotNeeded="true"
             android:exported="false"/>
-
 
         <meta-data
             android:name="com.google.ar.core"

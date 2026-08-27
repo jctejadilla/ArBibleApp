@@ -1,0 +1,10 @@
+com.UnityTechnologies.XR.Manifest.xrmanifest.androidlib-pngs-0 E:\AR Bible App\unityLibrary\xrmanifest.androidlib\build\generated\res\pngs\debug
+com.UnityTechnologies.XR.Manifest.xrmanifest.androidlib-resValues-1 E:\AR Bible App\unityLibrary\xrmanifest.androidlib\build\generated\res\resValues\debug
+com.UnityTechnologies.XR.Manifest.xrmanifest.androidlib-updated_navigation_xml-2 E:\AR Bible App\unityLibrary\xrmanifest.androidlib\build\generated\updated_navigation_xml\debug
+com.UnityTechnologies.XR.Manifest.xrmanifest.androidlib-mergeDebugResources-3 E:\AR Bible App\unityLibrary\xrmanifest.androidlib\build\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.UnityTechnologies.XR.Manifest.xrmanifest.androidlib-mergeDebugResources-4 E:\AR Bible App\unityLibrary\xrmanifest.androidlib\build\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.UnityTechnologies.XR.Manifest.xrmanifest.androidlib-debug-5 E:\AR Bible App\unityLibrary\xrmanifest.androidlib\build\intermediates\merged_res\debug\mergeDebugResources
+com.UnityTechnologies.XR.Manifest.xrmanifest.androidlib-debug-6 E:\AR Bible App\unityLibrary\xrmanifest.androidlib\build\intermediates\packaged_res\debug\packageDebugResources
+com.UnityTechnologies.XR.Manifest.xrmanifest.androidlib-xrmanifest.androidlib-7 E:\AR Bible App\unityLibrary\xrmanifest.androidlib\res
+com.UnityTechnologies.XR.Manifest.xrmanifest.androidlib-debug-8 E:\AR Bible App\unityLibrary\xrmanifest.androidlib\src\debug\res
+gradleHome-0 C:\Users\Cardo\.gradle
