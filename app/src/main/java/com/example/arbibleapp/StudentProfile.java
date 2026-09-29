@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +25,6 @@ import java.util.Set;
 public class StudentProfile extends AppCompatActivity {
 
     private ImageView btnBack;
-    private LinearLayout navHome, navStories, navLeaderboard, navProfile;
     private Button btnLogout;
     private TextView tvStudentName, tvQuizCount, tvAttendanceCount, tvBadgesSummary, tvBadgesCount;
     private TextView tvLevelLabel, tvXPProgressText;
@@ -118,15 +116,6 @@ public class StudentProfile extends AppCompatActivity {
 
     private void setupNavigation() {
         btnBack.setOnClickListener(v -> finish());
-
-        navHome = findViewById(R.id.navHome);
-        navStories = findViewById(R.id.navStories);
-        navLeaderboard = findViewById(R.id.navLeaderboard);
-        navProfile = findViewById(R.id.navProfile);
-
-        navHome.setOnClickListener(v -> startActivity(new Intent(this, StudentDashboard.class)));
-        navStories.setOnClickListener(v -> startActivity(new Intent(this, BibleStories.class)));
-        navLeaderboard.setOnClickListener(v -> startActivity(new Intent(this, Leaderboards.class)));
 
         btnLogout.setOnClickListener(v -> {
             mAuth.signOut();

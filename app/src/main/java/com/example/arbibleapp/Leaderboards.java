@@ -110,37 +110,7 @@ public class Leaderboards extends AppCompatActivity {
     }
 
     private void setupNavigation() {
-        // Teacher Nav
-        findViewById(R.id.navHomeTeacher).setOnClickListener(v -> {
-            startActivity(new Intent(this, TeacherDashboard.class));
-            finish();
-        });
-        findViewById(R.id.navStudentsTab).setOnClickListener(v -> {
-            startActivity(new Intent(this, ClassManagement.class));
-            finish();
-        });
-        findViewById(R.id.navAttendanceTab).setOnClickListener(v -> {
-            startActivity(new Intent(this, attendance_teacher_main.class));
-            finish();
-        });
-        findViewById(R.id.navAnalyticsTab).setOnClickListener(v -> {
-            startActivity(new Intent(this, AnalyticsActivity.class));
-            finish();
-        });
-
-        // Student Nav
-        findViewById(R.id.navHomeStudent).setOnClickListener(v -> {
-            startActivity(new Intent(this, StudentDashboard.class));
-            finish();
-        });
-        findViewById(R.id.navStories).setOnClickListener(v -> {
-            startActivity(new Intent(this, BibleStories.class));
-            finish();
-        });
-        findViewById(R.id.navProfile).setOnClickListener(v -> {
-            startActivity(new Intent(this, StudentProfile.class));
-            finish();
-        });
+        // Navigation logic for bottom nav removed as the nav bar is no longer present
     }
 
     private void checkEnrollmentAndSetupToggle() {
@@ -154,13 +124,9 @@ public class Leaderboards extends AppCompatActivity {
                     userClassTeacherUid = uid;
                     btnByClass.setVisibility(View.VISIBLE);
                     findViewById(R.id.cardSummary).setVisibility(View.GONE);
-                    findViewById(R.id.bottomNavTeacher).setVisibility(View.VISIBLE);
-                    findViewById(R.id.bottomNavStudent).setVisibility(View.GONE);
                     setupToggleListeners();
                 } else {
                     findViewById(R.id.cardSummary).setVisibility(View.VISIBLE);
-                    findViewById(R.id.bottomNavTeacher).setVisibility(View.GONE);
-                    findViewById(R.id.bottomNavStudent).setVisibility(View.VISIBLE);
                     db.collection("enrollments").whereEqualTo("studentUid", uid).limit(1).get()
                         .addOnSuccessListener(enrollments -> {
                             if (!enrollments.isEmpty()) {

@@ -18,9 +18,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class StudentDetailsActivity extends AppCompatActivity {
 
@@ -173,21 +175,15 @@ public class StudentDetailsActivity extends AppCompatActivity {
         });
 
         Calendar cal = Calendar.getInstance();
-        int month = cal.get(Calendar.MONTH);
-        int year = cal.get(Calendar.YEAR);
-        cal.set(year, month, 1);
-        int totalSundays = 0;
-        while (cal.get(Calendar.MONTH) == month) {
-            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-                totalSundays++;
-            }
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        final int finalTotalSundays = totalSundays;
+        cal.add(Calendar.DAY_OF_MONTH, -30);
+        final int daysToCheck = 30;
 
-        db.collection("attendance").whereEqualTo("studentUid", studentUid).get().addOnSuccessListener(query -> {
+        db.collection("attendance")
+                .whereEqualTo("studentUid", studentUid)
+                .whereGreaterThanOrEqualTo("date", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.getTime()))
+                .get().addOnSuccessListener(query -> {
             int attended = query.size();
-            tvAttendance.setText(attended + "/" + finalTotalSundays);
+            tvAttendance.setText(attended + "/" + daysToCheck + " days");
         });
     }
 

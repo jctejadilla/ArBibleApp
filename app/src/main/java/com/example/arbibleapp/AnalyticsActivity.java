@@ -354,6 +354,9 @@ public class AnalyticsActivity extends AppCompatActivity {
                     long totalXPAccumulator = 0;
 
                     for (DocumentSnapshot doc : results) {
+                        Boolean isSunday = doc.getBoolean("isSunday");
+                        if (isSunday != null && !isSunday) continue; // Skip weekday trials
+
                         String sUid = doc.getString("studentUid");
                         if (sUid != null && studentUids.contains(sUid)) {
                             Long xp = doc.getLong("xp");
@@ -431,6 +434,9 @@ public class AnalyticsActivity extends AppCompatActivity {
                     long durationCount = 0;
 
                     for (DocumentSnapshot doc : results) {
+                        Boolean isSunday = doc.getBoolean("isSunday");
+                        if (isSunday != null && !isSunday) continue; // Skip weekday trials
+
                         String sUid = doc.getString("studentUid");
                         if (sUid != null && studentUids.contains(sUid)) {
                             String story = doc.getString("storyTitle");
@@ -514,6 +520,9 @@ public class AnalyticsActivity extends AppCompatActivity {
                 .addOnSuccessListener(results -> {
                     Map<String, List<DocumentSnapshot>> studentResults = new HashMap<>();
                     for (DocumentSnapshot doc : results) {
+                        Boolean isSunday = doc.getBoolean("isSunday");
+                        if (isSunday != null && !isSunday) continue; // Skip weekday trials
+
                         String sUid = doc.getString("studentUid");
                         if (sUid != null && studentUids.contains(sUid)) {
                             if (!studentResults.containsKey(sUid)) studentResults.put(sUid, new ArrayList<>());
@@ -676,25 +685,21 @@ public class AnalyticsActivity extends AppCompatActivity {
     }
 
     private void loadAttendanceData() {
-        List<String> sundays = new ArrayList<>();
+        List<String> dates = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         SimpleDateFormat labelSdf = new SimpleDateFormat("MMM d", Locale.getDefault());
         List<String> labels = new ArrayList<>();
 
         Calendar cal = Calendar.getInstance();
-
-        while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+        // Get last 7 days including today
+        for (int i = 0; i < 7; i++) {
+            dates.add(0, sdf.format(cal.getTime()));
+            labels.add(0, labelSdf.format(cal.getTime()));
             cal.add(Calendar.DAY_OF_MONTH, -1);
         }
 
-        for (int i = 0; i < 4; i++) {
-            sundays.add(0, sdf.format(cal.getTime()));
-            labels.add(0, labelSdf.format(cal.getTime()));
-            cal.add(Calendar.DAY_OF_MONTH, -7);
-        }
-
         db.collection("attendance")
-                .whereIn("date", sundays)
+                .whereIn("date", dates)
                 .get()
                 .addOnSuccessListener(results -> {
                     attendancePresentNames.clear();
@@ -703,7 +708,7 @@ public class AnalyticsActivity extends AppCompatActivity {
                     attendanceSundayLabels.addAll(labels);
 
                     Map<String, List<String>> presentMap = new HashMap<>();
-                    for (String s : sundays) presentMap.put(s, new ArrayList<>());
+                    for (String d : dates) presentMap.put(d, new ArrayList<>());
 
                     for (DocumentSnapshot doc : results) {
                         String sUid = doc.getString("studentUid");
@@ -721,10 +726,8 @@ public class AnalyticsActivity extends AppCompatActivity {
                     ArrayList<BarEntry> presentEntries = new ArrayList<>();
                     ArrayList<BarEntry> absentEntries = new ArrayList<>();
 
-                    int totalStudents = studentUids.size();
-
-                    for (int i = 0; i < sundays.size(); i++) {
-                        String date = sundays.get(i);
+                    for (int i = 0; i < dates.size(); i++) {
+                        String date = dates.get(i);
                         List<String> presentList = presentMap.get(date);
                         if (presentList == null) presentList = new ArrayList<>();
                         
@@ -743,11 +746,11 @@ public class AnalyticsActivity extends AppCompatActivity {
                         absentEntries.add(new BarEntry(i, (float) absentList.size()));
                     }
 
-                    BarDataSet set1 = new BarDataSet(presentEntries, "present");
+                    BarDataSet set1 = new BarDataSet(presentEntries, "Present");
                     set1.setColor(Color.parseColor("#00C853"));
                     set1.setDrawValues(false);
 
-                    BarDataSet set2 = new BarDataSet(absentEntries, "absent");
+                    BarDataSet set2 = new BarDataSet(absentEntries, "Absent");
                     set2.setColor(Color.parseColor("#EF5350"));
                     set2.setDrawValues(false);
 
@@ -758,7 +761,7 @@ public class AnalyticsActivity extends AppCompatActivity {
 
                     int totalPresent = 0;
                     for (List<String> p : presentMap.values()) totalPresent += p.size();
-                    int totalPossible = studentUids.size() * sundays.size();
+                    int totalPossible = studentUids.size() * dates.size();
                     if (totalPossible > 0) {
                         tvAvgAttendanceValue.setText(totalPresent + "/" + totalPossible);
                     }
@@ -773,7 +776,7 @@ public class AnalyticsActivity extends AppCompatActivity {
                     xAxis.setAxisMaximum(labels.size());
                     xAxis.setCenterAxisLabels(true);
                     
-                    barChartAttendance.getAxisLeft().setAxisMaximum(Math.max(10, totalStudents + 5));
+                    barChartAttendance.getAxisLeft().setAxisMaximum(Math.max(10, studentUids.size() + 5));
                     barChartAttendance.invalidate();
                     barChartAttendance.animateY(1000);
                 });
@@ -808,6 +811,9 @@ public class AnalyticsActivity extends AppCompatActivity {
             }
 
             for (DocumentSnapshot doc : results) {
+                Boolean isSunday = doc.getBoolean("isSunday");
+                if (isSunday != null && !isSunday) continue;
+
                 String sUid = doc.getString("studentUid");
                 String story = doc.getString("storyTitle");
                 

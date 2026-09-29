@@ -1,6 +1,7 @@
 package com.example.arbibleapp;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -14,18 +15,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,7 +57,9 @@ public class QuizFlood extends AppCompatActivity {
     private Set<Cell> permanentlySelectedCells = new HashSet<>();
 
     private int score = 0;
+    private boolean isSubmittingResult = false;
     private long startTime;
+    private long timeLeftInMillis = 60000;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
@@ -81,6 +87,12 @@ public class QuizFlood extends AppCompatActivity {
         tvTimer = findViewById(R.id.tvTimer);
 
         btnBack.setOnClickListener(v -> finish());
+
+        View btnInstructions = findViewById(R.id.btnInstructions);
+        if (btnInstructions != null) {
+            btnInstructions.setOnClickListener(v -> showInstructionsDialog());
+        }
+
         btnSubmit.setOnClickListener(v -> {
             if (countDownTimer != null) countDownTimer.cancel();
             saveResults();
@@ -102,7 +114,7 @@ public class QuizFlood extends AppCompatActivity {
             Map<String, Object> session = new HashMap<>();
             session.put("studentUid", uid);
             session.put("storyTitle", "Early Humanity and the Flood");
-            session.put("timestamp", com.google.firebase.Timestamp.now());
+            session.put("timestamp", Timestamp.now());
 
             db.collection("quiz_sessions").document(uid).set(session);
         }
@@ -115,10 +127,25 @@ public class QuizFlood extends AppCompatActivity {
         }
     }
 
+    private void pauseTimer() {
+        if (countDownTimer != null) countDownTimer.cancel();
+    }
+
+    private void resumeTimer() {
+        if (timeLeftInMillis <= 0) return;
+        startTimerWithDuration(timeLeftInMillis);
+    }
+
     private void startTimer() {
-        countDownTimer = new CountDownTimer(60000, 1000) {
+        startTimerWithDuration(60000);
+    }
+
+    private void startTimerWithDuration(long durationMs) {
+        if (countDownTimer != null) countDownTimer.cancel();
+        countDownTimer = new CountDownTimer(durationMs, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
                 int seconds = (int) (millisUntilFinished / 1000);
                 String timeLeftFormatted = String.format("00:%02d", seconds);
                 tvTimer.setText(timeLeftFormatted);
@@ -130,6 +157,7 @@ public class QuizFlood extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                timeLeftInMillis = 0;
                 tvTimer.setText("00:00");
                 isTimeUp = true;
                 handleTimeUp();
@@ -389,7 +417,20 @@ public class QuizFlood extends AppCompatActivity {
         }
     }
 
+    private void showInstructionsDialog() {
+        pauseTimer();
+        new AlertDialog.Builder(this)
+                .setTitle("ℹ️ Quiz 2 Instructions")
+                .setMessage("Search the letter grid to find all 10 hidden animals from Noah's Ark!\n\nSwipe or drag across letters in any direction to highlight and collect words!")
+                .setPositiveButton("Got It!", (dialog, which) -> resumeTimer())
+                .setOnCancelListener(dialog -> resumeTimer())
+                .show();
+    }
+
     private void saveResults() {
+        if (isSubmittingResult) return;
+        isSubmittingResult = true;
+
         if (mAuth.getCurrentUser() == null) return;
         String uid = mAuth.getCurrentUser().getUid();
         int totalXP = score * 10;
@@ -407,8 +448,22 @@ public class QuizFlood extends AppCompatActivity {
             long durationMillis = endTime - startTime;
             int minutes = (int) (durationMillis / (1000 * 60));
             int seconds = (int) ((durationMillis / 1000) % 60);
-            String durationString = String.format(java.util.Locale.getDefault(), "%dm %02ds", minutes, seconds);
+            String durationString = String.format(Locale.getDefault(), "%dm %02ds", minutes, seconds);
             String dateString = new SimpleDateFormat("MMM dd (EEE)", Locale.getDefault()).format(new Date());
+
+            Calendar cal = Calendar.getInstance();
+            boolean isSunday = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
+
+            List<String> wrongAnswers = new ArrayList<>();
+            List<String> correctAnswers = new ArrayList<>();
+            List<String> selectedAnswers = new ArrayList<>();
+            for (String word : wordBank) {
+                if (!foundWords.contains(word)) {
+                    wrongAnswers.add(word);
+                    correctAnswers.add("This animal was hidden in the word search");
+                    selectedAnswers.add("Not found");
+                }
+            }
 
             Map<String, Object> result = new HashMap<>();
             result.put("studentUid", uid);
@@ -417,18 +472,57 @@ public class QuizFlood extends AppCompatActivity {
             result.put("score", score);
             result.put("xp", totalXP);
             result.put("totalQuestions", wordBank.length);
-            result.put("timestamp", com.google.firebase.Timestamp.now());
+            result.put("timestamp", Timestamp.now());
             result.put("duration", durationString);
             result.put("date", dateString);
+            result.put("wrongAnswers", wrongAnswers);
+            result.put("correctAnswers", correctAnswers);
+            result.put("selectedAnswers", selectedAnswers);
+            result.put("isSunday", isSunday);
 
             db.collection("quiz_results").add(result)
                     .addOnSuccessListener(dr -> {
-                        db.collection("users").document(uid).update("totalXP", FieldValue.increment(totalXP));
+                        boolean leveledUp = false;
+                        int newLevel = 1;
+
+                        if (totalXP > 0) {
+                            Long currentXpLong = (documentSnapshot.exists() && documentSnapshot.contains("totalXP")) ? documentSnapshot.getLong("totalXP") : null;
+                            long currentXP = currentXpLong != null ? currentXpLong : 0;
+                            int oldLevel = (int) (currentXP / 250) + 1;
+                            long newXP = currentXP + totalXP;
+                            newLevel = (int) (newXP / 250) + 1;
+                            if (newLevel > 10) newLevel = 10;
+                            leveledUp = newLevel > oldLevel;
+
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("totalXP", newXP);
+                            updates.put("level", newLevel);
+
+                            db.collection("users").document(uid).update(updates);
+                        }
                         endQuizSession();
-                        Toast.makeText(this, "Quiz Finished! Gained " + totalXP + " XP", Toast.LENGTH_LONG).show();
-                        finish();
+                        returnToDashboard(isSunday, score, wordBank.length, totalXP, leveledUp, newLevel);
                     });
         });
+    }
+
+    private void returnToDashboard(boolean isSunday, int score, int total, int xp, boolean leveledUp, int newLevel) {
+        Intent intent = new Intent(this, StudentDashboard.class);
+        intent.putExtra("SHOW_QUIZ_RESULT", true);
+        intent.putExtra("IS_SUNDAY", isSunday);
+        intent.putExtra("SCORE", score);
+        intent.putExtra("TOTAL", total);
+        intent.putExtra("XP", xp);
+        intent.putExtra("LEVELED_UP", leveledUp);
+        intent.putExtra("NEW_LEVEL", newLevel);
+        intent.putExtra("SHOW_QUIZ_RESULT", true);
+        intent.putExtra("IS_SUNDAY", isSunday);
+        intent.putExtra("SCORE", score);
+        intent.putExtra("TOTAL", total);
+        intent.putExtra("XP", xp);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
     @Override

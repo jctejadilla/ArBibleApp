@@ -218,8 +218,15 @@ public class TeacherQuizResultsByStory extends AppCompatActivity {
             } else {
                 TeacherQuizResults.QuizResultModel r = (TeacherQuizResults.QuizResultModel) list.get(position);
                 ItemViewHolder vh = (ItemViewHolder) holder;
-                vh.tvName.setText(r.username != null ? r.username : "Unknown");
-                vh.tvDate.setText(r.date != null ? r.date : "Recently");
+                vh.tvName.setText((r.username != null ? r.username : "Unknown") + (r.isSunday ? "" : " (Trial)"));
+                
+                String dateTime = r.date != null ? r.date : "Recently";
+                if (r.timestamp != null) {
+                    String time = new java.text.SimpleDateFormat("hh:mm a", Locale.getDefault()).format(r.timestamp.toDate());
+                    dateTime += " • " + time;
+                }
+                vh.tvDate.setText(dateTime);
+
                 vh.tvScore.setText(String.format(Locale.getDefault(), "%d/%d", r.score, r.totalQuestions));
                 
                 String name = r.username != null ? r.username : "ST";

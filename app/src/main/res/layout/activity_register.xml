@@ -57,21 +57,27 @@
 
                 <Button
                     android:id="@+id/btnStudentRegister"
-                    style="?attr/materialButtonOutlinedStyle"
+                    style="@style/Widget.ArBibleApp.ToggleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Student"
-                    android:textAllCaps="false"
-                    app:strokeColor="@color/primary_green" />
+                    android:textAllCaps="false" />
 
                 <Button
                     android:id="@+id/btnTeacherRegister"
-                    style="?attr/materialButtonOutlinedStyle"
+                    style="@style/Widget.ArBibleApp.ToggleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Teacher"
-                    android:textAllCaps="false"
-                    app:strokeColor="@color/primary_green" />
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:id="@+id/btnAdminRegister"
+                    style="@style/Widget.ArBibleApp.ToggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Admin"
+                    android:textAllCaps="false" />
 
             </com.google.android.material.button.MaterialButtonToggleGroup>
 

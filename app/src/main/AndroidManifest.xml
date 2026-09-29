@@ -20,6 +20,7 @@
     </queries>
 
     <application
+        android:name=".ArBibleApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -30,6 +31,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ArBibleApp">
+        <activity
+            android:name=".NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminDashboard"
+            android:exported="false" />
+        <activity
+            android:name=".AdminTeacherMonitoringActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminQuestionApprovalActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminApprovalHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TeacherProposeQuestionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StudentQuizReviewActivity"
+            android:exported="false" />
         <activity
             android:name=".AnalyticsActivity"
             android:exported="false" />

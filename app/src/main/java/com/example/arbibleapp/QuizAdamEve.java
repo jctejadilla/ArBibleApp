@@ -1,5 +1,6 @@
 package com.example.arbibleapp;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,18 +15,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -85,7 +91,9 @@ public class QuizAdamEve extends AppCompatActivity {
 
     private int currentQuestionIndex = 0;
     private boolean isQuizFinished = false;
+    private boolean isSubmittingResult = false;
     private long startTime;
+    private long timeLeftInMillis = QUIZ_TIME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +125,14 @@ public class QuizAdamEve extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> finish());
 
+        View btnInstructions = findViewById(R.id.btnInstructions);
+        if (btnInstructions != null) {
+            btnInstructions.setOnClickListener(v -> showInstructionsDialog());
+        }
+
         clearProgress();
         loadQuestion();
+        loadApprovedOverrides("Creation and the Fall");
         startTimer();
         startTime = System.currentTimeMillis();
         startQuizSession();
@@ -190,6 +204,55 @@ public class QuizAdamEve extends AppCompatActivity {
         Collections.shuffle(questionList);
     }
 
+    private void loadApprovedOverrides(String storyTitle) {
+        FirebaseFirestore.getInstance().collection("quiz_questions")
+                .whereEqualTo("storyTitle", storyTitle)
+                .whereEqualTo("approvedByAdmin", true)
+                .get()
+                .addOnSuccessListener(querySnapshots -> {
+                    if (querySnapshots != null && !querySnapshots.isEmpty()) {
+                        for (DocumentSnapshot doc : querySnapshots) {
+                            String origQ = doc.getString("originalQuestion");
+                            String newQ = doc.getString("question");
+                            List<String> newOpts = (List<String>) doc.get("options");
+                            Long newCorrectIdx = doc.getLong("correctAnswerIndex");
+
+                            if (newQ != null && newOpts != null && newCorrectIdx != null) {
+                                String[] optsArr = newOpts.toArray(new String[0]);
+                                QuestionModel approvedModel = new QuestionModel(newQ, optsArr, newCorrectIdx.intValue());
+
+                                boolean replaced = false;
+                                if (origQ != null && !origQ.isEmpty()) {
+                                    for (int i = 0; i < questionList.size(); i++) {
+                                        if (questionList.get(i).question.equalsIgnoreCase(origQ)) {
+                                            questionList.set(i, approvedModel);
+                                            replaced = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (!replaced) {
+                                    questionList.add(approvedModel);
+                                }
+                            }
+                        }
+                    }
+                    if (currentQuestionIndex < questionList.size()) {
+                        loadQuestion();
+                    }
+                });
+    }
+
+    private void showInstructionsDialog() {
+        pauseTimer();
+        new AlertDialog.Builder(this)
+                .setTitle("ℹ️ Quiz 1 Instructions")
+                .setMessage("Read each question carefully and select the correct answer out of the 4 choices!\n\nScore points for every correct answer to earn XP and level up!")
+                .setPositiveButton("Got It!", (dialog, which) -> resumeTimer())
+                .setOnCancelListener(dialog -> resumeTimer())
+                .show();
+    }
+
     private void loadQuestion() {
         rgOptions.clearCheck();
         QuestionModel currentQuestion = questionList.get(currentQuestionIndex);
@@ -225,12 +288,31 @@ public class QuizAdamEve extends AppCompatActivity {
         prefs.edit().remove(KEY_INDEX).remove(KEY_SELECTIONS).apply();
     }
 
+    private void pauseTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
+
+    private void resumeTimer() {
+        if (timeLeftInMillis <= 0) return;
+        startTimerWithDuration(timeLeftInMillis);
+    }
+
     private void startTimer() {
-        countDownTimer = new CountDownTimer(QUIZ_TIME, 1000) {
+        startTimerWithDuration(QUIZ_TIME);
+    }
+
+    private void startTimerWithDuration(long durationMs) {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        countDownTimer = new CountDownTimer(durationMs, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
                 int seconds = (int) (millisUntilFinished / 1000);
-                String timeLeftFormatted = String.format(java.util.Locale.getDefault(), "00:%02d", seconds);
+                String timeLeftFormatted = String.format(Locale.getDefault(), "00:%02d", seconds);
                 tvTimer.setText(timeLeftFormatted);
 
                 if (seconds <= 10) {
@@ -240,6 +322,7 @@ public class QuizAdamEve extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                timeLeftInMillis = 0;
                 tvTimer.setText("00:00");
                 Toast.makeText(QuizAdamEve.this, "Time's up!", Toast.LENGTH_SHORT).show();
                 saveQuizResult();
@@ -254,7 +337,7 @@ public class QuizAdamEve extends AppCompatActivity {
             Map<String, Object> session = new HashMap<>();
             session.put("studentUid", uid);
             session.put("storyTitle", "Creation and the Fall");
-            session.put("timestamp", com.google.firebase.Timestamp.now());
+            session.put("timestamp", Timestamp.now());
 
             FirebaseFirestore.getInstance().collection("quiz_sessions").document(uid).set(session);
         }
@@ -269,6 +352,9 @@ public class QuizAdamEve extends AppCompatActivity {
     }
 
     private void saveQuizResult() {
+        if (isSubmittingResult) return;
+        isSubmittingResult = true;
+
         if (countDownTimer != null) countDownTimer.cancel();
         int tempScore = 0;
         for (int i = 0; i < questionList.size(); i++) {
@@ -298,8 +384,26 @@ public class QuizAdamEve extends AppCompatActivity {
                 long durationMillis = endTime - startTime;
                 int minutes = (int) (durationMillis / (1000 * 60));
                 int seconds = (int) ((durationMillis / 1000) % 60);
-                String durationString = String.format(java.util.Locale.getDefault(), "%dm %02ds", minutes, seconds);
+                String durationString = String.format(Locale.getDefault(), "%dm %02ds", minutes, seconds);
                 String dateString = new SimpleDateFormat("MMM dd (EEE)", Locale.getDefault()).format(new Date());
+
+                Calendar cal = Calendar.getInstance();
+                boolean isSunday = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
+
+                List<String> wrongAnswers = new ArrayList<>();
+                List<String> correctAnswers = new ArrayList<>();
+                List<String> selectedAnswers = new ArrayList<>();
+                for (int i = 0; i < questionList.size(); i++) {
+                    if (userSelections[i] != questionList.get(i).correctAnswerIndex) {
+                        wrongAnswers.add(questionList.get(i).question);
+                        correctAnswers.add(questionList.get(i).options[questionList.get(i).correctAnswerIndex]);
+                        if (userSelections[i] != -1) {
+                            selectedAnswers.add(questionList.get(i).options[userSelections[i]]);
+                        } else {
+                            selectedAnswers.add("No answer");
+                        }
+                    }
+                }
 
                 Map<String, Object> result = new HashMap<>();
                 result.put("studentUid", uid);
@@ -308,20 +412,40 @@ public class QuizAdamEve extends AppCompatActivity {
                 result.put("score", finalScore);
                 result.put("xp", xpGained);
                 result.put("totalQuestions", questionList.size());
-                result.put("timestamp", com.google.firebase.Timestamp.now());
+                result.put("timestamp", Timestamp.now());
                 result.put("duration", durationString);
                 result.put("date", dateString);
+                result.put("wrongAnswers", wrongAnswers);
+                result.put("correctAnswers", correctAnswers);
+                result.put("selectedAnswers", selectedAnswers);
+                result.put("isSunday", isSunday);
 
                 db.collection("quiz_results").add(result)
                         .addOnSuccessListener(documentReference -> {
-                            db.collection("users").document(uid)
-                                    .update("totalXP", FieldValue.increment(xpGained));
+                            boolean leveledUp = false;
+                            int newLevel = 1;
+
+                            if (isSunday) {
+                                Long currentXpLong = (documentSnapshot.exists() && documentSnapshot.contains("totalXP")) ? documentSnapshot.getLong("totalXP") : null;
+                                long currentXP = currentXpLong != null ? currentXpLong : 0;
+                                int oldLevel = (int) (currentXP / 250) + 1;
+                                long newXP = currentXP + xpGained;
+                                newLevel = (int) (newXP / 250) + 1;
+                                if (newLevel > 10) newLevel = 10;
+                                leveledUp = newLevel > oldLevel && oldLevel < 10;
+
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("totalXP", newXP);
+                                updates.put("level", newLevel);
+
+                                db.collection("users").document(uid).update(updates);
+                            }
 
                             endQuizSession();
                             isQuizFinished = true;
                             clearProgress();
-                            Toast.makeText(this, "Quiz Finished! Score: " + finalScore + "/" + questionList.size() + " (" + xpGained + " XP)", Toast.LENGTH_LONG).show();
-                            finish();
+
+                            returnToDashboard(isSunday, finalScore, questionList.size(), (int)xpGained, leveledUp, newLevel);
                         })
                         .addOnFailureListener(e -> {
                             Toast.makeText(this, "Error saving result", Toast.LENGTH_SHORT).show();
@@ -332,8 +456,21 @@ public class QuizAdamEve extends AppCompatActivity {
             endQuizSession();
             isQuizFinished = true;
             clearProgress();
-            Toast.makeText(this, "Quiz Finished! Score: " + finalScore + "/" + questionList.size(), Toast.LENGTH_LONG).show();
-            finish();
+            returnToDashboard(false, finalScore, questionList.size(), 0, false, 1);
         }
+    }
+
+    private void returnToDashboard(boolean isSunday, int score, int total, int xp, boolean leveledUp, int newLevel) {
+        Intent intent = new Intent(this, StudentDashboard.class);
+        intent.putExtra("SHOW_QUIZ_RESULT", true);
+        intent.putExtra("IS_SUNDAY", isSunday);
+        intent.putExtra("SCORE", score);
+        intent.putExtra("TOTAL", total);
+        intent.putExtra("XP", xp);
+        intent.putExtra("LEVELED_UP", leveledUp);
+        intent.putExtra("NEW_LEVEL", newLevel);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 }

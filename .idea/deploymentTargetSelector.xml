@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-05-24T12:41:22.518495400Z">
+        <DropdownSelection timestamp="2026-09-17T15:42:31.205032Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Nokia\.android\avd\pixel_7_-_api_35.avd" />

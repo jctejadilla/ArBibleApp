@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -42,7 +43,7 @@ public class TeacherDashboard extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_teacher_dashboard);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            androidx.core.graphics.Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
@@ -70,6 +71,9 @@ public class TeacherDashboard extends AppCompatActivity {
 
         fetchUserData();
         fetchMonthlyOverview();
+
+        ConstraintLayout cardProposeQuestion = findViewById(R.id.cardProposeQuestion);
+        if (cardProposeQuestion != null) cardProposeQuestion.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, TeacherProposeQuestionActivity.class)));
 
         if (quizResult != null) quizResult.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, TeacherQuizResults.class)));
         if (leaderboard != null) leaderboard.setOnClickListener(v -> startActivity(new Intent(TeacherDashboard.this, Leaderboards.class)));

@@ -62,7 +62,9 @@ public class intro1 extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         String userType = documentSnapshot.getString("userType");
                         Intent intent;
-                        if ("Teacher".equals(userType)) {
+                        if ("Admin".equals(userType)) {
+                            intent = new Intent(intro1.this, AdminDashboard.class);
+                        } else if ("Teacher".equals(userType)) {
                             intent = new Intent(intro1.this, TeacherDashboard.class);
                         } else {
                             intent = new Intent(intro1.this, StudentDashboard.class);

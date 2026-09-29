@@ -79,7 +79,9 @@ public class login extends AppCompatActivity {
                                                     if (documentSnapshot.exists()) {
                                                         String userType = documentSnapshot.getString("userType");
                                                         Intent intent;
-                                                        if ("Teacher".equals(userType)) {
+                                                        if ("Admin".equals(userType)) {
+                                                            intent = new Intent(login.this, AdminDashboard.class);
+                                                        } else if ("Teacher".equals(userType)) {
                                                             intent = new Intent(login.this, TeacherDashboard.class);
                                                         } else {
                                                             intent = new Intent(login.this, StudentDashboard.class);

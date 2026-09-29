@@ -1,6 +1,7 @@
 package com.example.arbibleapp;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -12,18 +13,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,14 +43,19 @@ public class QuizLaw extends AppCompatActivity {
     private ProgressBar quizProgress;
 
     private List<Scenario> scenarios = new ArrayList<>();
+    private List<String> wrongAnswers = new ArrayList<>();
+    private List<String> correctAnswers = new ArrayList<>();
+    private List<String> selectedAnswers = new ArrayList<>();
     private int currentScenarioIndex = 0;
     private int score = 0;
+    private boolean isSubmittingResult = false;
     private long startTime;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private CountDownTimer questionTimer;
     private final long TIME_LIMIT = 15000;
+    private long timeLeftInMillis = TIME_LIMIT;
 
     private float dX, initialX;
     private final float SWIPE_THRESHOLD = 300f;
@@ -78,7 +87,7 @@ public class QuizLaw extends AppCompatActivity {
             Map<String, Object> session = new HashMap<>();
             session.put("studentUid", uid);
             session.put("storyTitle", "The Law and Wandering in the Desert");
-            session.put("timestamp", com.google.firebase.Timestamp.now());
+            session.put("timestamp", Timestamp.now());
 
             db.collection("quiz_sessions").document(uid).set(session);
         }
@@ -101,6 +110,11 @@ public class QuizLaw extends AppCompatActivity {
         quizProgress = findViewById(R.id.quizProgress);
 
         btnBack.setOnClickListener(v -> finish());
+
+        View btnInstructions = findViewById(R.id.btnInstructions);
+        if (btnInstructions != null) {
+            btnInstructions.setOnClickListener(v -> showInstructionsDialog());
+        }
         setupSwipeListener();
     }
 
@@ -141,6 +155,9 @@ public class QuizLaw extends AppCompatActivity {
             Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Incorrect!", Toast.LENGTH_SHORT).show();
+            wrongAnswers.add(current.description);
+            correctAnswers.add(current.isGood ? "Should be Good/Right" : "Should be Bad/Wrong");
+            selectedAnswers.add(swipedRight ? "Swiped Good" : "Swiped Bad");
         }
 
         float targetX = swipedRight ? 2000f : -2000f;
@@ -196,13 +213,27 @@ public class QuizLaw extends AppCompatActivity {
         startTimer();
     }
 
-    private void startTimer() {
+    private void pauseTimer() {
         if (questionTimer != null) questionTimer.cancel();
-        questionTimer = new CountDownTimer(TIME_LIMIT, 1000) {
+    }
+
+    private void resumeTimer() {
+        if (timeLeftInMillis <= 0) return;
+        startTimerWithDuration(timeLeftInMillis);
+    }
+
+    private void startTimer() {
+        startTimerWithDuration(TIME_LIMIT);
+    }
+
+    private void startTimerWithDuration(long durationMs) {
+        if (questionTimer != null) questionTimer.cancel();
+        questionTimer = new CountDownTimer(durationMs, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
                 int seconds = (int) (millisUntilFinished / 1000);
-                String time = String.format(java.util.Locale.getDefault(), "00:%02d", seconds);
+                String time = String.format(Locale.getDefault(), "00:%02d", seconds);
                 tvTimer.setText(time);
                 if (seconds <= 5) tvTimer.setTextColor(Color.RED);
                 else tvTimer.setTextColor(Color.parseColor("#1D4A4B"));
@@ -210,6 +241,7 @@ public class QuizLaw extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                timeLeftInMillis = 0;
                 tvTimer.setText("00:00");
 
                 Toast.makeText(QuizLaw.this, "You ran out of time", Toast.LENGTH_SHORT).show();
@@ -235,7 +267,20 @@ public class QuizLaw extends AppCompatActivity {
         saveResults();
     }
 
+    private void showInstructionsDialog() {
+        pauseTimer();
+        new AlertDialog.Builder(this)
+                .setTitle("ℹ️ Quiz 5 Instructions")
+                .setMessage("Read each real-life scenario carefully and swipe or tap whether the decision OBEYS or DISOBEYS God's Ten Commandments!")
+                .setPositiveButton("Got It!", (dialog, which) -> resumeTimer())
+                .setOnCancelListener(dialog -> resumeTimer())
+                .show();
+    }
+
     private void saveResults() {
+        if (isSubmittingResult) return;
+        isSubmittingResult = true;
+
         if (mAuth.getCurrentUser() == null) return;
         String uid = mAuth.getCurrentUser().getUid();
         int totalXP = score * 20;
@@ -253,8 +298,11 @@ public class QuizLaw extends AppCompatActivity {
             long durationMillis = endTime - startTime;
             int minutes = (int) (durationMillis / (1000 * 60));
             int seconds = (int) ((durationMillis / 1000) % 60);
-            String durationString = String.format(java.util.Locale.getDefault(), "%dm %02ds", minutes, seconds);
+            String durationString = String.format(Locale.getDefault(), "%dm %02ds", minutes, seconds);
             String dateString = new SimpleDateFormat("MMM dd (EEE)", Locale.getDefault()).format(new Date());
+
+            Calendar cal = Calendar.getInstance();
+            boolean isSunday = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
 
             Map<String, Object> result = new HashMap<>();
             result.put("studentUid", uid);
@@ -263,18 +311,52 @@ public class QuizLaw extends AppCompatActivity {
             result.put("score", score);
             result.put("xp", totalXP);
             result.put("totalQuestions", scenarios.size());
-            result.put("timestamp", com.google.firebase.Timestamp.now());
+            result.put("timestamp", Timestamp.now());
             result.put("duration", durationString);
             result.put("date", dateString);
+            result.put("wrongAnswers", wrongAnswers);
+            result.put("correctAnswers", correctAnswers);
+            result.put("selectedAnswers", selectedAnswers);
+            result.put("isSunday", isSunday);
 
             db.collection("quiz_results").add(result)
                     .addOnSuccessListener(dr -> {
-                        db.collection("users").document(uid).update("totalXP", FieldValue.increment(totalXP));
+                        boolean leveledUp = false;
+                        int newLevel = 1;
+
+                        if (totalXP > 0) {
+                            Long currentXpLong = (documentSnapshot.exists() && documentSnapshot.contains("totalXP")) ? documentSnapshot.getLong("totalXP") : null;
+                            long currentXP = currentXpLong != null ? currentXpLong : 0;
+                            int oldLevel = (int) (currentXP / 250) + 1;
+                            long newXP = currentXP + totalXP;
+                            newLevel = (int) (newXP / 250) + 1;
+                            if (newLevel > 10) newLevel = 10;
+                            leveledUp = newLevel > oldLevel;
+
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("totalXP", newXP);
+                            updates.put("level", newLevel);
+
+                            db.collection("users").document(uid).update(updates);
+                        }
                         endQuizSession();
-                        Toast.makeText(this, "Quiz Finished! Gained " + totalXP + " XP", Toast.LENGTH_LONG).show();
-                        finish();
+                        returnToDashboard(isSunday, score, scenarios.size(), totalXP, leveledUp, newLevel);
                     });
         });
+    }
+
+    private void returnToDashboard(boolean isSunday, int score, int total, int xp, boolean leveledUp, int newLevel) {
+        Intent intent = new Intent(this, StudentDashboard.class);
+        intent.putExtra("SHOW_QUIZ_RESULT", true);
+        intent.putExtra("IS_SUNDAY", isSunday);
+        intent.putExtra("SCORE", score);
+        intent.putExtra("TOTAL", total);
+        intent.putExtra("XP", xp);
+        intent.putExtra("LEVELED_UP", leveledUp);
+        intent.putExtra("NEW_LEVEL", newLevel);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
     @Override

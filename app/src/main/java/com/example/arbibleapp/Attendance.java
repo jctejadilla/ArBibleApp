@@ -1,5 +1,6 @@
 package com.example.arbibleapp;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -14,11 +15,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
+import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,6 +35,15 @@ public class Attendance extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private CompoundBarcodeView barcodeScanner;
+    private ListenerRegistration attendanceListener;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (attendanceListener != null) {
+            attendanceListener.remove();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +102,32 @@ public class Attendance extends AppCompatActivity {
         } catch (Exception e) {
             Toast.makeText(this, "Error generating QR code", Toast.LENGTH_SHORT).show();
         }
+
+        listenForAttendanceMarked(uid);
+    }
+
+    private void listenForAttendanceMarked(String uid) {
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        
+        if (attendanceListener != null) attendanceListener.remove();
+        
+        attendanceListener = db.collection("attendance")
+                .whereEqualTo("studentUid", uid)
+                .whereEqualTo("date", today)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null || snapshots == null || snapshots.isEmpty()) return;
+                    
+                    if (attendanceListener != null) {
+                        attendanceListener.remove();
+                        attendanceListener = null;
+                    }
+
+                    Intent intent = new Intent(this, StudentDashboard.class);
+                    intent.putExtra("SHOW_ATTENDANCE_RESULT", true);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    finish();
+                });
     }
 
     private void setupTeacherLayout() {
@@ -139,6 +178,7 @@ public class Attendance extends AppCompatActivity {
                                         attendanceData.put("username", username);
                                         attendanceData.put("date", date);
                                         attendanceData.put("timestamp", timestamp);
+                                        attendanceData.put("fullTimestamp", com.google.firebase.Timestamp.now());
 
                                         String finalUsername = username;
                                         db.collection("attendance").add(attendanceData)

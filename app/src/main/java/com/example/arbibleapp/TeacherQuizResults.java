@@ -167,6 +167,10 @@ public class TeacherQuizResults extends AppCompatActivity {
     public static class QuizResultModel {
         public String studentUid, username, storyTitle, duration, date;
         public int score, totalQuestions;
+        public List<String> wrongAnswers;
+        public List<String> correctAnswers;
+        public List<String> selectedAnswers;
+        public boolean isSunday;
         public com.google.firebase.Timestamp timestamp;
 
         public QuizResultModel() {}
@@ -189,14 +193,21 @@ public class TeacherQuizResults extends AppCompatActivity {
             holder.tvName.setText(r.username != null ? r.username : "Unknown");
             
             if (r.studentUid != null && r.studentUid.length() >= 7) {
-                holder.tvId.setText(r.studentUid.substring(0, 7).toUpperCase());
+                holder.tvId.setText(r.studentUid.substring(0, 7).toUpperCase() + (r.isSunday ? "" : " (Trial)"));
             } else {
-                holder.tvId.setText("STUDENT");
+                holder.tvId.setText(r.isSunday ? "STUDENT" : "TRIAL");
             }
             
             holder.tvStory.setText(r.storyTitle != null ? r.storyTitle : "General Quiz");
             holder.tvScore.setText(String.format(Locale.getDefault(), "%d/%d", r.score, r.totalQuestions));
-            holder.tvDate.setText(r.date != null ? r.date : "Recently");
+            
+            String dateTime = r.date != null ? r.date : "Recently";
+            if (r.timestamp != null) {
+                String time = new java.text.SimpleDateFormat("hh:mm a", Locale.getDefault()).format(r.timestamp.toDate());
+                dateTime += " • " + time;
+            }
+            holder.tvDate.setText(dateTime);
+
             holder.tvDuration.setText(r.duration != null ? r.duration : "--");
             
             String name = r.username != null ? r.username : "ST";

@@ -60,6 +60,8 @@ public class Register extends AppCompatActivity {
             String userType = "Student";
             if (toggleUserType.getCheckedButtonId() == R.id.btnTeacherRegister) {
                 userType = "Teacher";
+            } else if (toggleUserType.getCheckedButtonId() == R.id.btnAdminRegister) {
+                userType = "Admin";
             }
 
             int selectedGenderId = rgGender.getCheckedRadioButtonId();
@@ -121,6 +123,7 @@ public class Register extends AppCompatActivity {
         user.put("gender", gender);
         user.put("userType", userType);
         user.put("totalXP", 0);
+        user.put("level", 1);
 
         db.collection("users").document(uid)
                 .set(user)

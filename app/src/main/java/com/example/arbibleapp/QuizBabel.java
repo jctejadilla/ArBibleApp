@@ -1,6 +1,7 @@
 package com.example.arbibleapp;
 
 import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.Gravity;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -20,12 +22,14 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +51,7 @@ public class QuizBabel extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private boolean isTimeUp = false;
     private long startTime;
+    private long timeLeftInMillis = 60000;
     private int score = 0;
     private int floorsCleared = 0;
     private int floorWrongGuesses = 0;
@@ -74,6 +79,7 @@ public class QuizBabel extends AppCompatActivity {
     };
 
     private List<LinearLayout> floorLayouts = new ArrayList<>();
+    private boolean isSubmittingResult = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +101,12 @@ public class QuizBabel extends AppCompatActivity {
         tvTimer = findViewById(R.id.tvTimer);
 
         btnBack.setOnClickListener(v -> finish());
+
+        View btnInstructions = findViewById(R.id.btnInstructions);
+        if (btnInstructions != null) {
+            btnInstructions.setOnClickListener(v -> showInstructionsDialog());
+        }
+
         btnSubmit.setOnClickListener(v -> saveResults());
 
         setupTower();
@@ -109,7 +121,7 @@ public class QuizBabel extends AppCompatActivity {
             Map<String, Object> session = new HashMap<>();
             session.put("studentUid", uid);
             session.put("storyTitle", "The Tower of Babel");
-            session.put("timestamp", com.google.firebase.Timestamp.now());
+            session.put("timestamp", Timestamp.now());
 
             db.collection("quiz_sessions").document(uid).set(session);
         }
@@ -245,18 +257,34 @@ public class QuizBabel extends AppCompatActivity {
         }
     }
 
+    private void pauseTimer() {
+        if (countDownTimer != null) countDownTimer.cancel();
+    }
+
+    private void resumeTimer() {
+        if (timeLeftInMillis <= 0) return;
+        startTimerWithDuration(timeLeftInMillis);
+    }
+
     private void startTimer() {
-        countDownTimer = new CountDownTimer(60000, 1000) {
+        startTimerWithDuration(60000);
+    }
+
+    private void startTimerWithDuration(long durationMs) {
+        if (countDownTimer != null) countDownTimer.cancel();
+        countDownTimer = new CountDownTimer(durationMs, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
                 int seconds = (int) (millisUntilFinished / 1000);
-                String timeLeftFormatted = String.format(java.util.Locale.getDefault(), "00:%02d", seconds);
+                String timeLeftFormatted = String.format(Locale.getDefault(), "00:%02d", seconds);
                 tvTimer.setText(timeLeftFormatted);
                 if (seconds <= 10) tvTimer.setTextColor(Color.RED);
             }
 
             @Override
             public void onFinish() {
+                timeLeftInMillis = 0;
                 tvTimer.setText("00:00");
                 isTimeUp = true;
                 handleTimeUp();
@@ -271,7 +299,20 @@ public class QuizBabel extends AppCompatActivity {
         btnSubmit.setText("Time's Up! Submit Results");
     }
 
+    private void showInstructionsDialog() {
+        pauseTimer();
+        new AlertDialog.Builder(this)
+                .setTitle("ℹ️ Quiz 3 Instructions")
+                .setMessage("Tap the correct tower block on each floor to build the tower step-by-step!\n\nWatch out for the odd-one-out block on every floor to reach the top!")
+                .setPositiveButton("Got It!", (dialog, which) -> resumeTimer())
+                .setOnCancelListener(dialog -> resumeTimer())
+                .show();
+    }
+
     private void saveResults() {
+        if (isSubmittingResult) return;
+        isSubmittingResult = true;
+
         if (mAuth.getCurrentUser() == null) return;
         String uid = mAuth.getCurrentUser().getUid();
         int totalXP = score;
@@ -289,8 +330,11 @@ public class QuizBabel extends AppCompatActivity {
             long durationMillis = endTime - startTime;
             int minutes = (int) (durationMillis / (1000 * 60));
             int seconds = (int) ((durationMillis / 1000) % 60);
-            String durationString = String.format(java.util.Locale.getDefault(), "%dm %02ds", minutes, seconds);
+            String durationString = String.format(Locale.getDefault(), "%dm %02ds", minutes, seconds);
             String dateString = new SimpleDateFormat("MMM dd (EEE)", Locale.getDefault()).format(new Date());
+
+            Calendar cal = Calendar.getInstance();
+            boolean isSunday = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
 
             Map<String, Object> result = new HashMap<>();
             result.put("studentUid", uid);
@@ -299,18 +343,53 @@ public class QuizBabel extends AppCompatActivity {
             result.put("score", floorsCleared);
             result.put("xp", totalXP);
             result.put("totalQuestions", TOTAL_FLOORS);
-            result.put("timestamp", com.google.firebase.Timestamp.now());
+            result.put("timestamp", Timestamp.now());
             result.put("duration", durationString);
             result.put("date", dateString);
+            result.put("wrongAnswers", new ArrayList<String>());
+            result.put("correctAnswers", new ArrayList<String>());
+            result.put("selectedAnswers", new ArrayList<String>());
+            result.put("isSunday", isSunday);
 
             db.collection("quiz_results").add(result)
                     .addOnSuccessListener(dr -> {
-                        db.collection("users").document(uid).update("totalXP", FieldValue.increment(totalXP));
+                        boolean leveledUp = false;
+                        int newLevel = 1;
+
+                        if (totalXP > 0) {
+                            Long currentXpLong = (documentSnapshot.exists() && documentSnapshot.contains("totalXP")) ? documentSnapshot.getLong("totalXP") : null;
+                            long currentXP = currentXpLong != null ? currentXpLong : 0;
+                            int oldLevel = (int) (currentXP / 250) + 1;
+                            long newXP = currentXP + totalXP;
+                            newLevel = (int) (newXP / 250) + 1;
+                            if (newLevel > 10) newLevel = 10;
+                            leveledUp = newLevel > oldLevel;
+
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("totalXP", newXP);
+                            updates.put("level", newLevel);
+
+                            db.collection("users").document(uid).update(updates);
+                        }
                         endQuizSession();
-                        Toast.makeText(this, "Quiz Finished! Gained " + totalXP + " XP", Toast.LENGTH_LONG).show();
-                        finish();
+                        returnToDashboard(isSunday, floorsCleared, TOTAL_FLOORS, totalXP, leveledUp, newLevel);
                     });
         });
+    }
+
+    private void returnToDashboard(boolean isSunday, int score, int total, int xp, boolean leveledUp, int newLevel) {
+        Intent intent = new Intent(this, StudentDashboard.class);
+        intent.putExtra("SHOW_QUIZ_RESULT", true);
+        intent.putExtra("IS_SUNDAY", isSunday);
+        intent.putExtra("SCORE", score);
+        intent.putExtra("TOTAL", total);
+        intent.putExtra("XP", xp);
+        intent.putExtra("LEVELED_UP", leveledUp);
+        intent.putExtra("NEW_LEVEL", newLevel);
+        intent.putExtra("XP", xp);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
     @Override

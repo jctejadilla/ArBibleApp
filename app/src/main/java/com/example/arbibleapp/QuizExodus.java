@@ -1,26 +1,32 @@
 package com.example.arbibleapp;
 
 import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,14 +41,19 @@ public class QuizExodus extends AppCompatActivity {
     private TextView tvTimer, tvQuestionCount;
 
     private List<SequenceStep> steps = new ArrayList<>();
+    private List<String> wrongAnswers = new ArrayList<>();
+    private List<String> correctAnswers = new ArrayList<>();
+    private List<String> selectedAnswers = new ArrayList<>();
     private int currentStepIndex = 0;
     private int score = 0;
+    private boolean isSubmittingResult = false;
     private long startTime;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private CountDownTimer questionTimer;
     private final long TIME_LIMIT = 15000;
+    private long timeLeftInMillis = TIME_LIMIT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +82,7 @@ public class QuizExodus extends AppCompatActivity {
             Map<String, Object> session = new HashMap<>();
             session.put("studentUid", uid);
             session.put("storyTitle", "Slavery in Egypt and the Exodus");
-            session.put("timestamp", com.google.firebase.Timestamp.now());
+            session.put("timestamp", Timestamp.now());
 
             db.collection("quiz_sessions").document(uid).set(session);
         }
@@ -96,6 +107,11 @@ public class QuizExodus extends AppCompatActivity {
         tvQuestionCount = findViewById(R.id.tvQuestionCount);
 
         btnBack.setOnClickListener(v -> finish());
+
+        View btnInstructions = findViewById(R.id.btnInstructions);
+        if (btnInstructions != null) {
+            btnInstructions.setOnClickListener(v -> showInstructionsDialog());
+        }
 
         cardOption1.setOnClickListener(v -> handleChoice(0));
         cardOption2.setOnClickListener(v -> handleChoice(1));
@@ -173,16 +189,28 @@ public class QuizExodus extends AppCompatActivity {
         startTimer();
     }
 
+    private void pauseTimer() {
+        if (questionTimer != null) questionTimer.cancel();
+    }
+
+    private void resumeTimer() {
+        if (timeLeftInMillis <= 0) return;
+        startTimerWithDuration(timeLeftInMillis);
+    }
+
     private void startTimer() {
-        if (questionTimer != null) {
-            questionTimer.cancel();
-        }
+        startTimerWithDuration(TIME_LIMIT);
+    }
+
+    private void startTimerWithDuration(long durationMs) {
+        if (questionTimer != null) questionTimer.cancel();
         
-        questionTimer = new CountDownTimer(TIME_LIMIT, 1000) {
+        questionTimer = new CountDownTimer(durationMs, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
                 int seconds = (int) (millisUntilFinished / 1000);
-                String timeLeftFormatted = String.format(java.util.Locale.getDefault(), "00:%02d", seconds);
+                String timeLeftFormatted = String.format(Locale.getDefault(), "00:%02d", seconds);
                 tvTimer.setText(timeLeftFormatted);
                 if (seconds <= 5) {
                     tvTimer.setTextColor(Color.RED);
@@ -193,6 +221,7 @@ public class QuizExodus extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                timeLeftInMillis = 0;
                 tvTimer.setText("00:00");
                 Toast.makeText(QuizExodus.this, "Time's Up!", Toast.LENGTH_SHORT).show();
                 currentStepIndex++;
@@ -212,6 +241,9 @@ public class QuizExodus extends AppCompatActivity {
             Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Incorrect!", Toast.LENGTH_SHORT).show();
+            wrongAnswers.add("Step " + (currentStepIndex + 1) + " of the Exodus sequence");
+            correctAnswers.add("Selected the wrong event in the timeline");
+            selectedAnswers.add("Wrong choice made");
         }
 
         currentStepIndex++;
@@ -225,7 +257,20 @@ public class QuizExodus extends AppCompatActivity {
         saveResults();
     }
 
+    private void showInstructionsDialog() {
+        pauseTimer();
+        new AlertDialog.Builder(this)
+                .setTitle("ℹ️ Quiz 4 Instructions")
+                .setMessage("Review each story scene and tap the image choice that correctly continues the Exodus timeline!\n\nFollow Moses from Egypt across the Red Sea to the Promised Land!")
+                .setPositiveButton("Got It!", (dialog, which) -> resumeTimer())
+                .setOnCancelListener(dialog -> resumeTimer())
+                .show();
+    }
+
     private void saveResults() {
+        if (isSubmittingResult) return;
+        isSubmittingResult = true;
+
         if (mAuth.getCurrentUser() == null) return;
         String uid = mAuth.getCurrentUser().getUid();
         int totalXP = score * 10; // 10 points each correct guess
@@ -243,8 +288,11 @@ public class QuizExodus extends AppCompatActivity {
             long durationMillis = endTime - startTime;
             int minutes = (int) (durationMillis / (1000 * 60));
             int seconds = (int) ((durationMillis / 1000) % 60);
-            String durationString = String.format(java.util.Locale.getDefault(), "%dm %02ds", minutes, seconds);
+            String durationString = String.format(Locale.getDefault(), "%dm %02ds", minutes, seconds);
             String dateString = new SimpleDateFormat("MMM dd (EEE)", Locale.getDefault()).format(new Date());
+
+            Calendar cal = Calendar.getInstance();
+            boolean isSunday = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
 
             Map<String, Object> result = new HashMap<>();
             result.put("studentUid", uid);
@@ -253,18 +301,54 @@ public class QuizExodus extends AppCompatActivity {
             result.put("score", score);
             result.put("xp", totalXP);
             result.put("totalQuestions", steps.size());
-            result.put("timestamp", com.google.firebase.Timestamp.now());
+            result.put("timestamp", Timestamp.now());
             result.put("duration", durationString);
             result.put("date", dateString);
+            result.put("wrongAnswers", wrongAnswers);
+            result.put("correctAnswers", correctAnswers);
+            result.put("selectedAnswers", selectedAnswers);
+            result.put("isSunday", isSunday);
 
             db.collection("quiz_results").add(result)
                     .addOnSuccessListener(dr -> {
-                        db.collection("users").document(uid).update("totalXP", FieldValue.increment(totalXP));
+                        boolean leveledUp = false;
+                        int newLevel = 1;
+
+                        if (totalXP > 0) {
+                            Long currentXpLong = (documentSnapshot.exists() && documentSnapshot.contains("totalXP")) ? documentSnapshot.getLong("totalXP") : null;
+                            long currentXP = currentXpLong != null ? currentXpLong : 0;
+                            int oldLevel = (int) (currentXP / 250) + 1;
+                            long newXP = currentXP + totalXP;
+                            newLevel = (int) (newXP / 250) + 1;
+                            if (newLevel > 10) newLevel = 10;
+                            leveledUp = newLevel > oldLevel;
+
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("totalXP", newXP);
+                            updates.put("level", newLevel);
+
+                            db.collection("users").document(uid).update(updates);
+                        }
                         endQuizSession();
-                        Toast.makeText(this, "Sequence Complete! Gained " + totalXP + " XP", Toast.LENGTH_LONG).show();
-                        finish();
+                        returnToDashboard(isSunday, score, steps.size(), totalXP, leveledUp, newLevel);
                     });
         });
+    }
+
+    private void returnToDashboard(boolean isSunday, int score, int total, int xp, boolean leveledUp, int newLevel) {
+        Intent intent = new Intent(this, StudentDashboard.class);
+        intent.putExtra("SHOW_QUIZ_RESULT", true);
+        intent.putExtra("IS_SUNDAY", isSunday);
+        intent.putExtra("SCORE", score);
+        intent.putExtra("TOTAL", total);
+        intent.putExtra("XP", xp);
+        intent.putExtra("LEVELED_UP", leveledUp);
+        intent.putExtra("NEW_LEVEL", newLevel);
+        intent.putExtra("TOTAL", total);
+        intent.putExtra("XP", xp);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
     @Override

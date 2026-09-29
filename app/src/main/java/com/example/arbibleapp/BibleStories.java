@@ -71,39 +71,42 @@ public class BibleStories extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
 
         if (cardCreationFall != null) {
-            cardCreationFall.setOnClickListener(v -> {
-                Intent intent = new Intent(BibleStories.this, QuizAdamEve.class);
-                startActivity(intent);
-            });
+            cardCreationFall.setOnClickListener(v -> openStoryReview("Creation and the Fall", QuizAdamEve.class));
         }
 
         if (cardFlood != null) {
-            cardFlood.setOnClickListener(v -> {
-                Intent intent = new Intent(BibleStories.this, QuizFlood.class);
-                startActivity(intent);
-            });
+            cardFlood.setOnClickListener(v -> openStoryReview("Early Humanity and the Flood", QuizFlood.class));
         }
 
         if (cardBabelAbraham != null) {
-            cardBabelAbraham.setOnClickListener(v -> {
-                Intent intent = new Intent(BibleStories.this, QuizBabel.class);
-                startActivity(intent);
-            });
+            cardBabelAbraham.setOnClickListener(v -> openStoryReview("The Tower of Babel", QuizBabel.class));
         }
 
         if (cardExodus != null) {
-            cardExodus.setOnClickListener(v -> {
-                Intent intent = new Intent(BibleStories.this, QuizExodus.class);
-                startActivity(intent);
-            });
+            cardExodus.setOnClickListener(v -> openStoryReview("Slavery in Egypt and the Exodus", QuizExodus.class));
         }
 
         if (cardLawDesert != null) {
-            cardLawDesert.setOnClickListener(v -> {
-                Intent intent = new Intent(BibleStories.this, QuizLaw.class);
-                startActivity(intent);
-            });
+            cardLawDesert.setOnClickListener(v -> openStoryReview("The Law and Wandering in the Desert", QuizLaw.class));
         }
+
+        // Setup other cards similarly if quizzes exist
+        if (cardJudges != null) cardJudges.setOnClickListener(v -> openStoryReview("Entering the Promised Land and the Judges", null));
+        if (cardMonarchy != null) cardMonarchy.setOnClickListener(v -> openStoryReview("The Monarchy: Saul, David, and Solomon", null));
+        if (cardDivisionExile != null) cardDivisionExile.setOnClickListener(v -> openStoryReview("Division of the Kingdom and Exile", null));
+        if (cardReturnMessiah != null) cardReturnMessiah.setOnClickListener(v -> openStoryReview("Return from Exile and Anticipation of the Messiah", null));
+        if (cardBirthMinistry != null) cardBirthMinistry.setOnClickListener(v -> openStoryReview("The Birth and Ministry of Jesus", null));
+        if (cardConflictDeath != null) cardConflictDeath.setOnClickListener(v -> openStoryReview("Conflict with the Pharisees and Jesus's Death", null));
+        if (cardResurrectionAscension != null) cardResurrectionAscension.setOnClickListener(v -> openStoryReview("Resurrection and Ascension", null));
+    }
+
+    private void openStoryReview(String title, Class<?> quizClass) {
+        Intent intent = new Intent(BibleStories.this, StudentQuizReviewActivity.class);
+        intent.putExtra("storyTitle", title);
+        if (quizClass != null) {
+            intent.putExtra("quizClass", quizClass.getName());
+        }
+        startActivity(intent);
     }
 
     private void setupSearch() {
