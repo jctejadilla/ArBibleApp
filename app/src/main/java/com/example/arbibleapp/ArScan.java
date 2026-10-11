@@ -20,22 +20,35 @@ public class ArScan extends AppCompatActivity {
     private static Context appContext;
 
     private final ActivityResultLauncher<String> cameraPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    launchUnityAR();
-                } else {
-                    Toast.makeText(this, "Kailangan ng Camera Permission para sa AR", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-            });
+            registerForActivityResult(
+                    new ActivityResultContracts.RequestPermission(),
+                    isGranted -> {
+                        if (isGranted) {
+                            launchUnityAR();
+                        } else {
+                            Toast.makeText(
+                                    this,
+                                    "Kailangan ng Camera Permission para sa AR",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                            finish();
+                        }
+                    }
+            );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         appContext = getApplicationContext();
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED) {
+
             launchUnityAR();
+
         } else {
             cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
@@ -44,47 +57,85 @@ public class ArScan extends AppCompatActivity {
     private void launchUnityAR() {
         try {
             appContext = getApplicationContext();
+
             Intent intent = new Intent();
-            intent.setClassName(getPackageName(), "com.unity3d.player.UnityPlayerGameActivity");
+            intent.setClassName(
+                    getPackageName(),
+                    "com.unity3d.player.UnityPlayerGameActivity"
+            );
+
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
             startActivity(intent);
             finish();
+
         } catch (Exception e) {
-            Toast.makeText(this, "Failed to start AR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(
+                    this,
+                    "Failed to start AR: " + e.getMessage(),
+                    Toast.LENGTH_LONG
+            ).show();
+
+            Log.e("ArScan", "Failed to start Unity AR", e);
             finish();
         }
     }
 
-    // 1. DONE BUTTON -> PUMUNTA SA QUIZ
+    // ==========================================
+    // DONE BUTTON -> PUMUNTA SA QUIZ
+    // ==========================================
     public static void finishARAndOpenQuiz() {
         new Handler(Looper.getMainLooper()).post(() -> {
             try {
                 if (appContext != null) {
-                    Intent quizIntent = new Intent(appContext, QuizAdamEve.class);
-                    quizIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                    Intent quizIntent =
+                            new Intent(appContext, QuizAdamEve.class);
+
+                    quizIntent.addFlags(
+                            Intent.FLAG_ACTIVITY_NEW_TASK |
+                                    Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    );
+
                     appContext.startActivity(quizIntent);
                 }
+
             } catch (Exception e) {
-                Log.e("ArScan", "Error opening quiz: " + e.getMessage());
+                Log.e(
+                        "ArScan",
+                        "Error opening quiz: " + e.getMessage(),
+                        e
+                );
             }
         });
     }
 
-    // 2. BACK BUTTON -> BUMALIK SA DASHBOARD
-    // BACK BUTTON: Gamitin ang tamang Android system back trigger o unload
+    // ==========================================
+    // BACK BUTTON -> BUMALIK SA DASHBOARD
+    // ==========================================
     public static void exitUnityAR() {
         new Handler(Looper.getMainLooper()).post(() -> {
             try {
-                if (unityActivityRef != null) {
-                    // I-trigger ang native back press ng mismong Unity Activity
-                    unityActivityRef.onBackPressed();
-                } else if (appContext != null) {
-                    Intent mainIntent = new Intent(appContext, StudentDashboard.class);
-                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                if (appContext != null) {
+
+                    Intent mainIntent =
+                            new Intent(appContext, StudentDashboard.class);
+
+                    mainIntent.addFlags(
+                            Intent.FLAG_ACTIVITY_NEW_TASK |
+                                    Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                    Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    );
+
                     appContext.startActivity(mainIntent);
                 }
+
             } catch (Exception e) {
-                Log.e("ArScan", "Error exiting AR: " + e.getMessage());
+                Log.e(
+                        "ArScan",
+                        "Error exiting AR: " + e.getMessage(),
+                        e
+                );
             }
         });
     }
