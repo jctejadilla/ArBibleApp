@@ -1,0 +1,16 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.UnityTechnologies.XR.Manifest" >
+4
+5    <uses-sdk android:minSdkVersion="26" />
+5-->INJECTED
+5-->INJECTED
+6
+7    <application>
+7-->E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:3:3-5:17
+8        <activity android:name="com.unity3d.player.UnityPlayerGameActivity" />
+8-->E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:4:5-75
+8-->E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:4:15-72
+9    </application>
+10
+11</manifest>
