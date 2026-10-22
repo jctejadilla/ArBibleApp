@@ -1,23 +1,23 @@
 -- Merging decision tree log ---
 manifest
-ADDED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:2:1-6:12
-INJECTED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:2:1-6:12
+ADDED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:2:1-6:12
+INJECTED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:2:1-6:12
 	package
-		ADDED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:2:70-113
-		INJECTED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml
+		ADDED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:2:70-113
+		INJECTED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml
 	xmlns:android
-		ADDED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:2:11-69
+		ADDED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:2:11-69
 application
-ADDED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:3:3-5:17
+ADDED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:3:3-5:17
 activity#com.unity3d.player.UnityPlayerGameActivity
-ADDED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:4:5-75
+ADDED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:4:5-75
 	android:name
-		ADDED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:4:15-72
+		ADDED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml:4:15-72
 uses-sdk
-INJECTED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml
-INJECTED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml
+INJECTED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml
+INJECTED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml
+		INJECTED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from E:\AR Bible App\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml
+		INJECTED from C:\Users\Nokia\Documents\GitHub\ArBibleApp\unityLibrary\xrmanifest.androidlib\AndroidManifest.xml

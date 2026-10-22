@@ -55,7 +55,17 @@ public class NotificationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notification);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+
+            View topBar = findViewById(R.id.topBar);
+            if (topBar != null) {
+                topBar.setPadding(
+                        topBar.getPaddingLeft(),
+                        systemBars.top + 12,
+                        topBar.getPaddingRight(),
+                        topBar.getPaddingBottom()
+                );
+            }
             return insets;
         });
 

@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardQuizAttempt"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    android:background="@drawable/bg_glass_card_white"
+    android:elevation="3dp"
+    android:padding="16dp">
 
     <LinearLayout
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/white">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,8 +33,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Score: 5/10 - Date"
-                    android:textColor="@color/text_dark"
-                    android:textSize="14sp"
+                    android:textColor="#1D3B2E"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -42,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:text="Trial • 10:30 AM"
-                    android:textColor="@color/text_grey"
+                    android:textColor="#3B5848"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -51,7 +52,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@android:drawable/arrow_down_float"
-                app:tint="@color/text_grey" />
+                app:tint="#1D3B2E" />
         </LinearLayout>
 
         <LinearLayout
@@ -66,13 +67,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="12dp"
-                android:background="#E0E0E0" />
+                android:background="#301D3B2E" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Missed Questions:"
-                android:textColor="@color/red"
+                android:textColor="#D32F2F"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -92,31 +93,32 @@
                 <Button
                     android:id="@+id/btnShowCorrect"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
                     android:layout_weight="1.3"
                     android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_btn_show_correct"
+                    android:background="@drawable/bg_cream_task_card"
                     android:text="Show Correct Answers"
                     android:textAllCaps="false"
-                    android:textColor="@color/text_dark"
-                    android:textSize="11sp"
+                    android:textColor="#1D3B2E"
+                    android:textSize="11.5sp"
                     android:textStyle="bold"
                     app:backgroundTint="@null" />
 
                 <Button
                     android:id="@+id/btnRetakeCard"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_btn_retake"
+                    android:background="@drawable/bg_pill_btn_green"
                     android:text="Retake Quiz"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
-                    android:textSize="11sp"
+                    android:textSize="11.5sp"
                     android:textStyle="bold"
                     app:backgroundTint="@null" />
             </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

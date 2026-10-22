@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Base Sage Green Background -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:startColor="#9DBAA0"
+                android:centerColor="#A4C1A8"
+                android:endColor="#94B598" />
+        </shape>
+    </item>
+    <!-- Top-Left Leaf Watermark -->
+    <item
+        android:width="200dp"
+        android:height="200dp"
+        android:gravity="top|left"
+        android:drawable="@drawable/ic_leaf_corner_top_left" />
+    <!-- Bottom-Right Leaf Watermark -->
+    <item
+        android:width="220dp"
+        android:height="220dp"
+        android:gravity="bottom|right"
+        android:drawable="@drawable/ic_leaf_corner_bottom_right" />
+</layer-list>

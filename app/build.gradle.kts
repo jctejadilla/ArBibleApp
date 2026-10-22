@@ -46,6 +46,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
 }
 
 configurations.all {
@@ -59,8 +64,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation("com.google.ar:core:1.42.0")
-    implementation("io.github.sceneview:arsceneview:0.10.0")
+    //implementation("com.google.ar:core:1.42.0")
+    //implementation("io.github.sceneview:arsceneview:0.10.0")
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation(libs.zxing.android.embedded)
@@ -69,4 +74,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(project(":unityLibrary"))
 }

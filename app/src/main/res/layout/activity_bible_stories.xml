@@ -5,303 +5,1060 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:background="@drawable/bg_meh"
     tools:context=".BibleStories">
 
-    <!-- Header Section -->
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_circle_white"
-        android:elevation="2dp"
-        android:padding="12dp"
-        android:src="@android:drawable/ic_menu_revert"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/text_dark" />
-
-    <!-- Search Bar -->
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Bible Stories"
-        android:textColor="@color/text_dark"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/btnBack"
-        app:layout_constraintStart_toEndOf="@+id/btnBack"
-        app:layout_constraintTop_toTopOf="@+id/btnBack"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <EditText
-        android:id="@+id/etSearch"
+    <!-- Top Navigation Header -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/bg_search_bar"
-        android:drawableStart="@android:drawable/ic_menu_search"
-        android:drawablePadding="12dp"
-        android:hint="Search stories..."
-        android:paddingHorizontal="16dp"
-        android:textColor="@color/text_dark"
-        android:textColorHint="@color/text_grey"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_circle_translucent"
+            android:elevation="3dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_back_arrow_curved"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#1D3B2E" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowColor="#30000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="4"
+            android:text="Bible Stories"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Scrollable Stories Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         android:clipToPadding="false"
-        android:paddingBottom="24dp"
+        android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etSearch">
+        app:layout_constraintTop_toBottomOf="@+id/topBar">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="24dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="24dp">
 
-            <!-- Categories -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Categories"
-                android:textColor="@color/text_dark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <HorizontalScrollView
+            <!-- Search Bar -->
+            <EditText
+                android:id="@+id/etSearch"
                 android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_cream_task_card"
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:drawablePadding="10dp"
+                android:hint="Search stories..."
+                android:paddingHorizontal="16dp"
+                android:textColor="#1D3B2E"
+                android:textColorHint="#6B8A7A"
+                android:textSize="14sp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Category Filter Buttons -->
+            <HorizontalScrollView
+                android:id="@+id/hsvCategories"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:scrollbars="none">
+                android:layout_marginStart="-20dp"
+                android:layout_marginEnd="-20dp"
+                android:paddingHorizontal="20dp"
+                android:clipToPadding="false"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etSearch">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingVertical="2dp">
 
                     <TextView
                         android:id="@+id/btnAll"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_button_next"
-                        android:paddingHorizontal="20dp"
-                        android:paddingVertical="8dp"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_pill_btn_yellow"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
                         android:text="All"
-                        android:textColor="@color/white" />
+                        android:textColor="#1D3B2E"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/btnOldTestament"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:background="@drawable/bg_search_bar"
-                        android:paddingHorizontal="20dp"
-                        android:paddingVertical="8dp"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_cream_task_card"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
                         android:text="Old Testament"
-                        android:textColor="@color/text_grey" />
+                        android:textColor="#4A6956"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/btnNewTestament"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:background="@drawable/bg_search_bar"
-                        android:paddingHorizontal="20dp"
-                        android:paddingVertical="8dp"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_cream_task_card"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
                         android:text="New Testament"
-                        android:textColor="@color/text_grey" />
+                        android:textColor="#4A6956"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
             </HorizontalScrollView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="Stories"
-                android:textColor="@color/text_dark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
+            <!-- Stories 3D Grid -->
+            <GridLayout
                 android:id="@+id/containerStories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
+                android:layout_marginTop="14dp"
+                android:columnCount="2"
+                app:layout_constraintTop_toBottomOf="@+id/hsvCategories">
 
+                <!-- 1. Creation and the Fall -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardCreationFall"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
                     android:clickable="true"
-                    android:focusable="true">
-                    <View android:id="@+id/thumb1" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_adam" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle1" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Creation and the Fall" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb1" app:layout_constraintTop_toTopOf="@+id/thumb1" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="It begins with God creating the world, then Adam and Eve, and their subsequent disobedience..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle1" app:layout_constraintTop_toBottomOf="@+id/tvTitle1" />
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb1"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_adam"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="Creation and the Fall"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb1" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction1"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle1">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 2. Early Humanity and the Flood -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardFlood"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb2" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_noah" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle2" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Early Humanity and the Flood" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb2" app:layout_constraintTop_toTopOf="@+id/thumb2" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="This section covers the spread of sin through humanity, leading to God choosing Noah..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle2" app:layout_constraintTop_toBottomOf="@+id/tvTitle2" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb2"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_noah"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="Early Humanity and the Flood"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb2" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction2"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle2">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 3. Tower of Babel -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardBabelAbraham"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb3" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_babel" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="The Tower of Babel and Abraham's Covenant" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb3" app:layout_constraintTop_toTopOf="@+id/thumb3" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="explains how humanity's pride led to the Tower of Babel, resulting in the division of languages..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle3" app:layout_constraintTop_toBottomOf="@+id/tvTitle3" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb3"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_babel"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="The Tower of Babel and Abraham's Covenant"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction3"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb3" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction3"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle3">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 4. Slavery in Egypt and Exodus -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardExodus"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb4" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_slavery" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle4" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Slavery in Egypt and the Exodus" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb4" app:layout_constraintTop_toTopOf="@+id/thumb4" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="The narrative moves to the Israelites' enslavement in Egypt, Moses's call by God, the plagues..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle4" app:layout_constraintTop_toBottomOf="@+id/tvTitle4" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb4"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_slavery"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="Slavery in Egypt and the Exodus"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction4"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb4" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction4"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle4">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 5. Law and Desert -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardLawDesert"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb5" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_law" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle5" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="The Law and Wandering in the Desert" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb5" app:layout_constraintTop_toTopOf="@+id/thumb5" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="God gives the Israelites the Law, including the Ten Commandments, at Mount Sinai..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle5" app:layout_constraintTop_toBottomOf="@+id/tvTitle5" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb5"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_law"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="The Law and Wandering in the Desert"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction5"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb5" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction5"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle5">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 6. Judges -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardJudges"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb6" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_land" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle6" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Entering the Promised Land and the Judges" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb6" app:layout_constraintTop_toTopOf="@+id/thumb6" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Joshua leads the new generation into the Promised Land, conquering Jericho..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle6" app:layout_constraintTop_toBottomOf="@+id/tvTitle6" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb6"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_land"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="Entering the Promised Land and the Judges"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction6"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb6" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction6"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle6">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 7. Monarchy -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardMonarchy"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb7" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_monarchy" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle7" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="The Monarchy: Saul, David, and Solomon" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb7" app:layout_constraintTop_toTopOf="@+id/thumb7" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="The Israelites demand a king, and Saul is anointed, but he proves to be oppressive..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle7" app:layout_constraintTop_toBottomOf="@+id/tvTitle7" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb7"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_monarchy"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="The Monarchy: Saul, David, and Solomon"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction7"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb7" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction7"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle7">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 8. Division and Exile -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardDivisionExile"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb8" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_division" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle8" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Division of the Kingdom and Exile" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb8" app:layout_constraintTop_toTopOf="@+id/thumb8" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="The kingdom splits into Israel and Judah, both succumbing to evil kings and idol worship..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle8" app:layout_constraintTop_toBottomOf="@+id/tvTitle8" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb8"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_division"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="Division of the Kingdom and Exile"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction8"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb8" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction8"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle8">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 9. Return from Exile -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardReturnMessiah"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb9" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_exile" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle9" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Return from Exile and Anticipation of the Messiah" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb9" app:layout_constraintTop_toTopOf="@+id/thumb9" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="After exile, the Israelites return to their land and rebuild the Temple..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle9" app:layout_constraintTop_toBottomOf="@+id/tvTitle9" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb9"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_exile"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="Return from Exile and Anticipation of the Messiah"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction9"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb9" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction9"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle9">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 10. Birth and Ministry of Jesus -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardBirthMinistry"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb10" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_conflict" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle10" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="The Birth and Ministry of Jesus" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb10" app:layout_constraintTop_toTopOf="@+id/thumb10" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Mary gives birth to Jesus in Bethlehem, fulfilling prophecies. Jesus's ministry begins..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle10" app:layout_constraintTop_toBottomOf="@+id/tvTitle10" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb10"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_birth"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="The Birth and Ministry of Jesus"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction10"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb10" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction10"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 11. Conflict and Death -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardConflictDeath"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb11" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_conflict" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle11" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Conflict with the Pharisees and Jesus's Death" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb11" app:layout_constraintTop_toTopOf="@+id/thumb11" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Jesus's teachings and actions clash with the Pharisees. He enters Jerusalem..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle11" app:layout_constraintTop_toBottomOf="@+id/tvTitle11" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb11"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_conflict"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="Conflict with the Pharisees and Jesus's Death"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction11"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb11" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction11"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle11">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- 12. Resurrection and Ascension -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardResurrectionAscension"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="12dp">
-                    <View android:id="@+id/thumb12" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/ic_resurrection" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-                    <TextView android:id="@+id/tvTitle12" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Resurrection and Ascension" android:textColor="@color/text_dark" android:textSize="16sp" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/thumb12" app:layout_constraintTop_toTopOf="@+id/thumb12" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="On the third day, Jesus rises from the dead, proving his victory over death..." android:textColor="@color/text_grey" android:textSize="13sp" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="@+id/tvTitle12" app:layout_constraintTop_toBottomOf="@+id/tvTitle12" />
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_glass_card_white"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/thumb12"
+                        android:layout_width="115dp"
+                        android:layout_height="115dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_resurrection"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:text="Resurrection and Ascension"
+                        android:textColor="#1D3B2E"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/btnAction12"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/thumb12" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btnAction12"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_pill_btn_green"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle12">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="View Quiz Result"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_sparkle_star"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </LinearLayout>
+            </GridLayout>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

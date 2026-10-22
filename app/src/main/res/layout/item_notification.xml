@@ -1,80 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/notificationCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    android:background="@drawable/bg_glass_card_white"
+    android:elevation="3dp"
+    android:padding="14dp">
+
+    <View
+        android:id="@+id/viewIndicator"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_circle_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivIcon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="fitCenter"
+        android:src="@android:drawable/btn_star_big_on"
+        app:layout_constraintBottom_toBottomOf="@+id/viewIndicator"
+        app:layout_constraintEnd_toEndOf="@+id/viewIndicator"
+        app:layout_constraintStart_toStartOf="@+id/viewIndicator"
+        app:layout_constraintTop_toTopOf="@+id/viewIndicator" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="@color/white">
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnDelete"
+        app:layout_constraintStart_toEndOf="@+id/viewIndicator"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <View
-            android:id="@+id/viewIndicator"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_circle_white"
-            android:backgroundTint="@color/badge_yellow" />
-
-        <ImageView
-            android:id="@+id/ivIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="-36dp"
-            android:src="@android:drawable/btn_star_big_on"
-            app:tint="@color/text_dark" />
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tvNotifTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:text="Achievement Earned!"
+            android:textColor="#1D3B2E"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvNotifTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Achievement Earned!"
-                android:textColor="@color/text_dark"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/tvNotifDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="You've unlocked the Beginner badge."
+            android:textColor="#2C4B3D"
+            android:textSize="13sp" />
 
-            <TextView
-                android:id="@+id/tvNotifDesc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="You've unlocked the Beginner badge."
-                android:textColor="@color/text_grey"
-                android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/tvNotifTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Oct 24, 10:30 AM"
-                android:textColor="@color/text_grey"
-                android:textSize="10sp"
-                android:visibility="gone" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/btnDelete"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="10dp"
-            android:src="@android:drawable/ic_menu_delete"
-            app:tint="@color/text_grey"
-            android:alpha="0.6"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+        <TextView
+            android:id="@+id/tvNotifTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Oct 24, 10:30 AM"
+            android:textColor="#5C7C6B"
+            android:textSize="11sp"
+            android:visibility="gone" />
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/btnDelete"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:alpha="0.65"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="6dp"
+        android:src="@android:drawable/ic_menu_delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#6E8877" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

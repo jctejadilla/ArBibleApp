@@ -5,335 +5,420 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:background="@drawable/bg_meh"
     tools:context=".StudentDashboard">
 
+    <!-- Top Navigation Header -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/tvWelcomeBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowColor="#30000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="4"
+            android:text="My Dashboard"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btnNotifications"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_circle_translucent"
+            android:elevation="3dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_notification"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#1D3B2E" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Main Scrollable Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:scrollbars="none"
         app:layout_constraintBottom_toTopOf="@+id/bottomNav"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/topBar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="24dp">
 
-            <TextView
-                android:id="@+id/tvWelcomeBack"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Welcome back,"
-                android:textColor="@color/text_grey"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/btnNotifications"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:src="@android:drawable/ic_popup_reminder"
-                android:background="@drawable/bg_circle_white"
-                android:elevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/text_dark" />
-
-            <TextView
-                android:id="@+id/tvStudentName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Student"
-                android:textColor="@color/text_dark"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvWelcomeBack" />
-
+            <!-- Card 1: Student Profile, Level Progress & Streak Header Card -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cardStreak"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:background="@drawable/bg_rounded_card"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_streak_outer_card"
                 android:elevation="4dp"
-                android:padding="20dp"
-                app:layout_constraintTop_toBottomOf="@+id/tvStudentName"
-                tools:layout_editor_absoluteX="24dp">
+                app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/tvStreakLabel"
-                    android:layout_width="wrap_content"
+                <!-- Top Profile Section -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layoutProfileTop"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Learning Streak"
-                    android:textColor="#E0F2F1"
-                    android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:background="@drawable/bg_profile_top_section"
+                    android:padding="16dp"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/tvStreakValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="7 Days 🔥"
-                    android:textColor="@color/white"
-                    android:textSize="32sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvStreakLabel" />
+                    <!-- Avatar Image -->
+                    <ImageView
+                        android:id="@+id/imgStudentAvatar"
+                        android:layout_width="76dp"
+                        android:layout_height="98dp"
+                        android:background="@drawable/bg_avatar_box"
+                        android:padding="4dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_def_avatar"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tvXPLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Total XP"
-                    android:textColor="#E0F2F1"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <!-- Student Name -->
+                    <TextView
+                        android:id="@+id/tvStudentName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:text="Explorer Alex!"
+                        android:textColor="#1B382A"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imgStudentAvatar"
+                        app:layout_constraintTop_toTopOf="@+id/imgStudentAvatar" />
 
-                <TextView
-                    android:id="@+id/tvXPValue"
-                    android:layout_width="wrap_content"
+                    <!-- Subtitle / Level Title -->
+                    <TextView
+                        android:id="@+id/tvStreakLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginTop="2dp"
+                        android:text="Level 2 - Learner"
+                        android:textColor="#527361"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imgStudentAvatar"
+                        app:layout_constraintTop_toBottomOf="@+id/tvStudentName" />
+
+                    <!-- Progress Bar -->
+                    <ProgressBar
+                        android:id="@+id/progressXP"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_xp_progress_track"
+                        android:max="100"
+                        android:progress="65"
+                        android:progressDrawable="@drawable/bg_xp_progress_fill"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imgStudentAvatar"
+                        app:layout_constraintTop_toBottomOf="@+id/tvStreakLabel" />
+
+                    <!-- Total XP Text -->
+                    <TextView
+                        android:id="@+id/tvXPValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="150/250 XP"
+                        android:textColor="#4A6956"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/progressXP" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Bottom Streak Section -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layoutStreakBottom"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="1,240"
-                    android:textColor="@color/white"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvXPLabel" />
+                    android:background="@drawable/bg_streak_bottom_section"
+                    android:paddingVertical="14dp"
+                    android:paddingHorizontal="16dp"
+                    app:layout_constraintTop_toBottomOf="@+id/layoutProfileTop">
+
+                    <TextView
+                        android:id="@+id/tvStreakValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="6 Sunday Streak 🔥"
+                        android:textColor="@color/white"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/tvExplore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="Explore Features"
-                android:textColor="@color/text_dark"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardStreak" />
-
             <GridLayout
+                android:id="@+id/gridFeatures"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:columnCount="2"
-                android:rowCount="2"
-                app:layout_constraintTop_toBottomOf="@+id/tvExplore">
+                android:rowCount="1"
+                app:layout_constraintTop_toBottomOf="@+id/cardStreak">
 
-                <!-- AR Scan -->
+                <!-- Card 1: AR Scan / Start Story -->
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/arScan"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="16dp"
-                    android:id="@+id/arScan"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_feature_card_blue"
+                    android:clickable="true"
+                    android:elevation="4dp"
                     android:focusable="true"
-                    >
+                    android:padding="12dp">
 
-                    <View
-                        android:id="@+id/iconAR"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.4"
+                    <!-- Illustration Container -->
+                    <ImageView
+                        android:id="@+id/imgStory3D"
+                        android:layout_width="146dp"
+                        android:layout_height="163dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_qrscan"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@android:drawable/ic_menu_camera"
-                        app:layout_constraintBottom_toBottomOf="@+id/iconAR"
-                        app:layout_constraintEnd_toEndOf="@+id/iconAR"
-                        app:layout_constraintStart_toStartOf="@+id/iconAR"
-                        app:layout_constraintTop_toTopOf="@+id/iconAR"
-                        app:tint="@color/text_dark" />
+                    <!-- Pill Action Button -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_pill_btn_blue"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="12dp"
+                        app:layout_constraintTop_toBottomOf="@id/imgStory3D"
+                        tools:layout_editor_absoluteX="12dp">
 
-                    <TextView
-                        android:id="@+id/tvARTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="AR Scan"
-                        android:textColor="@color/text_dark"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iconAR" />
+                        <TextView
+                            android:id="@+id/tvARTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="AR Scanner"
+                            android:textColor="@color/white"
+                            android:textSize="13.5sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Scan and explore stories in 3D"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvARTitle" />
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_camera"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-                <!-- Attendance -->
+                <!-- Card 2: Attendance / QR Scanners -->
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/attendance"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="220dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="16dp"
-                    android:id="@+id/attendance"
-                    android:focusable="true">
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_feature_card_sky"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:focusable="true"
+                    android:padding="12dp">
 
-                    <View
-                        android:id="@+id/iconAttendance"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.4"
+                    <!-- Illustration Container -->
+                    <ImageView
+                        android:id="@+id/imgArk3D"
+                        android:layout_width="146dp"
+                        android:layout_height="163dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_qrcode"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@drawable/ic_qr"
-                        app:layout_constraintBottom_toBottomOf="@+id/iconAttendance"
-                        app:layout_constraintEnd_toEndOf="@+id/iconAttendance"
-                        app:layout_constraintStart_toStartOf="@+id/iconAttendance"
-                        app:layout_constraintTop_toTopOf="@+id/iconAttendance"
-                        app:tint="@color/text_dark" />
+                    <!-- Pill Action Button -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_pill_btn_yellow"
+                        android:elevation="2dp"
+                        android:paddingHorizontal="12dp"
+                        app:layout_constraintBottom_toBottomOf="parent">
 
-                    <TextView
-                        android:id="@+id/tvAttendanceTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="QR Code"
-                        android:textColor="@color/text_dark"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iconAttendance" />
+                        <TextView
+                            android:id="@+id/tvAttendanceTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="My QR Code"
+                            android:textColor="#1D3B2E"
+                            android:textSize="13.5sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Show it to your teacher"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvAttendanceTitle" />
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_qr"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="#1D3B2E" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </GridLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
+    <!-- Bottom Navigation Bar -->
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="@color/white"
-        android:elevation="16dp"
+        android:layout_height="wrap_content"
+        android:minHeight="72dp"
+        android:background="@drawable/bg_bottom_nav_glass"
+        android:elevation="12dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
+            android:id="@+id/navHome"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical"
-            android:id="@+id/navHome">
+            android:orientation="vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_home"
-                app:tint="@color/primary_green" />
+                app:tint="#1D3B2E" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Home"
-                android:textColor="@color/primary_green"
-                android:textSize="12sp" />
+                android:textColor="#1D3B2E"
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navStories"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_story"
-                app:tint="@color/text_grey" />
+                app:tint="#6B8A7A" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Stories"
-                android:textColor="@color/text_grey"
+                android:textColor="#6B8A7A"
                 android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navLeaderboard"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@android:drawable/btn_star_big_on"
-                app:tint="@color/text_grey" />
+                app:tint="#6B8A7A" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Leaderboard"
-                android:textColor="@color/text_grey"
+                android:textColor="#6B8A7A"
                 android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navProfile"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@android:drawable/ic_menu_myplaces"
-                app:tint="@color/text_grey" />
+                app:tint="#6B8A7A" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Profile"
-                android:textColor="@color/text_grey"
+                android:textColor="#6B8A7A"
                 android:textSize="12sp" />
         </LinearLayout>
 

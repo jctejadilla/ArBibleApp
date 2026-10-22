@@ -6,10 +6,23 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
+import android.graphics.Color;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +35,7 @@ public class BibleStories extends AppCompatActivity {
 
     private ImageView btnBack;
     private EditText etSearch;
-    private LinearLayout containerStories;
+    private View containerStories;
     private TextView btnAll, btnOldTestament, btnNewTestament;
     private ConstraintLayout cardCreationFall, cardFlood, cardBabelAbraham, cardExodus, cardLawDesert,
             cardJudges, cardMonarchy, cardDivisionExile, cardReturnMessiah,
@@ -35,7 +48,17 @@ public class BibleStories extends AppCompatActivity {
         setContentView(R.layout.activity_bible_stories);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+
+            View topBar = findViewById(R.id.topBar);
+            if (topBar != null) {
+                topBar.setPadding(
+                        topBar.getPaddingLeft(),
+                        systemBars.top + 12,
+                        topBar.getPaddingRight(),
+                        topBar.getPaddingBottom()
+                );
+            }
             return insets;
         });
 
@@ -141,82 +164,80 @@ public class BibleStories extends AppCompatActivity {
         });
     }
 
-    @SuppressLint("ResourceAsColor")
     private void updateCategoryUI(TextView selectedBtn) {
         resetCategoryButton(btnAll);
         resetCategoryButton(btnOldTestament);
         resetCategoryButton(btnNewTestament);
 
-        selectedBtn.setBackgroundResource(R.drawable.bg_button_next);
-        selectedBtn.setTextColor(R.color.white);
+        selectedBtn.setBackgroundResource(R.drawable.bg_pill_btn_yellow);
+        selectedBtn.setTextColor(Color.parseColor("#1D3B2E"));
     }
 
-    @SuppressLint("ResourceAsColor")
     private void resetCategoryButton(TextView btn) {
-        btn.setBackgroundResource(R.drawable.bg_search_bar);
-        btn.setTextColor(R.color.text_grey);
+        btn.setBackgroundResource(R.drawable.bg_cream_task_card);
+        btn.setTextColor(Color.parseColor("#4A6956"));
+    }
+
+    private void setVisibleCards(View... cards) {
+        if (containerStories instanceof ViewGroup) {
+            ViewGroup grid = (ViewGroup) containerStories;
+            grid.removeAllViews();
+            for (View card : cards) {
+                if (card != null) {
+                    card.setVisibility(View.VISIBLE);
+                    grid.addView(card);
+                }
+            }
+        }
     }
 
     private void showAllStories() {
-        setAllVisibility(View.VISIBLE);
+        setVisibleCards(
+                cardCreationFall, cardFlood, cardBabelAbraham, cardExodus,
+                cardLawDesert, cardJudges, cardMonarchy, cardDivisionExile,
+                cardReturnMessiah, cardBirthMinistry, cardConflictDeath, cardResurrectionAscension
+        );
     }
 
     private void showOldTestament() {
-        setAllVisibility(View.GONE);
-        if (cardCreationFall != null) cardCreationFall.setVisibility(View.VISIBLE);
-        if (cardFlood != null) cardFlood.setVisibility(View.VISIBLE);
-        if (cardBabelAbraham != null) cardBabelAbraham.setVisibility(View.VISIBLE);
-        if (cardExodus != null) cardExodus.setVisibility(View.VISIBLE);
-        if (cardLawDesert != null) cardLawDesert.setVisibility(View.VISIBLE);
-        if (cardJudges != null) cardJudges.setVisibility(View.VISIBLE);
-        if (cardMonarchy != null) cardMonarchy.setVisibility(View.VISIBLE);
-        if (cardDivisionExile != null) cardDivisionExile.setVisibility(View.VISIBLE);
-        if (cardReturnMessiah != null) cardReturnMessiah.setVisibility(View.VISIBLE);
+        setVisibleCards(
+                cardCreationFall, cardFlood, cardBabelAbraham, cardExodus,
+                cardLawDesert, cardJudges, cardMonarchy, cardDivisionExile, cardReturnMessiah
+        );
     }
 
     private void showNewTestament() {
-        setAllVisibility(View.GONE);
-        if (cardBirthMinistry != null) cardBirthMinistry.setVisibility(View.VISIBLE);
-        if (cardConflictDeath != null) cardConflictDeath.setVisibility(View.VISIBLE);
-        if (cardResurrectionAscension != null) cardResurrectionAscension.setVisibility(View.VISIBLE);
-    }
-
-    private void setAllVisibility(int visibility) {
-        if (cardCreationFall != null) cardCreationFall.setVisibility(visibility);
-        if (cardFlood != null) cardFlood.setVisibility(visibility);
-        if (cardBabelAbraham != null) cardBabelAbraham.setVisibility(visibility);
-        if (cardExodus != null) cardExodus.setVisibility(visibility);
-        if (cardLawDesert != null) cardLawDesert.setVisibility(visibility);
-        if (cardJudges != null) cardJudges.setVisibility(visibility);
-        if (cardMonarchy != null) cardMonarchy.setVisibility(visibility);
-        if (cardDivisionExile != null) cardDivisionExile.setVisibility(visibility);
-        if (cardReturnMessiah != null) cardReturnMessiah.setVisibility(visibility);
-        if (cardBirthMinistry != null) cardBirthMinistry.setVisibility(visibility);
-        if (cardConflictDeath != null) cardConflictDeath.setVisibility(visibility);
-        if (cardResurrectionAscension != null) cardResurrectionAscension.setVisibility(visibility);
+        setVisibleCards(
+                cardBirthMinistry, cardConflictDeath, cardResurrectionAscension
+        );
     }
 
     private void filterStories(String query) {
-        handleCardVisibility(cardCreationFall, "Creation and the Fall", query);
-        handleCardVisibility(cardFlood, "Early Humanity and the Flood", query);
-        handleCardVisibility(cardBabelAbraham, "The Tower of Babel and Abraham's Covenant", query);
-        handleCardVisibility(cardExodus, "Slavery in Egypt and the Exodus", query);
-        handleCardVisibility(cardLawDesert, "The Law and Wandering in the Desert", query);
-        handleCardVisibility(cardJudges, "Entering the Promised Land and the Judges", query);
-        handleCardVisibility(cardMonarchy, "The Monarchy: Saul, David, and Solomon", query);
-        handleCardVisibility(cardDivisionExile, "Division of the Kingdom and Exile", query);
-        handleCardVisibility(cardReturnMessiah, "Return from Exile and Anticipation of the Messiah", query);
-        handleCardVisibility(cardBirthMinistry, "The Birth and Ministry of Jesus", query);
-        handleCardVisibility(cardConflictDeath, "Conflict with the Pharisees and Jesus's Death", query);
-        handleCardVisibility(cardResurrectionAscension, "Resurrection and Ascension", query);
+        if (query == null || query.trim().isEmpty()) {
+            showAllStories();
+            return;
+        }
+        String q = query.toLowerCase().trim();
+        List<View> matches = new ArrayList<>();
+        checkAndAddMatch(matches, cardCreationFall, "Creation and the Fall", q);
+        checkAndAddMatch(matches, cardFlood, "Early Humanity and the Flood", q);
+        checkAndAddMatch(matches, cardBabelAbraham, "The Tower of Babel and Abraham's Covenant", q);
+        checkAndAddMatch(matches, cardExodus, "Slavery in Egypt and the Exodus", q);
+        checkAndAddMatch(matches, cardLawDesert, "The Law and Wandering in the Desert", q);
+        checkAndAddMatch(matches, cardJudges, "Entering the Promised Land and the Judges", q);
+        checkAndAddMatch(matches, cardMonarchy, "The Monarchy: Saul, David, and Solomon", q);
+        checkAndAddMatch(matches, cardDivisionExile, "Division of the Kingdom and Exile", q);
+        checkAndAddMatch(matches, cardReturnMessiah, "Return from Exile and Anticipation of the Messiah", q);
+        checkAndAddMatch(matches, cardBirthMinistry, "The Birth and Ministry of Jesus", q);
+        checkAndAddMatch(matches, cardConflictDeath, "Conflict with the Pharisees and Jesus's Death", q);
+        checkAndAddMatch(matches, cardResurrectionAscension, "Resurrection and Ascension", q);
+
+        setVisibleCards(matches.toArray(new View[0]));
     }
 
-    private void handleCardVisibility(View card, String title, String query) {
-        if (card == null) return;
-        if (title.toLowerCase().contains(query)) {
-            card.setVisibility(View.VISIBLE);
-        } else {
-            card.setVisibility(View.GONE);
+    private void checkAndAddMatch(List<View> matches, View card, String title, String query) {
+        if (card != null && title.toLowerCase().contains(query)) {
+            matches.add(card);
         }
     }
 }

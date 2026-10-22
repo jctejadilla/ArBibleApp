@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Bottom-right organic vine & leaves decoration -->
+    <path
+        android:fillColor="#3B5A47"
+        android:fillAlpha="0.18"
+        android:pathData="M 100,100 C 75,90 50,78 35,58 C 45,52 60,60 70,68 C 78,75 90,82 100,85 Z" />
+    <path
+        android:fillColor="#2D4D3A"
+        android:fillAlpha="0.22"
+        android:pathData="M 100,100 C 85,80 72,55 68,32 C 78,40 82,58 88,70 C 92,80 96,90 100,100 Z" />
+    <path
+        android:fillColor="#4A6B56"
+        android:fillAlpha="0.15"
+        android:pathData="M 85,100 C 70,88 52,80 38,88 C 50,82 68,85 85,100 Z" />
+    <path
+        android:fillColor="#2D4D3A"
+        android:fillAlpha="0.20"
+        android:pathData="M 60,75 C 45,80 30,75 22,65 C 32,64 45,68 60,75 Z" />
+    <path
+        android:fillColor="#3B5A47"
+        android:fillAlpha="0.18"
+        android:pathData="M 82,62 C 72,50 65,32 68,18 C 75,30 78,48 82,62 Z" />
+</vector>

@@ -354,6 +354,42 @@
                     android:textColor="@color/text_grey"
                     android:textSize="13sp" />
 
+                <!-- Story Quiz Input Limits Legend Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardOptionsLegend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="#E8F5E9"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvLegendHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Choice Limits &amp; Input Rules"
+                            android:textColor="#2E7D32"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvOptionsLegend"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="• Choices limit: Exactly 4 options required per question.\n• Length limit: Max 100 characters per option."
+                            android:textColor="#1B5E20"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
                 <!-- Field 1: Question / Scenario / Content Title -->
                 <TextView
                     android:id="@+id/tvLabelOriginal"

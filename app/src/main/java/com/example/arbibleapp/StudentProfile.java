@@ -45,7 +45,17 @@ public class StudentProfile extends AppCompatActivity {
         setContentView(R.layout.activity_student_profile);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+
+            View topBar = findViewById(R.id.topBar);
+            if (topBar != null) {
+                topBar.setPadding(
+                        topBar.getPaddingLeft(),
+                        systemBars.top + 12,
+                        topBar.getPaddingRight(),
+                        topBar.getPaddingBottom()
+                );
+            }
             return insets;
         });
 
@@ -137,7 +147,15 @@ public class StudentProfile extends AppCompatActivity {
                 if (username == null || username.isEmpty()) {
                     username = documentSnapshot.getString("fullName");
                 }
-                tvStudentName.setText(username != null ? username : "Student");
+                if (username != null && !username.isEmpty()) {
+                    if (!username.startsWith("Explorer") && !username.endsWith("!")) {
+                        tvStudentName.setText("Explorer " + username + "!");
+                    } else {
+                        tvStudentName.setText(username);
+                    }
+                } else {
+                    tvStudentName.setText("Student");
+                }
 
                 long totalXP = documentSnapshot.contains("totalXP") ? documentSnapshot.getLong("totalXP") : 0;
                 updateLevelUI(totalXP);
@@ -171,11 +189,11 @@ public class StudentProfile extends AppCompatActivity {
         if (level < 10) {
             pbXPLevel.setMax(XP_PER_LEVEL);
             pbXPLevel.setProgress((int) currentLevelXP);
-            tvXPProgressText.setText(currentLevelXP + " / " + XP_PER_LEVEL + " XP");
+            tvXPProgressText.setText(currentLevelXP + "/" + XP_PER_LEVEL + " XP");
         } else {
             pbXPLevel.setMax(XP_PER_LEVEL);
             pbXPLevel.setProgress(XP_PER_LEVEL);
-            tvXPProgressText.setText("Max Level (Bible Master)");
+            tvXPProgressText.setText("Max Level");
         }
     }
 
@@ -192,6 +210,12 @@ public class StudentProfile extends AppCompatActivity {
                     }
                     int attendanceCount = uniqueDates.size();
                     tvAttendanceCount.setText(String.valueOf(attendanceCount));
+                    
+                    TextView tvStreakValue = findViewById(R.id.tvStreakValue);
+                    if (tvStreakValue != null) {
+                        tvStreakValue.setText(attendanceCount + " Sunday Streak 🔥");
+                    }
+
                     updateAttendanceBadges(attendanceCount);
                 });
 

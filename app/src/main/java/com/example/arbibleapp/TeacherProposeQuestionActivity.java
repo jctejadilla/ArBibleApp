@@ -189,11 +189,15 @@ public class TeacherProposeQuestionActivity extends AppCompatActivity {
         tvToolbarTitle.setText("Configure Proposal");
         tvSelectedStoryHeader.setText(storyTitle);
 
+        TextView tvOptionsLegend = findViewById(R.id.tvOptionsLegend);
         List<String> originalItems = new ArrayList<>();
         switch (quizType) {
             case 1: // Quiz 1: Creation and the Fall (Multiple Choice)
                 originalItems.addAll(Arrays.asList(CREATION_QUESTIONS));
                 tvSelectedStorySub.setText("Quiz 1 • Propose Multiple Choice Question Edits:");
+                if (tvOptionsLegend != null) {
+                    tvOptionsLegend.setText("• Choices limit: Exactly 4 options required per question (Options A, B, C, D).\n• Choice length limit: Max 100 characters per option.\n• Correct answer limit: Select 1 correct option index (Choice 1 to 4).");
+                }
                 tvLabelOriginal.setText("Select Current Question to Edit");
                 tvLabelProposed.setText("Proposed New Question Wording");
                 llOptionsContainer.setVisibility(View.VISIBLE);
@@ -208,6 +212,9 @@ public class TeacherProposeQuestionActivity extends AppCompatActivity {
             case 2: // Quiz 2: Early Humanity and the Flood (Word Search)
                 originalItems.addAll(Arrays.asList(FLOOD_WORDS));
                 tvSelectedStorySub.setText("Quiz 2 • Propose Word Search Grid Word Edits:");
+                if (tvOptionsLegend != null) {
+                    tvOptionsLegend.setText("• Word count limit: Exactly 1 word replacement per proposal.\n• Character limit: Max 8 uppercase letters (A-Z only, no spaces or special characters).\n• Matrix limit: Word must fit into the 10x10 Word Search Grid Bank.");
+                }
                 tvLabelOriginal.setText("Select Current Word to Replace");
                 tvLabelProposed.setText("Proposed New Word for Grid");
                 llOptionsContainer.setVisibility(View.GONE);
@@ -216,11 +223,14 @@ public class TeacherProposeQuestionActivity extends AppCompatActivity {
             case 3: // Quiz 3: Tower of Babel & Abraham's Covenant (Tower Blocks)
                 originalItems.addAll(Arrays.asList(BABEL_FLOORS));
                 tvSelectedStorySub.setText("Quiz 3 • Propose Tower Floor Block Edits:");
+                if (tvOptionsLegend != null) {
+                    tvOptionsLegend.setText("• Choices limit: Exactly 2 options per floor level (Correct Block & Odd-One-Out Block).\n• Length limit: Max 25 characters per block label.\n• Correct answer limit: Option A = Correct Block, Option B = Odd-One-Out.");
+                }
                 tvLabelOriginal.setText("Select Floor Level / Block");
                 tvLabelProposed.setText("Proposed Correct Block / Word");
                 llOptionsContainer.setVisibility(View.VISIBLE);
-                etOptionA.setHint("Correct Block Label");
-                etOptionB.setHint("Odd-One-Out Block Label");
+                etOptionA.setHint("Correct Block Label (Option A)");
+                etOptionB.setHint("Odd-One-Out Block Label (Option B)");
                 etOptionC.setVisibility(View.GONE);
                 etOptionD.setVisibility(View.GONE);
                 break;
@@ -228,11 +238,14 @@ public class TeacherProposeQuestionActivity extends AppCompatActivity {
             case 4: // Quiz 4: Slavery in Egypt and the Exodus (Image Sequence)
                 originalItems.addAll(Arrays.asList(EXODUS_STEPS));
                 tvSelectedStorySub.setText("Quiz 4 • Propose Image Sequence Step Edits:");
+                if (tvOptionsLegend != null) {
+                    tvOptionsLegend.setText("• Choices limit: Exactly 2 options per sequence step.\n• Length limit: Max 60 characters per step choice description.\n• Correct answer limit: Option A = Correct Sequence Step, Option B = Wrong Step.");
+                }
                 tvLabelOriginal.setText("Select Sequence Step");
                 tvLabelProposed.setText("Proposed Step Wording / Scene Description");
                 llOptionsContainer.setVisibility(View.VISIBLE);
-                etOptionA.setHint("Correct Choice Description");
-                etOptionB.setHint("Wrong Choice Description");
+                etOptionA.setHint("Correct Choice Description (Option A)");
+                etOptionB.setHint("Wrong Choice Description (Option B)");
                 etOptionC.setVisibility(View.GONE);
                 etOptionD.setVisibility(View.GONE);
                 break;
@@ -240,11 +253,14 @@ public class TeacherProposeQuestionActivity extends AppCompatActivity {
             case 5: // Quiz 5: The Law and Wandering in the Desert (Scenario Decisions)
                 originalItems.addAll(Arrays.asList(LAW_SCENARIOS));
                 tvSelectedStorySub.setText("Quiz 5 • Propose Scenario Decision Edits:");
+                if (tvOptionsLegend != null) {
+                    tvOptionsLegend.setText("• Choices limit: Exactly 2 decision choices per commandment scenario.\n• Length limit: Max 60 characters per decision choice.\n• Decision limit: Option A = Obey Commandment, Option B = Disobey Commandment.");
+                }
                 tvLabelOriginal.setText("Select Current Scenario Wording");
                 tvLabelProposed.setText("Proposed Scenario Description");
                 llOptionsContainer.setVisibility(View.VISIBLE);
-                etOptionA.setHint("Choice A (Obey Decision)");
-                etOptionB.setHint("Choice B (Disobey Decision)");
+                etOptionA.setHint("Choice A - Obey Decision (Option A)");
+                etOptionB.setHint("Choice B - Disobey Decision (Option B)");
                 etOptionC.setVisibility(View.GONE);
                 etOptionD.setVisibility(View.GONE);
                 break;
@@ -254,7 +270,6 @@ public class TeacherProposeQuestionActivity extends AppCompatActivity {
         originalAdapter.setDropDownViewResource(R.layout.spinner_dropdown_dark);
         spOriginalQuestion.setAdapter(originalAdapter);
 
-        // Fetch live approved question configurations from Firestore to include in dropdown
         db.collection("quiz_questions")
                 .whereEqualTo("storyTitle", storyTitle)
                 .whereEqualTo("approvedByAdmin", true)
@@ -301,12 +316,31 @@ public class TeacherProposeQuestionActivity extends AppCompatActivity {
             return;
         }
 
+        if (selectedQuizType == 2) { // Word search validation
+            if (propQ.contains(" ") || propQ.length() > 8) {
+                Toast.makeText(this, "Word Search words must be A-Z with no spaces and max 8 letters!", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
         List<String> options = new ArrayList<>();
         if (llOptionsContainer.getVisibility() == View.VISIBLE) {
             String optA = etOptionA.getText().toString().trim();
             String optB = etOptionB.getText().toString().trim();
             String optC = etOptionC.getText().toString().trim();
             String optD = etOptionD.getText().toString().trim();
+
+            if (selectedQuizType == 1) { // 4 choices required
+                if (optA.isEmpty() || optB.isEmpty() || optC.isEmpty() || optD.isEmpty()) {
+                    Toast.makeText(this, "Quiz 1 requires all 4 choices (Options A, B, C, D)!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            } else if (selectedQuizType >= 3 && selectedQuizType <= 5) { // 2 choices required
+                if (optA.isEmpty() || optB.isEmpty()) {
+                    Toast.makeText(this, "This quiz requires both Option A and Option B choices!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
 
             if (!optA.isEmpty()) options.add(optA);
             if (!optB.isEmpty()) options.add(optB);

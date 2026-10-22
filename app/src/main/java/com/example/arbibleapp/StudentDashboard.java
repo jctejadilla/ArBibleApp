@@ -6,6 +6,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +46,27 @@ public class StudentDashboard extends AppCompatActivity {
         setContentView(R.layout.activity_student_dashboard);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, 0, systemBars.right, 0);
+
+            View topBar = findViewById(R.id.topBar);
+            if (topBar != null) {
+                topBar.setPadding(
+                        topBar.getPaddingLeft(),
+                        systemBars.top + 12,
+                        topBar.getPaddingRight(),
+                        topBar.getPaddingBottom()
+                );
+            }
+
+            View bottomNav = findViewById(R.id.bottomNav);
+            if (bottomNav != null) {
+                bottomNav.setPadding(
+                        bottomNav.getPaddingLeft(),
+                        bottomNav.getPaddingTop(),
+                        bottomNav.getPaddingRight(),
+                        systemBars.bottom
+                );
+            }
             return insets;
         });
 
@@ -98,11 +119,58 @@ public class StudentDashboard extends AppCompatActivity {
                             }
 
                             if (username != null && !username.isEmpty() && tvStudentName != null) {
-                                tvStudentName.setText(username);
+                                if (!username.startsWith("Explorer") && !username.endsWith("!")) {
+                                    tvStudentName.setText("Explorer " + username + "!");
+                                } else {
+                                    tvStudentName.setText(username);
+                                }
                             }
 
                             long totalXP = documentSnapshot.contains("totalXP") ? documentSnapshot.getLong("totalXP") : 0;
-                            if (tvXPValue != null) tvXPValue.setText(String.format("%,d", totalXP));
+                            
+                            int XP_PER_LEVEL = 250;
+                            int level = (int) (totalXP / XP_PER_LEVEL) + 1;
+                            if (level > 10) level = 10;
+
+                            long currentLevelXP = totalXP % XP_PER_LEVEL;
+
+                            String levelName;
+                            switch (level) {
+                                case 1: levelName = "Beginner"; break;
+                                case 2: levelName = "Learner"; break;
+                                case 3: levelName = "Explorer"; break;
+                                case 4: levelName = "Scholar"; break;
+                                case 5: levelName = "Faithful"; break;
+                                case 6: levelName = "Disciple"; break;
+                                case 7: levelName = "Servant"; break;
+                                case 8: levelName = "Warrior"; break;
+                                case 9: levelName = "Ambassador"; break;
+                                case 10: levelName = "Bible Master"; break;
+                                default: levelName = "Bible Master"; break;
+                            }
+
+                            if (tvStreakLabel != null) {
+                                tvStreakLabel.setText("Level " + level + " - " + levelName);
+                            }
+
+                            ProgressBar progressXP = findViewById(R.id.progressXP);
+                            if (progressXP != null) {
+                                if (level < 10) {
+                                    progressXP.setMax(XP_PER_LEVEL);
+                                    progressXP.setProgress((int) currentLevelXP);
+                                } else {
+                                    progressXP.setMax(XP_PER_LEVEL);
+                                    progressXP.setProgress(XP_PER_LEVEL);
+                                }
+                            }
+
+                            if (tvXPValue != null) {
+                                if (level < 10) {
+                                    tvXPValue.setText(currentLevelXP + "/" + XP_PER_LEVEL + " XP");
+                                } else {
+                                    tvXPValue.setText("Max Level");
+                                }
+                            }
                         }
                     })
                     .addOnFailureListener(e -> {
@@ -124,14 +192,8 @@ public class StudentDashboard extends AppCompatActivity {
                             if (date != null) uniqueDates.add(date);
                         }
                         int attendanceCount = uniqueDates.size();
-                        if (tvStreakLabel != null) tvStreakLabel.setText("Total Attendance");
-
                         if (tvStreakValue != null) {
-                            if (attendanceCount <= 1) {
-                                tvStreakValue.setText(attendanceCount + " Sundays");
-                            } else {
-                                tvStreakValue.setText(attendanceCount + " Sundays 🔥");
-                            }
+                            tvStreakValue.setText(attendanceCount + " Sunday Streak 🔥");
                         }
                     });
         }

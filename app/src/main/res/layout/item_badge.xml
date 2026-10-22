@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="80dp"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="12dp"
+    android:id="@+id/badgeRoot"
+    android:layout_width="82dp"
+    android:layout_height="108dp"
+    android:layout_marginEnd="10dp"
     android:alpha="0.2"
-    android:id="@+id/badgeRoot">
+    android:background="@drawable/bg_cream_task_card"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/tvBadgeIcon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:gravity="center"
-        android:textSize="32sp"
+        android:textSize="26sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,8 +22,8 @@
 
     <ImageView
         android:id="@+id/ivBadgeIcon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:scaleType="fitCenter"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,13 +33,18 @@
     <TextView
         android:id="@+id/tvBadgeName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="4dp"
+        android:ellipsize="end"
         android:gravity="center"
+        android:maxLines="2"
         android:text="Badge"
-        android:textColor="@color/text_dark"
+        android:textColor="#1D3B2E"
         android:textSize="10sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivBadgeIcon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

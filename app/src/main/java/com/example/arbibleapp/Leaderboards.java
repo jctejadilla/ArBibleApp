@@ -1,6 +1,7 @@
 package com.example.arbibleapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,7 +56,17 @@ public class Leaderboards extends AppCompatActivity {
         setContentView(R.layout.activity_leaderboards);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+
+            View topBar = findViewById(R.id.topBar);
+            if (topBar != null) {
+                topBar.setPadding(
+                        topBar.getPaddingLeft(),
+                        systemBars.top + 12,
+                        topBar.getPaddingRight(),
+                        topBar.getPaddingBottom()
+                );
+            }
             return insets;
         });
 
@@ -83,26 +95,25 @@ public class Leaderboards extends AppCompatActivity {
 
     private void setupResetNotice() {
         TextView tvResetNotice = findViewById(R.id.tvResetNotice);
-        java.util.Calendar cal = java.util.Calendar.getInstance();
+        if (tvResetNotice == null) return;
 
-        cal.set(java.util.Calendar.DAY_OF_MONTH, 1);
-        while (cal.get(java.util.Calendar.DAY_OF_WEEK) != java.util.Calendar.SUNDAY) {
-            cal.add(java.util.Calendar.DAY_OF_MONTH, 1);
-        }
-        
-        java.util.Calendar now = java.util.Calendar.getInstance();
-        if (now.after(cal)) {
-            cal.add(java.util.Calendar.MONTH, 1);
-            cal.set(java.util.Calendar.DAY_OF_MONTH, 1);
-            while (cal.get(java.util.Calendar.DAY_OF_WEEK) != java.util.Calendar.SUNDAY) {
-                cal.add(java.util.Calendar.DAY_OF_MONTH, 1);
-            }
+        Calendar now = Calendar.getInstance();
+
+        Calendar nextReset = Calendar.getInstance();
+        nextReset.set(Calendar.DAY_OF_MONTH, 1);
+        nextReset.set(Calendar.HOUR_OF_DAY, 0);
+        nextReset.set(Calendar.MINUTE, 0);
+        nextReset.set(Calendar.SECOND, 0);
+        nextReset.set(Calendar.MILLISECOND, 0);
+
+        if (!now.before(nextReset)) {
+            nextReset.add(Calendar.MONTH, 1);
         }
 
-        long diff = cal.getTimeInMillis() - now.getTimeInMillis();
-        long days = diff / (24 * 60 * 60 * 1000);
-        
-        if (days == 0) {
+        long diffMs = nextReset.getTimeInMillis() - now.getTimeInMillis();
+        long days = diffMs / (24 * 60 * 60 * 1000L);
+
+        if (days <= 0) {
             tvResetNotice.setText("Resets Today!");
         } else {
             tvResetNotice.setText("Resets in " + days + "d");
@@ -379,17 +390,17 @@ public class Leaderboards extends AppCompatActivity {
         tvUsername.setLayoutParams(params);
 
         if (isCurrentUser) {
-            view.setBackgroundResource(R.drawable.bg_rounded_card);
-            tvUsername.setTextColor(getColor(R.color.white));
-            tvVal.setTextColor(getColor(R.color.white));
-            tvPointsLabel.setTextColor(getColor(R.color.white));
-            view.setAlpha(0.9f);
+            view.setBackgroundResource(R.drawable.bg_glass_card_user_highlight);
+            tvUsername.setTextColor(Color.parseColor("#1D3B2E"));
+            tvVal.setTextColor(Color.parseColor("#1D3B2E"));
+            tvPointsLabel.setTextColor(Color.parseColor("#1D3B2E"));
+            view.setAlpha(1.0f);
         } else {
-            view.setBackgroundResource(R.drawable.bg_rounded_card1);
-            tvUsername.setTextColor(getColor(R.color.text_dark));
-            tvVal.setTextColor(getColor(R.color.text_dark));
-            tvPointsLabel.setTextColor(getColor(R.color.text_grey));
-            view.setAlpha(0.9f);
+            view.setBackgroundResource(R.drawable.bg_glass_card_white);
+            tvUsername.setTextColor(Color.parseColor("#1D3B2E"));
+            tvVal.setTextColor(Color.parseColor("#1D3B2E"));
+            tvPointsLabel.setTextColor(Color.parseColor("#1D3B2E"));
+            view.setAlpha(1.0f);
         }
 
         layoutLeaderboardList.addView(view);
