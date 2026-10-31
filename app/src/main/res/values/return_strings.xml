@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="return_title">Return from Exile Quiz</string>
+    <string name="return_story">Return from Exile and Anticipation of the Messiah</string>
+    <string name="return_back">Back</string>
+    <string name="return_instructions_title">Return from Exile Quiz</string>
+    <string name="return_instructions">Tap two cards to find identical pictures. A match stays face-up. Different pictures turn face-down after one second. Find all six pairs, then tap Finish. There is no timer or penalty for mistakes. Each pair is worth 20 XP when you finish on Sunday. Monday–Saturday attempts are saved as trials with no XP.</string>
+    <string name="return_progress">%1$d of 6 pairs · %2$d moves</string>
+    <string name="return_pending_xp">%1$d XP pending · Finish on Sunday to earn XP</string>
+    <string name="return_trial">Trial · No XP · Attempts are saved for review</string>
+    <string name="return_prompt">Flip a card, then find its identical picture.</string>
+    <string name="return_choose_second">Now choose a second card.</string>
+    <string name="return_match">✓ A matching pair!</string>
+    <string name="return_mismatch">Different pictures. Remember them and try again!</string>
+    <string name="return_complete">✓ You found all six pairs! Tap Finish to save.</string>
+    <string name="return_finish">Finish</string>
+    <string name="return_saving">Saving…</string>
+    <string name="return_retry">Retry saving</string>
+    <string name="return_save_error">Your completed game is still here. Check your connection and retry saving.</string>
+    <string name="return_sign_in">Sign in to save your result. Your completed game is still here.</string>
+    <string name="return_hidden_card">Card %1$d, face down</string>
+    <string name="return_revealed_card">Card %1$d, %2$s</string>
+    <string name="return_matched_card">Card %1$d, %2$s, matched</string>
+    <string name="return_matched_label">✓ %1$s</string>
+    <string name="return_exit_title">Leave this game?</string>
+    <string name="return_exit_message">This unfinished attempt will not be saved or earn XP.</string>
+    <string name="return_stay">Keep playing</string>
+    <string name="return_leave">Leave</string>
+    <string name="return_review_miss">Mismatched turn %1$d\n%2$s</string>
+</resources>

@@ -198,6 +198,7 @@
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:background="@drawable/bg_button_next"
+            android:backgroundTint="@color/red"
             android:text="Previous"
             android:textAllCaps="false"
             android:textColor="@color/white"
@@ -211,11 +212,20 @@
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:background="@drawable/bg_button_next"
+            android:backgroundTint="@color/primary_green"
             android:text="Next"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="&quot;&#xA;    android:layout_width=&quot;match_parent"
+        tools:layout_editor_absoluteX="6dp"
+        tools:layout_editor_absoluteY="7dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

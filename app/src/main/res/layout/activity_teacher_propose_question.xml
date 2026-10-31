@@ -326,6 +326,256 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
+                <!-- Story 6 Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardStory6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_rounded_card"
+                            android:backgroundTint="#00BCD4"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="Quiz 6 • Word Scramble"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Entering the Promised Land and the Judges"
+                            android:textColor="@color/text_dark"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Word Scramble &amp; Picture Matching Answers"
+                            android:textColor="@color/text_grey"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Story 7 Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardStory7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_rounded_card"
+                            android:backgroundTint="#3F51B5"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="Quiz 7 • Story Sequencing"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="The Monarchy: Saul, David, and Solomon"
+                            android:textColor="@color/text_dark"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Scenario titles, pictures, and correct sequence"
+                            android:textColor="@color/text_grey"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Story 8 Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardStory8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_rounded_card"
+                            android:backgroundTint="#FF5722"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="Quiz 8 • Match the Pair"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Division of the Kingdom and Exile"
+                            android:textColor="@color/text_dark"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Character and object names and pictures"
+                            android:textColor="@color/text_grey"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Story 9 Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardStory9"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_rounded_card"
+                            android:backgroundTint="#673AB7"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="Quiz 9 • Flip and Match"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Return from Exile and Anticipation of the Messiah"
+                            android:textColor="@color/text_dark"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Subject labels and identical picture pairs"
+                            android:textColor="@color/text_grey"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Story 10 Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardStory10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_rounded_card"
+                            android:backgroundTint="#009688"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="Quiz 10 • Picture Word Quiz"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="The Birth and Ministry of Jesus"
+                            android:textColor="@color/text_dark"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Display names, answer words, and pictures"
+                            android:textColor="@color/text_grey"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
             </LinearLayout>
 
             <!-- STEP 2: DYNAMIC PROPOSAL FORM -->
@@ -505,6 +755,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
+                        android:id="@+id/tvCorrectAnswerLabel"
                         android:text="Correct Option Index"
                         android:textColor="@color/text_dark"
                         android:textSize="14sp"
@@ -518,6 +769,280 @@
                         android:layout_marginTop="8dp"
                         android:background="@drawable/bg_outlined_spinner" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llLawControls"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Scenario image"
+                        android:textColor="@color/text_dark"
+                        android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/ivLawImagePreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Law scenario image preview" />
+                    <TextView
+                        android:id="@+id/tvLawImageStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Keep the currently approved image"
+                        android:textColor="@color/text_dark" />
+                    <Button
+                        android:id="@+id/btnChooseLawImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="8dp"
+                        android:backgroundTint="@color/primary_green"
+                        android:text="Choose image"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="16dp" />
+                    <Button
+                        android:id="@+id/btnDefaultLawImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="8dp"
+                        android:backgroundTint="@color/primary_green"
+                        android:text="Use default image"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="16dp" />
+                    <TextView
+                        android:id="@+id/tvLawClassificationLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Correct classification"
+                        android:textColor="@color/text_dark"
+                        android:textStyle="bold" />
+                    <Spinner
+                        android:id="@+id/spLawClassification"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:background="@drawable/bg_outlined_spinner" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llBabelControls"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvBabelOddLabel" android:text="Odd Block Position"
+                        android:textColor="@color/text_dark"
+                        android:textStyle="bold" />
+                    <Spinner
+                        android:id="@+id/spBabelOddBlock"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:background="@drawable/bg_outlined_spinner" />
+
+                    <!-- Block 1 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvThreeImageLabel1" android:text="Block 1 image"
+                        android:textColor="@color/text_dark"
+                        android:layout_marginTop="16dp"
+                        android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/ivBabelImage1"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Block 1 image preview" />
+                    <EditText
+                        android:id="@+id/etExodusDescription1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:gravity="top|start"
+                        android:hint="Main scene description"
+                        android:textColor="@color/text_dark"
+                        android:textColorHint="@color/text_dark"
+                        android:visibility="gone" />
+                    <TextView
+                        android:id="@+id/tvBabelStatus1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Keep the currently approved image"
+                        android:textColor="@color/text_dark" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <Button
+                            android:id="@+id/btnChooseBabel1"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="4dp"
+                            android:backgroundTint="@color/primary_green"
+                            android:text="Choose"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            app:cornerRadius="16dp" />
+                        <Button
+                            android:id="@+id/btnDefaultBabel1"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="4dp"
+                            android:backgroundTint="@color/primary_green"
+                            android:text="Default"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            app:cornerRadius="16dp" />
+                    </LinearLayout>
+
+                    <!-- Block 2 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvThreeImageLabel2" android:text="Block 2 image"
+                        android:textColor="@color/text_dark"
+                        android:layout_marginTop="16dp"
+                        android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/ivBabelImage2"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Block 2 image preview" />
+                    <EditText
+                        android:id="@+id/etExodusDescription2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:gravity="top|start"
+                        android:hint="Correct next scenario description"
+                        android:textColor="@color/text_dark"
+                        android:textColorHint="@color/text_dark"
+                        android:visibility="gone" />
+                    <TextView
+                        android:id="@+id/tvBabelStatus2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Keep the currently approved image"
+                        android:textColor="@color/text_dark" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <Button
+                            android:id="@+id/btnChooseBabel2"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="4dp"
+                            android:backgroundTint="@color/primary_green"
+                            android:text="Choose"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            app:cornerRadius="16dp" />
+                        <Button
+                            android:id="@+id/btnDefaultBabel2"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="4dp"
+                            android:backgroundTint="@color/primary_green"
+                            android:text="Default"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            app:cornerRadius="16dp" />
+                    </LinearLayout>
+
+                    <!-- Block 3 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvThreeImageLabel3" android:text="Block 3 image"
+                        android:textColor="@color/text_dark"
+                        android:layout_marginTop="16dp"
+                        android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/ivBabelImage3"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Block 3 image preview" />
+                    <EditText
+                        android:id="@+id/etExodusDescription3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:gravity="top|start"
+                        android:hint="Incorrect next scenario description"
+                        android:textColor="@color/text_dark"
+                        android:textColorHint="@color/text_dark"
+                        android:visibility="gone" />
+                    <TextView
+                        android:id="@+id/tvBabelStatus3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Keep the currently approved image"
+                        android:textColor="@color/text_dark" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <Button
+                            android:id="@+id/btnChooseBabel3"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="4dp"
+                            android:backgroundTint="@color/primary_green"
+                            android:text="Choose"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            app:cornerRadius="16dp" />
+                        <Button
+                            android:id="@+id/btnDefaultBabel3"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="4dp"
+                            android:backgroundTint="@color/primary_green"
+                            android:text="Default"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            app:cornerRadius="16dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btnRestoreQuizDefaults"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="16dp"
+                        android:backgroundTint="@color/primary_green"
+                        android:text="Request reset quiz to defaults"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="16dp" />
 
                 <Button
                     android:id="@+id/btnSubmitProposal"

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="judges_title">The Judges Quiz</string>
+    <string name="judges_story">Entering the Promised Land and the Judges</string>
+    <string name="judges_back">Back</string>
+    <string name="judges_instructions_title">The Judges Quiz</string>
+    <string name="judges_instructions">Two neighboring letters have swapped places. The first and last letters stay the same! Work out the word, then tap its matching picture. Take your time: there is no timer. You have one choice per round. All completed attempts are saved for review. Finish on Sunday to earn 20 XP per correct answer. Monday through Saturday are trials and earn no XP.</string>
+    <string name="judges_prompt">Unscramble the word. Tap its matching picture.</string>
+    <string name="judges_progress">Round %1$d of %2$d · %3$d XP</string>
+    <string name="judges_next">Next</string>
+    <string name="judges_finish">Finish</string>
+    <string name="judges_saving">Saving…</string>
+    <string name="judges_retry">Retry saving</string>
+    <string name="judges_correct">✓ Correct! The word is %1$s.</string>
+    <string name="judges_incorrect">✗ Keep learning! The word is %1$s.</string>
+    <string name="judges_correct_choice">✓ %1$s</string>
+    <string name="judges_wrong_choice">✗ Your choice: %1$s</string>
+    <string name="judges_save_error">Your answers are still here. Could not save your result. Check your connection and retry.</string>
+    <string name="judges_sign_in">Sign in to save your result. Your answers are still here.</string>
+    <string name="judges_exit_title">Leave this quiz?</string>
+    <string name="judges_exit_message">This unfinished attempt will not earn XP.</string>
+    <string name="judges_stay">Keep playing</string>
+    <string name="judges_leave">Leave</string>
+    <string name="judges_scrambled_description">Scrambled letters: %1$s</string>
+    <string name="judges_trial_progress">Round %1$d of %2$d · %3$d correct · Trial — No XP</string>
+</resources>

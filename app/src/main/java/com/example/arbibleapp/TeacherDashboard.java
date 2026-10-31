@@ -40,6 +40,7 @@ public class TeacherDashboard extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!VerifiedAccountFlow.guard(this)) return;
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_teacher_dashboard);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -213,6 +214,7 @@ public class TeacherDashboard extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (!VerifiedAccountFlow.guard(this)) return;
         checkSingleSignOn();
     }
 

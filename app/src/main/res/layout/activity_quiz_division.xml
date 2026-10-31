@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.arbibleapp.DivisionDragLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@color/bg_light">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingTop="8dp">
+        <ImageView android:id="@+id/btnDivisionBack" android:layout_width="48dp" android:layout_height="48dp"
+            android:background="@drawable/bg_circle_white" android:padding="12dp"
+            android:elevation="2dp" app:tint="@color/text_dark"
+            android:src="@android:drawable/ic_menu_revert" android:contentDescription="Back" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_marginStart="16dp" android:layout_marginEnd="8dp"
+            android:text="Divided Kingdom Quiz" android:textSize="24sp" android:textStyle="bold"
+            android:textColor="@color/text_dark" />
+        <TextView android:id="@+id/tvDivisionRound" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:textSize="16sp" android:textColor="@color/text_dark" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/btnDivisionInstructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginVertical="12dp"
+        android:background="@drawable/bg_rounded_card"
+        android:backgroundTint="#E0F2F1"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:text="ℹ️ Instructions"
+        android:textColor="@color/primary_green"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+    <ScrollView android:id="@+id/divisionScroll" android:layout_width="match_parent"
+        android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
+        <LinearLayout android:id="@+id/divisionRows" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical"
+            android:paddingHorizontal="16dp" android:paddingBottom="8dp" />
+    </ScrollView>
+    <TextView android:id="@+id/tvDivisionTray" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="Drag an object, or tap it then tap a space."
+        android:gravity="center" android:textSize="14sp" android:padding="4dp" android:textColor="@color/text_dark" />
+    <LinearLayout android:id="@+id/divisionTray" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="horizontal"
+        android:gravity="center" android:paddingHorizontal="12dp" android:paddingVertical="4dp" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp" android:paddingVertical="8dp">
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnDivisionReset"
+            android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1"
+            android:layout_marginEnd="8dp" android:text="Reset" android:textAllCaps="false"
+            android:textSize="18sp" android:background="@drawable/bg_button_next" android:backgroundTint="@color/red" android:textColor="@android:color/white" />
+
+        <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnDivisionSubmit"
+                android:layout_width="match_parent" android:layout_height="60dp"
+                android:text="Submit" android:textAllCaps="false" android:textSize="18sp"
+                android:background="@drawable/bg_button_next" android:backgroundTint="@color/primary_green" android:textColor="@android:color/white" />
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnDivisionNext"
+                android:layout_width="match_parent" android:layout_height="60dp"
+                android:text="Next Round" android:textAllCaps="false" android:visibility="gone"
+                android:textSize="18sp" android:background="@drawable/bg_button_next" android:backgroundTint="@color/primary_green" android:textColor="@android:color/white" />
+        </FrameLayout>
+    </LinearLayout>
+</com.example.arbibleapp.DivisionDragLayout>

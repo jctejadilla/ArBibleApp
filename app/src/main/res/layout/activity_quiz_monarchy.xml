@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:fillViewport="true"
+    android:background="@color/bg_light">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="12dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical">
+            <ImageView android:id="@+id/btnMonarchyBack"
+                android:layout_width="48dp" android:layout_height="48dp"
+                android:background="@drawable/bg_circle_white" android:elevation="2dp"
+                android:padding="12dp" android:src="@android:drawable/ic_menu_revert"
+                android:contentDescription="@string/monarchy_back"
+                android:clickable="true" android:focusable="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_dark" />
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:layout_marginStart="16dp" android:layout_marginEnd="8dp" android:text="@string/monarchy_title"
+                android:textColor="@color/text_dark" android:textSize="24sp" android:textStyle="bold" />
+        </LinearLayout>
+        <TextView android:id="@+id/tvMonarchyScenario" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:gravity="center" android:padding="8dp"
+            android:textColor="@color/text_dark" android:textSize="21sp" android:textStyle="bold" />
+        <TextView android:id="@+id/btnMonarchyInstructions"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_gravity="center" android:layout_marginVertical="12dp"
+            android:background="@drawable/bg_rounded_card" android:backgroundTint="#E0F2F1"
+            android:clickable="true" android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingHorizontal="16dp" android:paddingVertical="8dp"
+            android:text="ℹ️ Instructions"
+            android:textColor="@color/primary_green" android:textSize="13sp" android:textStyle="bold" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center" android:padding="8dp" android:text="@string/monarchy_prompt"
+            android:textColor="@color/text_dark" android:textSize="16sp" />
+        <LinearLayout android:id="@+id/monarchyGrid" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical" />
+        <TextView android:id="@+id/tvMonarchySelected" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:gravity="center" android:padding="8dp"
+            android:textColor="@color/text_dark" android:textSize="16sp"
+            android:accessibilityLiveRegion="polite" />
+        <LinearLayout android:id="@+id/monarchyEditControls" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal">
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnMonarchyUndo" android:layout_width="0dp"
+                android:layout_height="60dp" android:layout_weight="1"
+                android:background="@drawable/bg_button_next" android:backgroundTint="@color/red" android:textColor="@color/white" android:textSize="18sp" android:textAllCaps="false" android:text="@string/monarchy_undo" android:layout_marginEnd="8dp" />
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnMonarchyReset" android:layout_width="0dp"
+                android:layout_height="60dp" android:layout_weight="1"
+                android:background="@drawable/bg_button_next" android:backgroundTint="@color/red" android:textColor="@color/white" android:textSize="18sp" android:textAllCaps="false" android:text="@string/monarchy_reset" android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnMonarchySubmit" android:layout_width="match_parent"
+                android:layout_height="60dp" android:background="@drawable/bg_button_next" android:backgroundTint="@color/primary_green" android:textColor="@color/white" android:textSize="18sp" android:textAllCaps="false"
+                android:enabled="false" android:text="@string/monarchy_submit" />
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnMonarchyNext" android:layout_width="match_parent"
+                android:layout_height="60dp" android:background="@drawable/bg_button_next" android:backgroundTint="@color/primary_green" android:textColor="@color/white" android:textSize="18sp" android:textAllCaps="false"
+                android:text="@string/monarchy_next" android:visibility="gone" />
+        </FrameLayout>
+    </LinearLayout>
+</ScrollView>

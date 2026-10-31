@@ -84,7 +84,12 @@
             android:name=".ForgotPassword"
             android:exported="false" />
         <activity
-            android:name=".QuizLaw"
+            android:name=".QuizMonarchy" android:exported="false" />
+        <activity android:name=".QuizBirth" android:exported="false" />
+        <activity android:name=".QuizReturn" android:exported="false" />
+        <activity android:name=".QuizDivision" android:exported="false" />
+        <activity android:name=".QuizJudges" android:exported="false" />
+        <activity android:name=".QuizLaw"
             android:exported="false" />
         <activity
             android:name=".QuizExodus"
@@ -101,6 +106,7 @@
         <activity
             android:name=".TeacherProfile"
             android:exported="false" />
+        <activity android:name=".EmailVerificationActivity" android:exported="false" />
         <activity
             android:name=".Register"
             android:exported="false" />

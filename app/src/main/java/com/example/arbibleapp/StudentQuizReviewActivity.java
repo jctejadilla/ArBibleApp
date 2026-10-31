@@ -208,8 +208,8 @@ public class StudentQuizReviewActivity extends AppCompatActivity {
             holder.itemView.setOnClickListener(v -> {
                 int previousExpanded = expandedPosition;
                 expandedPosition = isExpanded ? -1 : holder.getAdapterPosition();
-                notifyItemChanged(previousExpanded);
-                notifyItemChanged(expandedPosition);
+                if (previousExpanded >= 0) notifyItemChanged(previousExpanded);
+                if (expandedPosition >= 0) notifyItemChanged(expandedPosition);
             });
 
             holder.btnRetake.setOnClickListener(retakeListener);
@@ -232,7 +232,48 @@ public class StudentQuizReviewActivity extends AppCompatActivity {
                 holder.btnShowCorrect.setVisibility(View.GONE);
             } else {
                 holder.btnShowCorrect.setVisibility(View.VISIBLE);
+                if (DivisionPairBank.STORY_TITLE.equals(r.storyTitle)
+                        && r.matchedPairs != null && !r.matchedPairs.isEmpty()) {
+                    for (DivisionPairResult pair : r.matchedPairs) {
+                        if (pair != null && !pair.correct)
+                            holder.containerWrongAnswers.addView(DivisionPairReview.create(
+                                    holder.itemView.getContext(), pair, showCorrect));
+                    }
+                    return;
+                }
+                if (BirthWordBank.STORY_TITLE.equals(r.storyTitle)
+                        && r.wordAnswers != null && !r.wordAnswers.isEmpty()) {
+                    for (BirthWordResult word : r.wordAnswers) {
+                        if (word != null && !word.correct)
+                            holder.containerWrongAnswers.addView(BirthWordReview.create(
+                                    holder.itemView.getContext(), word, showCorrect));
+                    }
+                    return;
+                }
+                if (MonarchyScenarioBank.STORY_TITLE.equals(r.storyTitle)
+                        && r.sequences != null && !r.sequences.isEmpty()) {
+                    for (MonarchySequenceResult sequence : r.sequences) {
+                        if (sequence != null && sequence.correctPositions < MonarchySequenceGame.SCENES) {
+                            holder.containerWrongAnswers.addView(MonarchySequenceView.review(
+                                    holder.itemView.getContext(), sequence, showCorrect));
+                        }
+                    }
+                    return;
+                }
                 for (int i = 0; i < r.wrongAnswers.size(); i++) {
+                    if ("Creation and the Fall".equals(r.storyTitle) || JudgesQuizGame.STORY_TITLE.equals(r.storyTitle) || ReturnMatchingGame.STORY_TITLE.equals(r.storyTitle)) {
+                        View card = LayoutInflater.from(holder.itemView.getContext()).inflate(
+                                R.layout.item_creation_missed_question, holder.containerWrongAnswers, false);
+                        if (ReturnMatchingGame.STORY_TITLE.equals(r.storyTitle)) {
+                            ReturnMissedMatchView.bind(card, r, i, showCorrect);
+                        } else if (JudgesQuizGame.STORY_TITLE.equals(r.storyTitle)) {
+                            JudgesMissedQuestionView.bind(card, r, i, showCorrect);
+                        } else {
+                            CreationMissedQuestionView.bind(card, r, i, showCorrect);
+                        }
+                        holder.containerWrongAnswers.addView(card);
+                        continue;
+                    }
                     String wrong = r.wrongAnswers.get(i);
                     
                     LinearLayout itemLayout = new LinearLayout(holder.itemView.getContext());

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="monarchy_title">The Monarchy Quiz</string>
+    <string name="monarchy_back">Back</string>
+    <string name="monarchy_instructions_title">The Monarchy Quiz</string>
+    <string name="monarchy_instructions">Put each king’s story in order. Tap all six pictures in the order you think the events happened. The badges show your choices from 1 to 6. Use Undo or Reset to change your order before submitting. Each correct position earns one point. After submitting, each card shows + for a correct position or x for an incorrect position. There is no timer. Finish on Sunday to earn 10 XP per correct position; weekday attempts are saved as trials with no XP.</string>
+    <string name="monarchy_prompt">Tap the pictures from first event to last.</string>
+    <string name="monarchy_progress">Scenario %1$d of 3 · %2$d of 18 correct</string>
+    <string name="monarchy_selected">%1$d of 6 selected</string>
+    <string name="monarchy_pending_xp">%1$d XP pending · Sunday rewards</string>
+    <string name="monarchy_trial">Trial · No XP · Your attempt will be saved</string>
+    <string name="monarchy_undo">Undo</string>
+    <string name="monarchy_reset">Reset</string>
+    <string name="monarchy_submit">Submit Order</string>
+    <string name="monarchy_next">Next Scenario</string>
+    <string name="monarchy_finish">Finish</string>
+    <string name="monarchy_saving">Saving…</string>
+    <string name="monarchy_retry">Retry saving</string>
+    <string name="monarchy_round_score">%1$d of 6 positions correct</string>
+    <string name="monarchy_perfect">✓ All six positions are correct!</string>
+    <string name="monarchy_correction">%1$d of 6 positions correct. Compare your order with the correct sequence below.</string>
+    <string name="monarchy_your_order">Your Order</string>
+    <string name="monarchy_correct_order">Correct Sequence</string>
+    <string name="monarchy_not_recorded">Not recorded</string>
+    <string name="monarchy_unselected">Not selected: %1$s</string>
+    <string name="monarchy_ordered">Position %1$d: %2$s</string>
+    <string name="monarchy_ordered_correct">Plus, correct position %1$d: %2$s</string>
+    <string name="monarchy_ordered_wrong">X, incorrect position %1$d: %2$s</string>
+    <string name="monarchy_save_error">Your answers are still here. Check your connection and retry saving.</string>
+    <string name="monarchy_sign_in">Sign in to save your result. Your answers are still here.</string>
+</resources>

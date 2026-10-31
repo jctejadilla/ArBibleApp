@@ -106,6 +106,42 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
                             String story = doc.getString("storyTitle");
                             String origQ = doc.getString("originalQuestion");
                             String propQ = doc.getString("proposedQuestion");
+                            if ("RESTORE_ALL".equals(doc.getString("operation"))) {
+                                origQ = "All content in " + story;
+                                propQ = "RESET TO DEFAULTS: " + story;
+                            }
+                            if ((LawScenarioBank.STORY_TITLE.equals(story) || JudgesQuizGame.STORY_TITLE.equals(story) || ReturnMatchingGame.STORY_TITLE.equals(story) || BirthWordBank.STORY_TITLE.equals(story))
+                                    && !"RESTORE_ALL".equals(doc.getString("operation"))) {
+                                LawImageData image = LawImageData.read(doc.get("imageAction"), doc.get("imageBytes"));
+                                propQ = (propQ == null ? "" : propQ) + "\nImage: " +
+                                        ("REPLACE".equals(image.action) ? "uploaded replacement"
+                                                : "DEFAULT".equals(image.action) ? "original default" : "keep current");
+                            }
+                            if (MonarchyScenarioBank.STORY_TITLE.equals(story) && !"RESTORE_ALL".equals(doc.getString("operation"))) {
+                                Object rows = doc.get("scenes");
+                                if (rows instanceof java.util.List) {
+                                    StringBuilder summary = new StringBuilder(propQ == null ? "" : propQ);
+                                    int position = 1;
+                                    for (Object row : (java.util.List<?>) rows) if (row instanceof java.util.Map) {
+                                        java.util.Map<?,?> scene = (java.util.Map<?,?>) row;
+                                        summary.append("\n").append(position++).append(". ").append(scene.get("caption"))
+                                                .append(" (image: ").append(scene.get("imageAction")).append(")");
+                                    }
+                                    propQ = summary.toString();
+                                }
+                            }
+                            if (DivisionPairBank.STORY_TITLE.equals(story) && !"RESTORE_ALL".equals(doc.getString("operation"))) {
+                                propQ = (propQ == null ? "" : propQ) + " - " + doc.getString("objectName");
+                                for (int role = 1; role <= 2; role++) {
+                                    LawImageData image = LawImageData.read(doc.get("image" + role + "Action"), doc.get("image" + role + "Bytes"));
+                                    propQ += "\n" + (role == 1 ? "Character picture: " : "Object picture: ")
+                                            + ("REPLACE".equals(image.action) ? "uploaded replacement" : "DEFAULT".equals(image.action) ? "original" : "keep current");
+                                }
+                            }
+                            if (BirthWordBank.STORY_TITLE.equals(story) && !"RESTORE_ALL".equals(doc.getString("operation"))) {
+                                origQ = (origQ == null ? "" : origQ) + "\nAnswer: " + doc.getString("originalAnswerWord");
+                                propQ = (propQ == null ? "" : propQ) + "\nAnswer: " + doc.getString("answerWord");
+                            }
                             Timestamp ts = doc.getTimestamp("timestamp");
 
                             allHistoryList.add(new HistoryModel(

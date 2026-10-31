@@ -1,6 +1,7 @@
 package com.example.arbibleapp;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -46,14 +48,15 @@ public class QuizFlood extends AppCompatActivity {
     private ImageView btnBack;
     private TextView tvTimer;
 
-    private final int GRID_SIZE = 8;
-    private char[][] grid = new char[GRID_SIZE][GRID_SIZE];
-    private String[] wordBank = {"BEAR", "BIRD", "CAT", "COW", "DOG", "DOVE", "FROG", "LION", "PIG", "SHEEP"};
+    private int gridSize = 8;
+    private char[][] grid = new char[gridSize][gridSize];
+    private String[] wordBank = FloodWordBank.defaults();
+    private boolean quizReady = false;
     
     private List<Cell> selectedCells = new ArrayList<>();
     private List<String> foundWords = new ArrayList<>();
     private Map<String, Integer> colors = new HashMap<>();
-    private TextView[][] tvGrid = new TextView[GRID_SIZE][GRID_SIZE];
+    private TextView[][] tvGrid = new TextView[gridSize][gridSize];
     private Set<Cell> permanentlySelectedCells = new HashSet<>();
 
     private int score = 0;
@@ -86,7 +89,13 @@ public class QuizFlood extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         tvTimer = findViewById(R.id.tvTimer);
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> confirmExit());
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                confirmExit();
+            }
+        });
 
         View btnInstructions = findViewById(R.id.btnInstructions);
         if (btnInstructions != null) {
@@ -99,13 +108,51 @@ public class QuizFlood extends AppCompatActivity {
         });
         btnSubmit.setEnabled(false);
 
+        loadApprovedOverrides();
+    }
+
+    private void loadApprovedOverrides() {
+        quizReady = false;
+        tvTimer.setText("Loading...");
+        findViewById(R.id.btnInstructions).setEnabled(false);
+        db.collection("quiz_questions")
+                .whereEqualTo("storyTitle", "Early Humanity and the Flood")
+                .whereEqualTo("approvedByAdmin", true)
+                .get()
+                .addOnSuccessListener(snapshots -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    wordBank = FloodWordBank.load(snapshots.getDocuments());
+                    startLoadedQuiz();
+                })
+                .addOnFailureListener(e -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    wordBank = FloodWordBank.defaults();
+                    Toast.makeText(this, "Could not load edits. Using default words.", Toast.LENGTH_SHORT).show();
+                    startLoadedQuiz();
+                });
+    }
+
+    private void startLoadedQuiz() {
+        if (FloodWordBank.hasDuplicates(wordBank)) {
+            tvTimer.setText("Not ready");
+            new AlertDialog.Builder(this)
+                    .setTitle("Duplicate puzzle words")
+                    .setMessage("Approved edits contain duplicate words. A teacher must change one of them before this puzzle can start.")
+                    .setPositiveButton("Retry", (dialog, which) -> loadApprovedOverrides())
+                    .setNegativeButton("Back", (dialog, which) -> finish())
+                    .setOnCancelListener(dialog -> finish())
+                    .show();
+            return;
+        }
         setupColorMap();
         generateGrid();
         setupGrid();
         setupWordBank();
-        startTimer();
+        quizReady = true;
+        findViewById(R.id.btnInstructions).setEnabled(true);
         startTime = System.currentTimeMillis();
         startQuizSession();
+        startTimer();
     }
 
     private void startQuizSession() {
@@ -132,7 +179,7 @@ public class QuizFlood extends AppCompatActivity {
     }
 
     private void resumeTimer() {
-        if (timeLeftInMillis <= 0) return;
+        if (!quizReady || timeLeftInMillis <= 0) return;
         startTimerWithDuration(timeLeftInMillis);
     }
 
@@ -172,86 +219,34 @@ public class QuizFlood extends AppCompatActivity {
     }
 
     private void setupColorMap() {
-        colors.put("BEAR", R.color.badge_orange);
-        colors.put("BIRD", R.color.badge_blue);
-        colors.put("CAT", R.color.badge_purple);
-        colors.put("COW", R.color.badge_red);
-        colors.put("DOG", R.color.badge_teal);
-        colors.put("DOVE", R.color.badge_indigo);
-        colors.put("FROG", R.color.badge_pink);
-        colors.put("LION", R.color.badge_lime);
-        colors.put("PIG", R.color.badge_cyan);
-        colors.put("SHEEP", R.color.badge_yellow);
+        int[] palette = {R.color.badge_orange, R.color.badge_blue, R.color.badge_purple,
+                R.color.badge_red, R.color.badge_teal, R.color.badge_indigo,
+                R.color.badge_pink, R.color.badge_lime, R.color.badge_cyan, R.color.badge_yellow};
+        colors.clear();
+        for (int i = 0; i < wordBank.length; i++) colors.put(wordBank[i], palette[i]);
     }
 
     private void generateGrid() {
-        for (int i = 0; i < GRID_SIZE; i++) {
-            for (int j = 0; j < GRID_SIZE; j++) {
-                grid[i][j] = ' ';
-            }
-        }
-
-        Random random = new Random();
-        int[] dr = {0, 0, 1, -1, 1, 1, -1, -1};
-        int[] dc = {1, -1, 0, 0, 1, -1, 1, -1};
-
-        for (String word : wordBank) {
-            boolean placed = false;
-            int attempts = 0;
-            while (!placed && attempts < 100) {
-                int r = random.nextInt(GRID_SIZE);
-                int c = random.nextInt(GRID_SIZE);
-                int dir = random.nextInt(8);
-                
-                if (canPlaceWord(word, r, c, dr[dir], dc[dir])) {
-                    placeWord(word, r, c, dr[dir], dc[dir]);
-                    placed = true;
-                }
-                attempts++;
-            }
-        }
-
-        // Fill remaining spaces
-        for (int i = 0; i < GRID_SIZE; i++) {
-            for (int j = 0; j < GRID_SIZE; j++) {
-                if (grid[i][j] == ' ') {
-                    grid[i][j] = (char) ('A' + random.nextInt(26));
-                }
-            }
-        }
-    }
-
-    private boolean canPlaceWord(String word, int r, int c, int dr, int dc) {
-        if (r + dr * (word.length() - 1) < 0 || r + dr * (word.length() - 1) >= GRID_SIZE ||
-            c + dc * (word.length() - 1) < 0 || c + dc * (word.length() - 1) >= GRID_SIZE) {
-            return false;
-        }
-
-        for (int i = 0; i < word.length(); i++) {
-            char cellChar = grid[r + dr * i][c + dc * i];
-            if (cellChar != ' ' && cellChar != word.charAt(i)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void placeWord(String word, int r, int c, int dr, int dc) {
-        for (int i = 0; i < word.length(); i++) {
-            grid[r + dr * i][c + dc * i] = word.charAt(i);
-        }
+        grid = FloodGridGenerator.generate(wordBank, new Random());
+        gridSize = grid.length;
+        tvGrid = new TextView[gridSize][gridSize];
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void setupGrid() {
         gridLayout.removeAllViews();
-        for (int r = 0; r < GRID_SIZE; r++) {
-            for (int c = 0; c < GRID_SIZE; c++) {
+        gridLayout.setColumnCount(gridSize);
+        gridLayout.setRowCount(gridSize);
+        gridLayout.setUseDefaultMargins(false);
+        for (int r = 0; r < gridSize; r++) {
+            for (int c = 0; c < gridSize; c++) {
                 TextView tv = new TextView(this);
                 tv.setText(String.valueOf(grid[r][c]));
                 tv.setGravity(Gravity.CENTER);
-                tv.setTextSize(20);
-                tv.setPadding(10, 10, 10, 10);
+                tv.setTextSize(gridSize == 10 ? 16 : 20);
+                tv.setMinWidth(0);
+                tv.setSingleLine(true);
+                tv.setPadding(0, 6, 0, 6);
                 tv.setTextColor(Color.BLACK);
                 tv.setBackgroundResource(R.drawable.bg_circle_white);
                 
@@ -271,9 +266,19 @@ public class QuizFlood extends AppCompatActivity {
         gridLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (isTimeUp) return true;
+                if (!quizReady || isTimeUp) return true;
                 
                 int action = event.getAction();
+                // Keep the surrounding scroll view from interrupting word selection.
+                if (action == MotionEvent.ACTION_DOWN) v.getParent().requestDisallowInterceptTouchEvent(true);
+                if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                }
+                if (action == MotionEvent.ACTION_CANCEL) {
+                    resetSelectionVisuals();
+                    selectedCells.clear();
+                    return true;
+                }
                 float x = event.getX();
                 float y = event.getY();
 
@@ -286,8 +291,8 @@ public class QuizFlood extends AppCompatActivity {
                 for (int i = 0; i < gridLayout.getChildCount(); i++) {
                     View child = gridLayout.getChildAt(i);
                     if (x >= child.getLeft() && x <= child.getRight() && y >= child.getTop() && y <= child.getBottom()) {
-                        int r = i / GRID_SIZE;
-                        int c = i % GRID_SIZE;
+                        int r = i / gridSize;
+                        int c = i % gridSize;
                         handleTouch(r, c, action);
                         foundChild = true;
                         break;
@@ -413,18 +418,47 @@ public class QuizFlood extends AppCompatActivity {
         if (foundWords.size() == wordBank.length) {
             if (countDownTimer != null) countDownTimer.cancel();
             btnSubmit.setEnabled(true);
-            Toast.makeText(this, "All animals found!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "All words found!", Toast.LENGTH_LONG).show();
         }
     }
 
     private void showInstructionsDialog() {
         pauseTimer();
-        new AlertDialog.Builder(this)
-                .setTitle("ℹ️ Quiz 2 Instructions")
-                .setMessage("Search the letter grid to find all 10 hidden animals from Noah's Ark!\n\nSwipe or drag across letters in any direction to highlight and collect words!")
-                .setPositiveButton("Got It!", (dialog, which) -> resumeTimer())
-                .setOnCancelListener(dialog -> resumeTimer())
-                .show();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_instructions);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        
+        TextView tvTitle = dialog.findViewById(R.id.tvInstructionTitle);
+        TextView tvMessage = dialog.findViewById(R.id.tvInstructionMessage);
+        
+        tvTitle.setText("Quiz 2 Instructions");
+        tvMessage.setText("Search the letter grid to find all 10 hidden animals from Noah's Ark!\n\nSwipe or drag across letters in any direction to highlight and collect words!");
+        
+        dialog.findViewById(R.id.btnInstructionGotIt).setOnClickListener(v -> {
+            dialog.dismiss();
+            resumeTimer();
+        });
+        dialog.setOnCancelListener(d -> resumeTimer());
+        
+        dialog.show();
+    }
+    
+    private void confirmExit() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_confirm_exit);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        
+        dialog.findViewById(R.id.btnExitStay).setOnClickListener(v -> dialog.dismiss());
+        dialog.findViewById(R.id.btnExitLeave).setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
+        
+        dialog.show();
     }
 
     private void saveResults() {
@@ -485,7 +519,7 @@ public class QuizFlood extends AppCompatActivity {
                         boolean leveledUp = false;
                         int newLevel = 1;
 
-                        if (totalXP > 0) {
+                        if (isSunday && totalXP > 0) {
                             Long currentXpLong = (documentSnapshot.exists() && documentSnapshot.contains("totalXP")) ? documentSnapshot.getLong("totalXP") : null;
                             long currentXP = currentXpLong != null ? currentXpLong : 0;
                             int oldLevel = (int) (currentXP / 250) + 1;

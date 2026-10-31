@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@color/bg_light">
+
+    <ScrollView android:id="@+id/scrollView" android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:fillViewport="true">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="16dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="center_vertical" android:orientation="horizontal">
+                <ImageView
+                    android:id="@+id/btnBirthBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_circle_white"
+                    android:elevation="2dp"
+                    android:padding="12dp"
+                    android:src="@android:drawable/ic_menu_revert"
+                    app:tint="@color/text_dark" />
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:layout_marginStart="16dp" android:layout_marginEnd="8dp"
+                    android:text="@string/birth_title" android:textColor="@color/text_dark" android:textSize="24sp"
+                    android:textStyle="bold" />
+                </LinearLayout>
+            <TextView
+                android:id="@+id/btnBirthInstructions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_rounded_card"
+                android:backgroundTint="#E0F2F1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:text="ℹ️ Instructions"
+                android:textColor="@color/primary_green"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/birth_prompt" android:gravity="center" android:textSize="16sp" android:textColor="@color/text_dark" />
+            <ImageView android:id="@+id/ivBirthPicture" android:layout_width="match_parent" android:layout_height="220dp"
+                android:layout_marginVertical="10dp" android:scaleType="fitCenter" android:contentDescription="@string/birth_picture" />
+            <LinearLayout android:id="@+id/birthSlots" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center" />
+            <LinearLayout android:id="@+id/birthTiles" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="14dp" android:orientation="vertical" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@color/bg_light"
+        android:elevation="8dp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnBirthClear" android:layout_width="0dp" android:layout_weight="1" android:layout_height="60dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_button_next"
+            android:backgroundTint="@color/red" android:textColor="@color/white"
+            android:text="@string/birth_clear" />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp">
+
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnBirthSubmit" android:layout_width="match_parent" android:layout_height="60dp"
+                android:background="@drawable/bg_button_next"
+                android:backgroundTint="@color/primary_green" android:textColor="@color/white"
+                android:text="@string/birth_submit" />
+
+            <androidx.appcompat.widget.AppCompatButton android:id="@+id/btnBirthNext" android:layout_width="match_parent" android:layout_height="60dp"
+                android:background="@drawable/bg_button_next"
+                android:backgroundTint="@color/primary_green" android:textColor="@color/white"
+                android:text="@string/birth_next" android:visibility="gone" />
+        </FrameLayout>
+
+    </LinearLayout>
+</LinearLayout>

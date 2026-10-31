@@ -19,7 +19,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class StudentProfile extends AppCompatActivity {
@@ -66,6 +73,7 @@ public class StudentProfile extends AppCompatActivity {
         setupNavigation();
         fetchUserData();
         loadAchievements();
+        loadQuizzes();
     }
 
     private void initViews() {
@@ -211,14 +219,59 @@ public class StudentProfile extends AppCompatActivity {
                     int attendanceCount = uniqueDates.size();
                     tvAttendanceCount.setText(String.valueOf(attendanceCount));
                     
+                    int streak = calculateSundayStreak(uniqueDates);
                     TextView tvStreakValue = findViewById(R.id.tvStreakValue);
                     if (tvStreakValue != null) {
-                        tvStreakValue.setText(attendanceCount + " Sunday Streak 🔥");
+                        tvStreakValue.setText(streak + " Sunday Streak 🔥");
                     }
 
                     updateAttendanceBadges(attendanceCount);
                 });
+    }
 
+    private int calculateSundayStreak(Set<String> uniqueDates) {
+        if (uniqueDates == null || uniqueDates.isEmpty()) return 0;
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        List<LocalDate> sundays = new ArrayList<>();
+        for (String d : uniqueDates) {
+            try {
+                LocalDate date = LocalDate.parse(d, formatter);
+                if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    sundays.add(date);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        
+        if (sundays.isEmpty()) return 0;
+        sundays.sort(Collections.reverseOrder());
+        
+        LocalDate today = LocalDate.now();
+        LocalDate thisSunday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate lastSunday = thisSunday.minusWeeks(1);
+        
+        LocalDate mostRecentSunday = sundays.get(0);
+        if (!mostRecentSunday.equals(thisSunday) && !mostRecentSunday.equals(lastSunday)) {
+            return 0;
+        }
+        
+        int streak = 1;
+        for (int i = 1; i < sundays.size(); i++) {
+            if (sundays.get(i - 1).minusWeeks(1).equals(sundays.get(i))) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+        return streak;
+    }
+
+    private void loadQuizzes() {
+        if (mAuth.getCurrentUser() == null) return;
+        String uid = mAuth.getCurrentUser().getUid();
+        
         db.collection("quiz_results").whereEqualTo("studentUid", uid).get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     Set<String> uniqueStories = new HashSet<>();

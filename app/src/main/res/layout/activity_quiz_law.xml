@@ -120,7 +120,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_law" />
+                    android:src="@drawable/law_helping_friend" />
 
                 <TextView
                     android:id="@+id/tvScenarioDesc"
@@ -154,8 +154,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@android:drawable/ic_menu_revert"
-                android:rotation="180"
-                app:tint="@color/badge_red" />
+                app:tint="@color/red" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -177,6 +176,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@android:drawable/ic_menu_revert"
+                android:rotation="180"
                 app:tint="@color/primary_green" />
             <TextView
                 android:layout_width="wrap_content"

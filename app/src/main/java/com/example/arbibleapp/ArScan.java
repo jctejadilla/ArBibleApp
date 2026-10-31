@@ -1,6 +1,7 @@
 package com.example.arbibleapp;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,6 +11,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +21,7 @@ import androidx.core.content.ContextCompat;
 public class ArScan extends AppCompatActivity {
 
     private static Context appContext;
+    private static WeakReference<Activity> unityActivity = new WeakReference<>(null);
 
     private final ActivityResultLauncher<String> cameraPermissionLauncher =
             registerForActivityResult(
@@ -64,8 +68,6 @@ public class ArScan extends AppCompatActivity {
                     "com.unity3d.player.UnityPlayerGameActivity"
             );
 
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
             startActivity(intent);
             finish();
 
@@ -81,62 +83,52 @@ public class ArScan extends AppCompatActivity {
         }
     }
 
-    // ==========================================
-    // DONE BUTTON -> PUMUNTA SA QUIZ
-    // ==========================================
+    public static void attachUnityActivity(Activity activity) {
+        unityActivity = new WeakReference<>(activity);
+    }
+
+    public static void detachUnityActivity(Activity activity) {
+        Activity current = unityActivity.get();
+        if (current == activity) unityActivity.clear();
+    }
+
+    // Unity's Done button opens the existing quiz flow, then closes AR.
     public static void finishARAndOpenQuiz() {
         new Handler(Looper.getMainLooper()).post(() -> {
+            Activity unity = unityActivity.get();
             try {
-                if (appContext != null) {
-
-                    Intent quizIntent =
-                            new Intent(appContext, QuizAdamEve.class);
-
-                    quizIntent.addFlags(
-                            Intent.FLAG_ACTIVITY_NEW_TASK |
-                                    Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    );
-
-                    appContext.startActivity(quizIntent);
+                if (unity != null && !unity.isFinishing() && !unity.isDestroyed()) {
+                    unity.startActivity(new Intent(unity, QuizAdamEve.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    unity.finish();
+                } else if (appContext != null) {
+                    appContext.startActivity(new Intent(appContext, QuizAdamEve.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
-
             } catch (Exception e) {
-                Log.e(
-                        "ArScan",
-                        "Error opening quiz: " + e.getMessage(),
-                        e
-                );
+                Log.e("ArScan", "Error opening quiz", e);
             }
         });
     }
 
-    // ==========================================
-    // BACK BUTTON -> BUMALIK SA DASHBOARD
-    // ==========================================
+    // Unity UI Back closes the AR activity; the existing dashboard is below it.
     public static void exitUnityAR() {
         new Handler(Looper.getMainLooper()).post(() -> {
-            try {
-                if (appContext != null) {
-
-                    Intent mainIntent =
-                            new Intent(appContext, StudentDashboard.class);
-
-                    mainIntent.addFlags(
-                            Intent.FLAG_ACTIVITY_NEW_TASK |
-                                    Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                                    Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    );
-
-                    appContext.startActivity(mainIntent);
-                }
-
-            } catch (Exception e) {
-                Log.e(
-                        "ArScan",
-                        "Error exiting AR: " + e.getMessage(),
-                        e
-                );
+            Activity unity = unityActivity.get();
+            if (unity != null && !unity.isFinishing() && !unity.isDestroyed()) {
+                unity.finish();
+            } else if (appContext != null) {
+                appContext.startActivity(new Intent(appContext, StudentDashboard.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             }
         });
+    }
+
+    public static boolean exitUnityAR(Activity activity) {
+        if (activity == null || unityActivity.get() != activity
+                || activity.isFinishing() || activity.isDestroyed()) return false;
+        activity.finish();
+        return true;
     }
 }

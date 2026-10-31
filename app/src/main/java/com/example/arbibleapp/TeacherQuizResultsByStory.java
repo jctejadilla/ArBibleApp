@@ -236,6 +236,10 @@ public class TeacherQuizResultsByStory extends AppCompatActivity {
                     vh.tvInitials.setText(name.toUpperCase());
                 }
 
+                vh.itemView.setOnClickListener(null);
+                if (DivisionPairBank.STORY_TITLE.equals(r.storyTitle) && r.matchedPairs != null) {
+                    vh.itemView.setOnClickListener(v -> DivisionPairReview.showForTeacher(v.getContext(), r));
+                }
                 double percent = r.totalQuestions > 0 ? (double) r.score / r.totalQuestions : 0;
                 if (percent >= 0.8) {
                     vh.tvScore.setTextColor(Color.parseColor("#2E7D32"));

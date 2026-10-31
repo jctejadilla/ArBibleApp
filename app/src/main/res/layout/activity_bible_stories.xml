@@ -50,7 +50,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Scrollable Stories Content -->
+    <!-- Scrollable Stories Content -->a
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -156,11 +156,10 @@
                 android:columnCount="2"
                 app:layout_constraintTop_toBottomOf="@+id/hsvCategories">
 
-                <!-- 1. Creation and the Fall -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardCreationFall"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="230dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_glass_card_white"
@@ -231,11 +230,10 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- 2. Early Humanity and the Flood -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardFlood"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="230dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_glass_card_white"
@@ -306,11 +304,10 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- 3. Tower of Babel -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardBabelAbraham"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="230dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_glass_card_white"
@@ -381,11 +378,10 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- 4. Slavery in Egypt and Exodus -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardExodus"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="230dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_glass_card_white"
@@ -456,11 +452,10 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- 5. Law and Desert -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardLawDesert"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="230dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_glass_card_white"
@@ -531,11 +526,10 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- 6. Judges -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardJudges"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="230dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_glass_card_white"
@@ -606,11 +600,10 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- 7. Monarchy -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardMonarchy"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="230dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_glass_card_white"
@@ -681,11 +674,10 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- 8. Division and Exile -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardDivisionExile"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="230dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_glass_card_white"
@@ -756,11 +748,10 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- 9. Return from Exile -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardReturnMessiah"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="230dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_glass_card_white"
@@ -831,11 +822,10 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- 10. Birth and Ministry of Jesus -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardBirthMinistry"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="230dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_glass_card_white"
@@ -901,164 +891,9 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
-
                     </androidx.constraintlayout.widget.ConstraintLayout>
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- 11. Conflict and Death -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cardConflictDeath"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="6dp"
-                    android:background="@drawable/bg_glass_card_white"
-                    android:clickable="true"
-                    android:elevation="4dp"
-                    android:focusable="true"
-                    android:padding="10dp">
-
-                    <ImageView
-                        android:id="@+id/thumb11"
-                        android:layout_width="115dp"
-                        android:layout_height="115dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_conflict"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvTitle11"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:layout_marginBottom="8dp"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="2"
-                        android:text="Conflict with the Pharisees and Jesus's Death"
-                        android:textColor="#1D3B2E"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toTopOf="@+id/btnAction11"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/thumb11" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/btnAction11"
-                        android:layout_width="match_parent"
-                        android:layout_height="44dp"
-                        android:background="@drawable/bg_pill_btn_green"
-                        android:elevation="2dp"
-                        android:paddingHorizontal="10dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvTitle11">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="View Quiz Result"
-                            android:textColor="@color/white"
-                            android:textSize="11sp"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_sparkle_star"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- 12. Resurrection and Ascension -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cardResurrectionAscension"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="6dp"
-                    android:background="@drawable/bg_glass_card_white"
-                    android:clickable="true"
-                    android:elevation="4dp"
-                    android:focusable="true"
-                    android:padding="10dp">
-
-                    <ImageView
-                        android:id="@+id/thumb12"
-                        android:layout_width="115dp"
-                        android:layout_height="115dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_resurrection"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvTitle12"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:layout_marginBottom="8dp"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="2"
-                        android:text="Resurrection and Ascension"
-                        android:textColor="#1D3B2E"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toTopOf="@+id/btnAction12"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/thumb12" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/btnAction12"
-                        android:layout_width="match_parent"
-                        android:layout_height="44dp"
-                        android:background="@drawable/bg_pill_btn_green"
-                        android:elevation="2dp"
-                        android:paddingHorizontal="10dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvTitle12">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="View Quiz Result"
-                            android:textColor="@color/white"
-                            android:textSize="11sp"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_sparkle_star"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
             </GridLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -23,8 +23,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -42,6 +49,7 @@ public class StudentDashboard extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!VerifiedAccountFlow.guard(this)) return;
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_student_dashboard);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -191,17 +199,57 @@ public class StudentDashboard extends AppCompatActivity {
                             String date = doc.getString("date");
                             if (date != null) uniqueDates.add(date);
                         }
-                        int attendanceCount = uniqueDates.size();
+                        int streak = calculateSundayStreak(uniqueDates);
                         if (tvStreakValue != null) {
-                            tvStreakValue.setText(attendanceCount + " Sunday Streak 🔥");
+                            tvStreakValue.setText(streak + " Sunday Streak 🔥");
                         }
                     });
         }
     }
 
+    private int calculateSundayStreak(Set<String> uniqueDates) {
+        if (uniqueDates == null || uniqueDates.isEmpty()) return 0;
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        List<LocalDate> sundays = new ArrayList<>();
+        for (String d : uniqueDates) {
+            try {
+                LocalDate date = LocalDate.parse(d, formatter);
+                if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    sundays.add(date);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        
+        if (sundays.isEmpty()) return 0;
+        Collections.sort(sundays, Collections.reverseOrder());
+        
+        LocalDate today = LocalDate.now();
+        LocalDate thisSunday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate lastSunday = thisSunday.minusWeeks(1);
+        
+        LocalDate mostRecentSunday = sundays.get(0);
+        if (!mostRecentSunday.equals(thisSunday) && !mostRecentSunday.equals(lastSunday)) {
+            return 0;
+        }
+        
+        int streak = 1;
+        for (int i = 1; i < sundays.size(); i++) {
+            if (sundays.get(i - 1).minusWeeks(1).equals(sundays.get(i))) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+        return streak;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        if (!VerifiedAccountFlow.guard(this)) return;
         fetchUserData();
         fetchAttendanceData();
         checkSingleSignOn();

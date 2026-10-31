@@ -17,16 +17,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class Register extends AppCompatActivity {
 
+    private RegistrationModel registration;
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private androidx.appcompat.app.AlertDialog recoveryDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +37,6 @@ public class Register extends AppCompatActivity {
         });
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         MaterialButtonToggleGroup toggleUserType = findViewById(R.id.toggleUserType);
         EditText etUsername = findViewById(R.id.etRegisterUsername);
@@ -51,7 +47,29 @@ public class Register extends AppCompatActivity {
         Button btnRegister = findViewById(R.id.btnRegister);
         TextView tvLogin = findViewById(R.id.tvLogin);
 
+        registration = new androidx.lifecycle.ViewModelProvider(this).get(RegistrationModel.class);
+        if (savedInstanceState != null && registration.existingEmail == null)
+            registration.existingEmail = savedInstanceState.getString("existingEmail");
+        etPassword.setSaveEnabled(false); etConfirmPassword.setSaveEnabled(false);
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override public void handleOnBackPressed() {
+                if (!registration.busy) { FirebaseAuth.getInstance().signOut(); finish(); }
+            }
+        });
+        registration.changes.observe(this, ignored -> {
+            btnRegister.setEnabled(!registration.busy);
+            tvLogin.setEnabled(!registration.busy);
+            btnRegister.setText(registration.hasPending() ? "Retry profile setup" : "Register");
+            if (registration.error != null) {
+                Toast.makeText(this, registration.error, Toast.LENGTH_LONG).show(); registration.error = null;
+            }
+            showExistingAccount();
+            if (registration.complete) VerifiedAccountFlow.open(this, EmailVerificationActivity.class);
+        });
+        btnRegister.setText(registration.hasPending() ? "Retry profile setup" : "Register");
         btnRegister.setOnClickListener(v -> {
+            if (registration.busy) return;
+            if (registration.hasPending()) { registration.retry(); return; }
             String username = etUsername.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
@@ -60,8 +78,6 @@ public class Register extends AppCompatActivity {
             String userType = "Student";
             if (toggleUserType.getCheckedButtonId() == R.id.btnTeacherRegister) {
                 userType = "Teacher";
-            } else if (toggleUserType.getCheckedButtonId() == R.id.btnAdminRegister) {
-                userType = "Admin";
             }
 
             int selectedGenderId = rgGender.getCheckedRadioButtonId();
@@ -91,49 +107,40 @@ public class Register extends AppCompatActivity {
                 return;
             }
 
-            registerUser(username, email, password, gender, userType);
+            registration.register(username, email, password, gender, userType);
         });
 
         tvLogin.setOnClickListener(v -> {
+            mAuth.signOut();
             finish();
         });
     }
 
-    private void registerUser(String username, String email, String password, String gender, String userType) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        if (user != null) {
-                            saveUserToFirestore(user.getUid(), username, email, password, gender, userType);
-                        }
-                    } else {
-                        Toast.makeText(Register.this, "Authentication failed: " + task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void saveUserToFirestore(String uid, String username, String email, String password, String gender, String userType) {
-        Map<String, Object> user = new HashMap<>();
-        user.put("uid", uid);
-        user.put("username", username);
-        user.put("email", email);
-        user.put("password", password);
-        user.put("gender", gender);
-        user.put("userType", userType);
-        user.put("totalXP", 0);
-        user.put("level", 1);
-
-        db.collection("users").document(uid)
-                .set(user)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(Register.this, "Account Created Successfully!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Register.this, login.class));
+    private void showExistingAccount() {
+        if (registration.existingEmail == null || (recoveryDialog != null && recoveryDialog.isShowing())) return;
+        final String email = registration.existingEmail;
+        recoveryDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(R.string.account_exists_title)
+                .setMessage(R.string.account_exists_message)
+                .setPositiveButton(R.string.account_continue_login, (dialog, which) -> {
+                    registration.existingEmail = null;
+                    startActivity(new Intent(this, login.class).putExtra(VerifiedAccountFlow.EXTRA_EMAIL, email)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                     finish();
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(Register.this, "Error storing data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .setNeutralButton(R.string.account_forgot_password, (dialog, which) -> {
+                    registration.existingEmail = null;
+                    startActivity(new Intent(this, ForgotPassword.class).putExtra(VerifiedAccountFlow.EXTRA_EMAIL, email));
+                })
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> registration.existingEmail = null)
+                .setOnCancelListener(dialog -> registration.existingEmail = null).show();
+    }
+    @Override protected void onSaveInstanceState(Bundle state) {
+        state.putString("existingEmail", registration.existingEmail);
+        super.onSaveInstanceState(state);
+    }
+    @Override protected void onDestroy() {
+        if (recoveryDialog != null) recoveryDialog.dismiss();
+        super.onDestroy();
     }
 }

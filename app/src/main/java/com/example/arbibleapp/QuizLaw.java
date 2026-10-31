@@ -1,6 +1,7 @@
 package com.example.arbibleapp;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -28,7 +30,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
+import java.util.Random;
+import com.example.arbibleapp.LawScenarioBank.Scenario;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +52,7 @@ public class QuizLaw extends AppCompatActivity {
     private int currentScenarioIndex = 0;
     private int score = 0;
     private boolean isSubmittingResult = false;
+    private boolean quizReady = false, transitioning = false;
     private long startTime;
 
     private FirebaseFirestore db;
@@ -75,10 +79,9 @@ public class QuizLaw extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         initViews();
-        setupScenarios();
-        updateUI();
-        startTime = System.currentTimeMillis();
-        startQuizSession();
+        findViewById(R.id.btnInstructions).setEnabled(false);
+        tvTimer.setText("Loading...");
+        loadApprovedOverrides();
     }
 
     private void startQuizSession() {
@@ -109,7 +112,13 @@ public class QuizLaw extends AppCompatActivity {
         swipeCard = findViewById(R.id.swipeCard);
         quizProgress = findViewById(R.id.quizProgress);
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> confirmExit());
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                confirmExit();
+            }
+        });
 
         View btnInstructions = findViewById(R.id.btnInstructions);
         if (btnInstructions != null) {
@@ -121,6 +130,7 @@ public class QuizLaw extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     private void setupSwipeListener() {
         swipeCard.setOnTouchListener((v, event) -> {
+            if (!quizReady || transitioning || isSubmittingResult) return true;
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     dX = v.getX() - event.getRawX();
@@ -147,6 +157,8 @@ public class QuizLaw extends AppCompatActivity {
     }
 
     private void handleSwipe(boolean swipedRight) {
+        if (!quizReady || transitioning || isSubmittingResult || currentScenarioIndex >= scenarios.size()) return;
+        transitioning = true;
         if (questionTimer != null) questionTimer.cancel();
         
         Scenario current = scenarios.get(currentScenarioIndex);
@@ -156,8 +168,8 @@ public class QuizLaw extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Incorrect!", Toast.LENGTH_SHORT).show();
             wrongAnswers.add(current.description);
-            correctAnswers.add(current.isGood ? "Should be Good/Right" : "Should be Bad/Wrong");
-            selectedAnswers.add(swipedRight ? "Swiped Good" : "Swiped Bad");
+            correctAnswers.add(current.isGood ? "Follows Law" : "Breaks Law");
+            selectedAnswers.add(swipedRight ? "Follows Law" : "Breaks Law");
         }
 
         float targetX = swipedRight ? 2000f : -2000f;
@@ -169,43 +181,45 @@ public class QuizLaw extends AppCompatActivity {
         }).start();
     }
 
-    private void setupScenarios() {
-        List<Scenario> scenarioBank = new ArrayList<>();
+    private void loadApprovedOverrides() {
+        db.collection("quiz_questions")
+                .whereEqualTo("storyTitle", LawScenarioBank.STORY_TITLE)
+                .whereEqualTo("approvedByAdmin", true)
+                .get()
+                .addOnSuccessListener(snapshots -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    startLoadedQuiz(LawScenarioBank.load(snapshots.getDocuments()));
+                })
+                .addOnFailureListener(e -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    Toast.makeText(this, "Could not load edits. Using default scenarios.", Toast.LENGTH_SHORT).show();
+                    startLoadedQuiz(LawScenarioBank.defaults());
+                });
+    }
 
-        scenarioBank.add(new Scenario("Helping a friend who fell down", R.drawable.ic_faithfulness, true));
-        scenarioBank.add(new Scenario("Taking a toy without asking", R.drawable.ic_slavery, false));
-        scenarioBank.add(new Scenario("Listening to your parents", R.drawable.ic_growing_disciple, true));
-        scenarioBank.add(new Scenario("Telling a lie to stay out of trouble", R.drawable.ic_conflict, false));
-        scenarioBank.add(new Scenario("Sharing your lunch with someone", R.drawable.ic_growing_scholar, true));
-        scenarioBank.add(new Scenario("Cheating during a test", R.drawable.ic_conflict, false));
-        scenarioBank.add(new Scenario("Praying before eating", R.drawable.ic_faithfulness, true));
-        scenarioBank.add(new Scenario("Bullying a classmate", R.drawable.ic_conflict, false));
-        scenarioBank.add(new Scenario("Helping clean the classroom", R.drawable.ic_growing_disciple, true));
-        scenarioBank.add(new Scenario("Stealing money from a bag", R.drawable.ic_slavery, false));
-        scenarioBank.add(new Scenario("Forgiving someone who hurt you", R.drawable.ic_faithfulness, true));
-        scenarioBank.add(new Scenario("Destroying school property", R.drawable.ic_conflict, false));
-        scenarioBank.add(new Scenario("Respecting your teacher", R.drawable.ic_growing_scholar, true));
-        scenarioBank.add(new Scenario("Ignoring someone who needs help", R.drawable.ic_slavery, false));
-        scenarioBank.add(new Scenario("Being honest even when scared",R.drawable.ic_faithfulness,true));
-
-        Collections.shuffle(scenarioBank);
-        scenarios.clear();
-
-        for (int i = 0; i < 10; i++) {
-            scenarios.add(scenarioBank.get(i));
-        }
-
+    private void startLoadedQuiz(List<Scenario> bank) {
+        scenarios = LawScenarioBank.selectQuiz(bank, new Random());
         quizProgress.setMax(scenarios.size());
+        swipeCard.post(() -> {
+            if (isFinishing() || isDestroyed()) return;
+            initialX = swipeCard.getX();
+            quizReady = true;
+            findViewById(R.id.btnInstructions).setEnabled(true);
+            startTime = System.currentTimeMillis();
+            startQuizSession();
+            updateUI();
+        });
     }
 
     private void updateUI() {
+        transitioning = false;
         if (currentScenarioIndex >= scenarios.size()) {
             finishQuiz();
             return;
         }
 
         Scenario current = scenarios.get(currentScenarioIndex);
-        ivScenario.setImageResource(current.imageRes);
+        LawImageCodec.display(ivScenario, current.imageBytes, current.imageRes);
         tvScenarioDesc.setText(current.description);
         tvScenarioCount.setText(currentScenarioIndex + 1 + " / " + scenarios.size());
         quizProgress.setProgress(currentScenarioIndex);
@@ -218,7 +232,7 @@ public class QuizLaw extends AppCompatActivity {
     }
 
     private void resumeTimer() {
-        if (timeLeftInMillis <= 0) return;
+        if (!quizReady || transitioning || isSubmittingResult || timeLeftInMillis <= 0) return;
         startTimerWithDuration(timeLeftInMillis);
     }
 
@@ -241,6 +255,12 @@ public class QuizLaw extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                if (!quizReady || transitioning || isSubmittingResult || currentScenarioIndex >= scenarios.size()) return;
+                transitioning = true;
+                Scenario current = scenarios.get(currentScenarioIndex);
+                wrongAnswers.add(current.description);
+                correctAnswers.add(current.isGood ? "Follows Law" : "Breaks Law");
+                selectedAnswers.add("No answer (time expired)");
                 timeLeftInMillis = 0;
                 tvTimer.setText("00:00");
 
@@ -264,17 +284,49 @@ public class QuizLaw extends AppCompatActivity {
     }
 
     private void finishQuiz() {
+        quizReady = false;
+        if (questionTimer != null) questionTimer.cancel();
         saveResults();
     }
 
     private void showInstructionsDialog() {
+        if (!quizReady || transitioning || isSubmittingResult) return;
         pauseTimer();
-        new AlertDialog.Builder(this)
-                .setTitle("ℹ️ Quiz 5 Instructions")
-                .setMessage("Read each real-life scenario carefully and swipe or tap whether the decision OBEYS or DISOBEYS God's Ten Commandments!")
-                .setPositiveButton("Got It!", (dialog, which) -> resumeTimer())
-                .setOnCancelListener(dialog -> resumeTimer())
-                .show();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_instructions);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        
+        TextView tvTitle = dialog.findViewById(R.id.tvInstructionTitle);
+        TextView tvMessage = dialog.findViewById(R.id.tvInstructionMessage);
+        
+        tvTitle.setText("Quiz 5 Instructions");
+        tvMessage.setText("Read each scenario. Swipe right if the action Follows Law, or left if it Breaks Law.");
+        
+        dialog.findViewById(R.id.btnInstructionGotIt).setOnClickListener(v -> {
+            dialog.dismiss();
+            resumeTimer();
+        });
+        dialog.setOnCancelListener(d -> resumeTimer());
+        
+        dialog.show();
+    }
+    
+    private void confirmExit() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_confirm_exit);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        
+        dialog.findViewById(R.id.btnExitStay).setOnClickListener(v -> dialog.dismiss());
+        dialog.findViewById(R.id.btnExitLeave).setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
+        
+        dialog.show();
     }
 
     private void saveResults() {
@@ -324,7 +376,7 @@ public class QuizLaw extends AppCompatActivity {
                         boolean leveledUp = false;
                         int newLevel = 1;
 
-                        if (totalXP > 0) {
+                        if (isSunday && totalXP > 0) {
                             Long currentXpLong = (documentSnapshot.exists() && documentSnapshot.contains("totalXP")) ? documentSnapshot.getLong("totalXP") : null;
                             long currentXP = currentXpLong != null ? currentXpLong : 0;
                             int oldLevel = (int) (currentXP / 250) + 1;
@@ -362,21 +414,13 @@ public class QuizLaw extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        quizReady = false;
+        swipeCard.animate().cancel();
+        ivScenario.setTag(null);
         if (questionTimer != null) questionTimer.cancel();
         if (!isChangingConfigurations()) {
             endQuizSession();
         }
     }
 
-    private static class Scenario {
-        String description;
-        int imageRes;
-        boolean isGood;
-
-        Scenario(String description, int imageRes, boolean isGood) {
-            this.description = description;
-            this.imageRes = imageRes;
-            this.isGood = isGood;
-        }
-    }
 }

@@ -39,7 +39,7 @@ public class BibleStories extends AppCompatActivity {
     private TextView btnAll, btnOldTestament, btnNewTestament;
     private ConstraintLayout cardCreationFall, cardFlood, cardBabelAbraham, cardExodus, cardLawDesert,
             cardJudges, cardMonarchy, cardDivisionExile, cardReturnMessiah,
-            cardBirthMinistry, cardConflictDeath, cardResurrectionAscension;
+            cardBirthMinistry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +86,6 @@ public class BibleStories extends AppCompatActivity {
         cardDivisionExile = findViewById(R.id.cardDivisionExile);
         cardReturnMessiah = findViewById(R.id.cardReturnMessiah);
         cardBirthMinistry = findViewById(R.id.cardBirthMinistry);
-        cardConflictDeath = findViewById(R.id.cardConflictDeath);
-        cardResurrectionAscension = findViewById(R.id.cardResurrectionAscension);
     }
 
     private void setupListeners() {
@@ -114,13 +112,12 @@ public class BibleStories extends AppCompatActivity {
         }
 
         // Setup other cards similarly if quizzes exist
-        if (cardJudges != null) cardJudges.setOnClickListener(v -> openStoryReview("Entering the Promised Land and the Judges", null));
-        if (cardMonarchy != null) cardMonarchy.setOnClickListener(v -> openStoryReview("The Monarchy: Saul, David, and Solomon", null));
-        if (cardDivisionExile != null) cardDivisionExile.setOnClickListener(v -> openStoryReview("Division of the Kingdom and Exile", null));
-        if (cardReturnMessiah != null) cardReturnMessiah.setOnClickListener(v -> openStoryReview("Return from Exile and Anticipation of the Messiah", null));
-        if (cardBirthMinistry != null) cardBirthMinistry.setOnClickListener(v -> openStoryReview("The Birth and Ministry of Jesus", null));
-        if (cardConflictDeath != null) cardConflictDeath.setOnClickListener(v -> openStoryReview("Conflict with the Pharisees and Jesus's Death", null));
-        if (cardResurrectionAscension != null) cardResurrectionAscension.setOnClickListener(v -> openStoryReview("Resurrection and Ascension", null));
+        if (cardJudges != null) cardJudges.setOnClickListener(v -> openStoryReview("Entering the Promised Land and the Judges", QuizJudges.class));
+        if (cardMonarchy != null) cardMonarchy.setOnClickListener(v -> openStoryReview("The Monarchy: Saul, David, and Solomon", QuizMonarchy.class));
+        if (cardDivisionExile != null) cardDivisionExile.setOnClickListener(v -> openStoryReview("Division of the Kingdom and Exile", QuizDivision.class));
+        if (cardReturnMessiah != null) cardReturnMessiah.setOnClickListener(v -> openStoryReview("Return from Exile and Anticipation of the Messiah", QuizReturn.class));
+        if (cardBirthMinistry != null) cardBirthMinistry.setOnClickListener(v -> openStoryReview("The Birth and Ministry of Jesus", QuizBirth.class));
+
     }
 
     private void openStoryReview(String title, Class<?> quizClass) {
@@ -132,6 +129,9 @@ public class BibleStories extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private enum Category { ALL, OLD_TESTAMENT, NEW_TESTAMENT }
+    private Category currentCategory = Category.ALL;
+
     private void setupSearch() {
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -139,7 +139,7 @@ public class BibleStories extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterStories(s.toString().toLowerCase());
+                applyFilters();
             }
 
             @Override
@@ -150,17 +150,20 @@ public class BibleStories extends AppCompatActivity {
     private void setupCategories() {
         btnAll.setOnClickListener(v -> {
             updateCategoryUI(btnAll);
-            showAllStories();
+            currentCategory = Category.ALL;
+            applyFilters();
         });
 
         btnOldTestament.setOnClickListener(v -> {
             updateCategoryUI(btnOldTestament);
-            showOldTestament();
+            currentCategory = Category.OLD_TESTAMENT;
+            applyFilters();
         });
 
         btnNewTestament.setOnClickListener(v -> {
             updateCategoryUI(btnNewTestament);
-            showNewTestament();
+            currentCategory = Category.NEW_TESTAMENT;
+            applyFilters();
         });
     }
 
@@ -191,52 +194,31 @@ public class BibleStories extends AppCompatActivity {
         }
     }
 
-    private void showAllStories() {
-        setVisibleCards(
-                cardCreationFall, cardFlood, cardBabelAbraham, cardExodus,
-                cardLawDesert, cardJudges, cardMonarchy, cardDivisionExile,
-                cardReturnMessiah, cardBirthMinistry, cardConflictDeath, cardResurrectionAscension
-        );
-    }
-
-    private void showOldTestament() {
-        setVisibleCards(
-                cardCreationFall, cardFlood, cardBabelAbraham, cardExodus,
-                cardLawDesert, cardJudges, cardMonarchy, cardDivisionExile, cardReturnMessiah
-        );
-    }
-
-    private void showNewTestament() {
-        setVisibleCards(
-                cardBirthMinistry, cardConflictDeath, cardResurrectionAscension
-        );
-    }
-
-    private void filterStories(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            showAllStories();
-            return;
-        }
-        String q = query.toLowerCase().trim();
+    private void applyFilters() {
+        String query = etSearch.getText() != null ? etSearch.getText().toString().toLowerCase().trim() : "";
         List<View> matches = new ArrayList<>();
-        checkAndAddMatch(matches, cardCreationFall, "Creation and the Fall", q);
-        checkAndAddMatch(matches, cardFlood, "Early Humanity and the Flood", q);
-        checkAndAddMatch(matches, cardBabelAbraham, "The Tower of Babel and Abraham's Covenant", q);
-        checkAndAddMatch(matches, cardExodus, "Slavery in Egypt and the Exodus", q);
-        checkAndAddMatch(matches, cardLawDesert, "The Law and Wandering in the Desert", q);
-        checkAndAddMatch(matches, cardJudges, "Entering the Promised Land and the Judges", q);
-        checkAndAddMatch(matches, cardMonarchy, "The Monarchy: Saul, David, and Solomon", q);
-        checkAndAddMatch(matches, cardDivisionExile, "Division of the Kingdom and Exile", q);
-        checkAndAddMatch(matches, cardReturnMessiah, "Return from Exile and Anticipation of the Messiah", q);
-        checkAndAddMatch(matches, cardBirthMinistry, "The Birth and Ministry of Jesus", q);
-        checkAndAddMatch(matches, cardConflictDeath, "Conflict with the Pharisees and Jesus's Death", q);
-        checkAndAddMatch(matches, cardResurrectionAscension, "Resurrection and Ascension", q);
+
+        if (currentCategory == Category.ALL || currentCategory == Category.OLD_TESTAMENT) {
+            checkAndAddMatch(matches, cardCreationFall, "Creation and the Fall", query);
+            checkAndAddMatch(matches, cardFlood, "Early Humanity and the Flood", query);
+            checkAndAddMatch(matches, cardBabelAbraham, "The Tower of Babel and Abraham's Covenant", query);
+            checkAndAddMatch(matches, cardExodus, "Slavery in Egypt and the Exodus", query);
+            checkAndAddMatch(matches, cardLawDesert, "The Law and Wandering in the Desert", query);
+            checkAndAddMatch(matches, cardJudges, "Entering the Promised Land and the Judges", query);
+            checkAndAddMatch(matches, cardMonarchy, "The Monarchy: Saul, David, and Solomon", query);
+            checkAndAddMatch(matches, cardDivisionExile, "Division of the Kingdom and Exile", query);
+            checkAndAddMatch(matches, cardReturnMessiah, "Return from Exile and Anticipation of the Messiah", query);
+        }
+
+        if (currentCategory == Category.ALL || currentCategory == Category.NEW_TESTAMENT) {
+            checkAndAddMatch(matches, cardBirthMinistry, "The Birth and Ministry of Jesus", query);
+        }
 
         setVisibleCards(matches.toArray(new View[0]));
     }
 
     private void checkAndAddMatch(List<View> matches, View card, String title, String query) {
-        if (card != null && title.toLowerCase().contains(query)) {
+        if (card != null && (query.isEmpty() || title.toLowerCase().contains(query))) {
             matches.add(card);
         }
     }

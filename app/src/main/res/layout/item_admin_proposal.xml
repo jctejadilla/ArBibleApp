@@ -98,6 +98,72 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tvLawImageAction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/text_dark"
+            android:visibility="gone" />
+        <ImageView
+            android:id="@+id/ivLawProposalImage"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="Proposed Law scenario image"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/llBabelProposalImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/tvBabelOddBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/text_dark"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvBabelImage1Action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_dark" />
+            <ImageView
+                android:id="@+id/ivBabelProposalImage1"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="Babel block 1 proposal image" />
+            <TextView
+                android:id="@+id/tvBabelImage2Action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_dark" />
+            <ImageView
+                android:id="@+id/ivBabelProposalImage2"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="Babel block 2 proposal image" />
+            <TextView
+                android:id="@+id/tvBabelImage3Action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_dark" />
+            <ImageView
+                android:id="@+id/ivBabelProposalImage3"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="Babel block 3 proposal image" />
+        </LinearLayout>
+
+        <TextView
             android:id="@+id/tvProposedOptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

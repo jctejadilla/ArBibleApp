@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">ArBibleApp</string>
+    <string name="verification_title">Verify your email</string>
+    <string name="verification_check">I\'ve verified my email</string>
+    <string name="verification_resend">Resend email</string>
+    <string name="verification_resend_wait">Resend in %1$d seconds</string>
+    <string name="verification_login">Back to login</string>
+    <string name="account_exists_title">Account already exists</string>
+    <string name="account_exists_message">This email already has an account. Log in to finish verification using your original password.</string>
+    <string name="account_continue_login">Continue to login</string>
+    <string name="account_forgot_password">Forgot password</string>
 </resources>

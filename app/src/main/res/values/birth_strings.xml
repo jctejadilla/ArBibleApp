@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="birth_title">Birth of Jesus Quiz</string>
+    <string name="birth_back">Back</string>
+    <string name="birth_instructions_button">Birth of Jesus Quiz</string>
+    <string name="birth_instructions">Name the person or object in the picture. Green answer slots are hints. Tap letters below to fill the other slots. Tap a filled slot to return its letter, or Clear to start the word again. Submit when every slot is filled. You get one scored try per picture. There is no timer. Each correct word earns 20 XP when you finish on Sunday. Weekday attempts are saved as trials with no XP. For King Herod and John the Baptist, enter HEROD and JOHN.</string>
+    <string name="birth_prompt">Complete the name below the picture.</string>
+    <string name="birth_progress">Picture %1$d of 10 · %2$d correct</string>
+    <string name="birth_pending_xp">%1$d XP pending · Sunday rewards</string>
+    <string name="birth_trial">Trial · No XP · Your attempt will be saved</string>
+    <string name="birth_picture">Picture to identify</string>
+    <string name="birth_hint_slot">Hint %1$d: %2$s</string>
+    <string name="birth_answer_slot">Answer slot %1$d: %2$s. Tap a filled slot to remove its letter.</string>
+    <string name="birth_tile">Letter tile %1$d: %2$s</string>
+    <string name="birth_clear">Clear</string>
+    <string name="birth_submit">Submit Word</string>
+    <string name="birth_next">Next Picture</string>
+    <string name="birth_finish">Finish</string>
+    <string name="birth_correct">Correct! %1$s — %2$s</string>
+    <string name="birth_wrong">The correct word is %1$s — %2$s</string>
+    <string name="birth_saving">Saving…</string>
+    <string name="birth_retry">Retry saving</string>
+    <string name="birth_save_error">Your answers are still here. Check your connection and retry saving.</string>
+    <string name="birth_sign_in">Sign in to save your result. Your answers are still here.</string>
+    <string name="birth_review_title">Name the person or object in this picture.</string>
+    <string name="birth_your_answer">Your answer: %1$s</string>
+    <string name="birth_correct_answer">Correct answer: %1$s — %2$s</string>
+</resources>

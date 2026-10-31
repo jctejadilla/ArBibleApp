@@ -1,5 +1,6 @@
 package com.example.arbibleapp;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -88,6 +90,7 @@ public class QuizAdamEve extends AppCompatActivity {
 
     private List<QuestionModel> questionList = new ArrayList<>();
     private int[] userSelections;
+    private boolean quizReady = false;
 
     private int currentQuestionIndex = 0;
     private boolean isQuizFinished = false;
@@ -119,11 +122,22 @@ public class QuizAdamEve extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         tvTimer = findViewById(R.id.tvTimer);
 
-        setupQuestions();
-        userSelections = new int[questionList.size()];
-        Arrays.fill(userSelections, -1);
+        btnNext.setEnabled(false);
+        btnPrevious.setEnabled(false);
+        rbOptionA.setEnabled(false);
+        rbOptionB.setEnabled(false);
+        rbOptionC.setEnabled(false);
+        rbOptionD.setEnabled(false);
+        findViewById(R.id.btnInstructions).setEnabled(false);
+        tvTimer.setText("Loading...");
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> confirmExit());
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                confirmExit();
+            }
+        });
 
         View btnInstructions = findViewById(R.id.btnInstructions);
         if (btnInstructions != null) {
@@ -131,13 +145,10 @@ public class QuizAdamEve extends AppCompatActivity {
         }
 
         clearProgress();
-        loadQuestion();
         loadApprovedOverrides("Creation and the Fall");
-        startTimer();
-        startTime = System.currentTimeMillis();
-        startQuizSession();
 
         btnNext.setOnClickListener(v -> {
+            if (!quizReady) return;
             int selectedId = rgOptions.getCheckedRadioButtonId();
             if (selectedId == -1) {
                 Toast.makeText(this, "Please select an answer", Toast.LENGTH_SHORT).show();
@@ -156,6 +167,7 @@ public class QuizAdamEve extends AppCompatActivity {
         });
 
         btnPrevious.setOnClickListener(v -> {
+            if (!quizReady) return;
             int selectedId = rgOptions.getCheckedRadioButtonId();
             if (selectedId != -1) {
                 RadioButton selectedRadioButton = findViewById(selectedId);
@@ -169,88 +181,81 @@ public class QuizAdamEve extends AppCompatActivity {
         });
     }
 
-    private void setupQuestions() {
-        String[] questions = {
-                "Who were the first man and woman created by God?",
-                "Where did Adam and Eve live at the beginning?",
-                "What was the name of the garden?",
-                "Who created Adam and Eve?",
-                "What did God tell Adam and Eve not to eat?",
-                "Which animal tricked Eve?",
-                "What did the serpent say would happen if Eve ate the fruit?",
-                "Why did God create Eve?",
-                "What did Adam and Eve use to cover themselves?",
-                "What is one important lesson from the story?"
-        };
-
-        String[][] options = {
-                {"Noah and his wife", "Abraham and Sarah", "Adam and Eve", "Moses and Miriam"},
-                {"In a castle", "In a garden", "In a city", "On a mountain"},
-                {"Garden of Peace", "Garden of Life", "Garden of Eden", "Garden of Hope"},
-                {"An angel", "A king", "God", "A farmer"},
-                {"Apples", "Grapes", "Bread", "Fruit from the Tree of Knowledge"},
-                {"Lion", "Monkey", "Dove", "Serpent (snake)"},
-                {"She would get sick", "She would fall asleep", "She would disappear", "She would be like God, knowing good and evil"},
-                {"To work in the garden", "To name the animals", "To be a helper and companion for Adam", "To build a house"},
-                {"Animal skin", "Grass", "Blankets", "Leaves"},
-                {"Always hide", "Animals can talk", "We should obey God", "Gardens are dangerous"}
-        };
-
-        int[] correctAnswers = {2, 1, 2, 2, 3, 3, 3, 2, 3, 2};
-
-        for (int i = 0; i < questions.length; i++) {
-            questionList.add(new QuestionModel(questions[i], options[i], correctAnswers[i]));
-        }
-        Collections.shuffle(questionList);
-    }
-
     private void loadApprovedOverrides(String storyTitle) {
         FirebaseFirestore.getInstance().collection("quiz_questions")
                 .whereEqualTo("storyTitle", storyTitle)
                 .whereEqualTo("approvedByAdmin", true)
                 .get()
-                .addOnSuccessListener(querySnapshots -> {
-                    if (querySnapshots != null && !querySnapshots.isEmpty()) {
-                        for (DocumentSnapshot doc : querySnapshots) {
-                            String origQ = doc.getString("originalQuestion");
-                            String newQ = doc.getString("question");
-                            List<String> newOpts = (List<String>) doc.get("options");
-                            Long newCorrectIdx = doc.getLong("correctAnswerIndex");
-
-                            if (newQ != null && newOpts != null && newCorrectIdx != null) {
-                                String[] optsArr = newOpts.toArray(new String[0]);
-                                QuestionModel approvedModel = new QuestionModel(newQ, optsArr, newCorrectIdx.intValue());
-
-                                boolean replaced = false;
-                                if (origQ != null && !origQ.isEmpty()) {
-                                    for (int i = 0; i < questionList.size(); i++) {
-                                        if (questionList.get(i).question.equalsIgnoreCase(origQ)) {
-                                            questionList.set(i, approvedModel);
-                                            replaced = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (!replaced) {
-                                    questionList.add(approvedModel);
-                                }
-                            }
-                        }
-                    }
-                    if (currentQuestionIndex < questionList.size()) {
-                        loadQuestion();
-                    }
+                .addOnSuccessListener(snapshots -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    startLoadedQuiz(CreationQuestionBank.load(snapshots.getDocuments()));
+                })
+                .addOnFailureListener(e -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    Toast.makeText(this, "Could not load edits. Using default questions.", Toast.LENGTH_SHORT).show();
+                    startLoadedQuiz(CreationQuestionBank.defaults());
                 });
+    }
+
+    private void startLoadedQuiz(List<CreationQuestionBank.QuestionModel> bank) {
+        questionList.clear();
+        for (CreationQuestionBank.QuestionModel item : bank) {
+            questionList.add(new QuestionModel(item.question, item.options, item.correctAnswerIndex));
+        }
+        Collections.shuffle(questionList);
+        userSelections = new int[questionList.size()];
+        Arrays.fill(userSelections, -1);
+        quizReady = true;
+        btnNext.setEnabled(true);
+        btnPrevious.setEnabled(true);
+        rbOptionA.setEnabled(true);
+        rbOptionB.setEnabled(true);
+        rbOptionC.setEnabled(true);
+        rbOptionD.setEnabled(true);
+        findViewById(R.id.btnInstructions).setEnabled(true);
+        loadQuestion();
+        startTime = System.currentTimeMillis();
+        startQuizSession();
+        startTimer();
     }
 
     private void showInstructionsDialog() {
         pauseTimer();
-        new AlertDialog.Builder(this)
-                .setTitle("ℹ️ Quiz 1 Instructions")
-                .setMessage("Read each question carefully and select the correct answer out of the 4 choices!\n\nScore points for every correct answer to earn XP and level up!")
-                .setPositiveButton("Got It!", (dialog, which) -> resumeTimer())
-                .setOnCancelListener(dialog -> resumeTimer())
-                .show();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_instructions);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        
+        TextView tvTitle = dialog.findViewById(R.id.tvInstructionTitle);
+        TextView tvMessage = dialog.findViewById(R.id.tvInstructionMessage);
+        
+        tvTitle.setText("Quiz 1 Instructions");
+        tvMessage.setText("Read each question carefully and select the correct answer out of the 4 choices!\n\nScore points for every correct answer to earn XP and level up!");
+        
+        dialog.findViewById(R.id.btnInstructionGotIt).setOnClickListener(v -> {
+            dialog.dismiss();
+            resumeTimer();
+        });
+        dialog.setOnCancelListener(d -> resumeTimer());
+        
+        dialog.show();
+    }
+    
+    private void confirmExit() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_confirm_exit);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        
+        dialog.findViewById(R.id.btnExitStay).setOnClickListener(v -> dialog.dismiss());
+        dialog.findViewById(R.id.btnExitLeave).setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
+        
+        dialog.show();
     }
 
     private void loadQuestion() {
@@ -295,7 +300,7 @@ public class QuizAdamEve extends AppCompatActivity {
     }
 
     private void resumeTimer() {
-        if (timeLeftInMillis <= 0) return;
+        if (!quizReady || timeLeftInMillis <= 0) return;
         startTimerWithDuration(timeLeftInMillis);
     }
 

@@ -167,9 +167,15 @@ public class TeacherQuizResults extends AppCompatActivity {
     public static class QuizResultModel {
         public String studentUid, username, storyTitle, duration, date;
         public int score, totalQuestions;
+        public int moves;
+        public List<MonarchySequenceResult> sequences;
+        public List<BirthWordResult> wordAnswers;
+        public List<DivisionPairResult> matchedPairs;
         public List<String> wrongAnswers;
         public List<String> correctAnswers;
         public List<String> selectedAnswers;
+        public List<String> selectedImageKeys;
+        public List<String> correctImageKeys;
         public boolean isSunday;
         public com.google.firebase.Timestamp timestamp;
 
@@ -217,6 +223,10 @@ public class TeacherQuizResults extends AppCompatActivity {
                 holder.tvInitials.setText(name.toUpperCase());
             }
             
+            holder.itemView.setOnClickListener(null);
+            if (DivisionPairBank.STORY_TITLE.equals(r.storyTitle) && r.matchedPairs != null) {
+                holder.itemView.setOnClickListener(v -> DivisionPairReview.showForTeacher(v.getContext(), r));
+            }
             double percent = r.totalQuestions > 0 ? (double) r.score / r.totalQuestions : 0;
             if (percent >= 0.8) {
                 holder.tvScore.setTextColor(Color.parseColor("#2E7D32"));

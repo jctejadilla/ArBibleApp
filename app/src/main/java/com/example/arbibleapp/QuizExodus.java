@@ -1,9 +1,12 @@
 package com.example.arbibleapp;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -11,9 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -38,7 +43,8 @@ public class QuizExodus extends AppCompatActivity {
     private ImageView btnBack, ivMainScene, ivOption1, ivOption2;
     private CardView cardOption1, cardOption2;
     private ProgressBar quizProgress;
-    private TextView tvTimer, tvQuestionCount;
+    private TextView tvTimer, tvQuestionCount, tvPrompt, tvOption1Caption, tvOption2Caption;
+    private boolean quizReady = false;
 
     private List<SequenceStep> steps = new ArrayList<>();
     private List<String> wrongAnswers = new ArrayList<>();
@@ -71,9 +77,54 @@ public class QuizExodus extends AppCompatActivity {
 
         initViews();
         setupSequence();
-        updateUI();
+        cardOption1.setEnabled(false);
+        cardOption2.setEnabled(false);
+        findViewById(R.id.btnInstructions).setEnabled(false);
+        tvTimer.setText("Loading...");
+        loadApprovedOverrides();
+    }
+
+    private void loadApprovedOverrides() {
+        db.collection("quiz_questions")
+                .whereEqualTo("storyTitle", "Slavery in Egypt and the Exodus")
+                .whereEqualTo("approvedByAdmin", true)
+                .get()
+                .addOnSuccessListener(snapshots -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    Map<Integer, QuizCaptionOverride> edits =
+                            QuizCaptionOverride.select(snapshots.getDocuments(), 4);
+                    for (Map.Entry<Integer, QuizCaptionOverride> entry : edits.entrySet()) {
+                        SequenceStep step = steps.get(entry.getKey());
+                        QuizCaptionOverride edit = entry.getValue();
+                        step.description = edit.question;
+                        step.correctCaption = edit.optionA;
+                        step.wrongCaption = edit.optionB;
+                        step.mainBytes = ExodusImageDefaults.bytes(edit.image1);
+                        step.correctBytes = ExodusImageDefaults.bytes(edit.image2);
+                        step.wrongBytes = ExodusImageDefaults.bytes(edit.image3);
+                    }
+                    startLoadedQuiz();
+                })
+                .addOnFailureListener(e -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    Toast.makeText(this, "Could not load edits. Using default content.", Toast.LENGTH_SHORT).show();
+                    startLoadedQuiz();
+                });
+    }
+
+    private void startLoadedQuiz() {
+        quizReady = true;
+        cardOption1.setEnabled(true);
+        cardOption2.setEnabled(true);
+        findViewById(R.id.btnInstructions).setEnabled(true);
         startTime = System.currentTimeMillis();
         startQuizSession();
+        updateUI();
+    }
+
+    private void setCaption(TextView view, String caption) {
+        view.setText(caption);
+        view.setVisibility(caption.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private void startQuizSession() {
@@ -105,8 +156,17 @@ public class QuizExodus extends AppCompatActivity {
         quizProgress = findViewById(R.id.quizProgress);
         tvTimer = findViewById(R.id.tvTimer);
         tvQuestionCount = findViewById(R.id.tvQuestionCount);
+        tvPrompt = findViewById(R.id.tvPrompt);
+        tvOption1Caption = findViewById(R.id.tvOption1Caption);
+        tvOption2Caption = findViewById(R.id.tvOption2Caption);
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> confirmExit());
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                confirmExit();
+            }
+        });
 
         View btnInstructions = findViewById(R.id.btnInstructions);
         if (btnInstructions != null) {
@@ -115,48 +175,19 @@ public class QuizExodus extends AppCompatActivity {
 
         cardOption1.setOnClickListener(v -> handleChoice(0));
         cardOption2.setOnClickListener(v -> handleChoice(1));
+        tvOption1Caption.setOnClickListener(v -> cardOption1.performClick());
+        tvOption2Caption.setOnClickListener(v -> cardOption2.performClick());
     }
 
     private void setupSequence() {
-        // 1. Slavery -> Baby Moses
-        steps.add(new SequenceStep(
-                R.drawable.ic_slavery,
-                R.drawable.ic_birth,
-                R.drawable.ic_adam,
-                0
-        ));
-
-        // 2. Moses grown up -> Burning Bush / Confront Pharaoh
-        steps.add(new SequenceStep(
-                R.drawable.ic_birth,
-                R.drawable.ic_conflict,
-                R.drawable.ic_noah,
-                0
-        ));
-
-        // 3. Pharaoh refuses -> Plagues
-        steps.add(new SequenceStep(
-                R.drawable.ic_conflict,
-                R.drawable.ic_land, // Placeholder for exodus start
-                R.drawable.ic_babel,
-                0
-        ));
-
-        // 4. Red Sea Crossing -> Wilderness
-        steps.add(new SequenceStep(
-                R.drawable.ic_land,
-                R.drawable.ic_law, // Placeholder for Sinai
-                R.drawable.ic_gold,
-                0
-        ));
-
-        // 5. Sinai -> Promised Land
-        steps.add(new SequenceStep(
-                R.drawable.ic_law,
-                R.drawable.ic_land, // Correct: Entering land
-                R.drawable.ic_monarchy,
-                0
-        ));
+        for (int step = 0; step < 5; step++) {
+            SequenceStep scenario = new SequenceStep(ExodusImageDefaults.image(step, 0),
+                    ExodusImageDefaults.image(step, 1), ExodusImageDefaults.image(step, 2), 0);
+            scenario.description = ExodusImageDefaults.description(step);
+            scenario.correctCaption = ExodusImageDefaults.caption(step, true);
+            scenario.wrongCaption = ExodusImageDefaults.caption(step, false);
+            steps.add(scenario);
+        }
 
         quizProgress.setMax(steps.size());
     }
@@ -170,15 +201,21 @@ public class QuizExodus extends AppCompatActivity {
         tvQuestionCount.setText((currentStepIndex + 1) + "/" + steps.size());
 
         SequenceStep step = steps.get(currentStepIndex);
-        ivMainScene.setImageResource(step.mainSceneRes);
+        LawImageCodec.display(ivMainScene, step.mainBytes, step.mainSceneRes);
+        ((TextView) findViewById(R.id.tvMainSceneDescription)).setText(step.description);
+        tvPrompt.setText("What happens next?");
         
         if (Math.random() > 0.5) {
-            ivOption1.setImageResource(step.correctRes);
-            ivOption2.setImageResource(step.wrongRes);
+            LawImageCodec.display(ivOption1, step.correctBytes, step.correctRes);
+            LawImageCodec.display(ivOption2, step.wrongBytes, step.wrongRes);
+            setCaption(tvOption1Caption, step.correctCaption);
+            setCaption(tvOption2Caption, step.wrongCaption);
             step.correctOptionIndex = 0;
         } else {
-            ivOption1.setImageResource(step.wrongRes);
-            ivOption2.setImageResource(step.correctRes);
+            LawImageCodec.display(ivOption1, step.wrongBytes, step.wrongRes);
+            LawImageCodec.display(ivOption2, step.correctBytes, step.correctRes);
+            setCaption(tvOption1Caption, step.wrongCaption);
+            setCaption(tvOption2Caption, step.correctCaption);
             step.correctOptionIndex = 1;
         }
 
@@ -194,7 +231,7 @@ public class QuizExodus extends AppCompatActivity {
     }
 
     private void resumeTimer() {
-        if (timeLeftInMillis <= 0) return;
+        if (!quizReady || timeLeftInMillis <= 0) return;
         startTimerWithDuration(timeLeftInMillis);
     }
 
@@ -231,23 +268,36 @@ public class QuizExodus extends AppCompatActivity {
     }
 
     private void handleChoice(int index) {
+        if (!quizReady || currentStepIndex >= steps.size()) return;
+        
+        quizReady = false; // Prevent multiple clicks while showing feedback
+        
         if (questionTimer != null) {
             questionTimer.cancel();
         }
         
         SequenceStep step = steps.get(currentStepIndex);
-        if (index == step.correctOptionIndex) {
+        boolean correct = index == step.correctOptionIndex;
+        
+        CardView selectedCard = (index == 0) ? cardOption1 : cardOption2;
+        int colorRes = correct ? R.color.primary_green : R.color.red;
+        selectedCard.setCardBackgroundColor(ContextCompat.getColor(this, colorRes));
+
+        if (correct) {
             score++;
-            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Incorrect!", Toast.LENGTH_SHORT).show();
             wrongAnswers.add("Step " + (currentStepIndex + 1) + " of the Exodus sequence");
             correctAnswers.add("Selected the wrong event in the timeline");
             selectedAnswers.add("Wrong choice made");
         }
 
-        currentStepIndex++;
-        updateUI();
+        // Delay 1 second to show the color, then reset and move on
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            cardOption1.setCardBackgroundColor(Color.WHITE);
+            cardOption2.setCardBackgroundColor(Color.WHITE);
+            currentStepIndex++;
+            updateUI();
+        }, 1000);
     }
 
     private void finishQuiz() {
@@ -259,12 +309,41 @@ public class QuizExodus extends AppCompatActivity {
 
     private void showInstructionsDialog() {
         pauseTimer();
-        new AlertDialog.Builder(this)
-                .setTitle("ℹ️ Quiz 4 Instructions")
-                .setMessage("Review each story scene and tap the image choice that correctly continues the Exodus timeline!\n\nFollow Moses from Egypt across the Red Sea to the Promised Land!")
-                .setPositiveButton("Got It!", (dialog, which) -> resumeTimer())
-                .setOnCancelListener(dialog -> resumeTimer())
-                .show();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_instructions);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        
+        TextView tvTitle = dialog.findViewById(R.id.tvInstructionTitle);
+        TextView tvMessage = dialog.findViewById(R.id.tvInstructionMessage);
+        
+        tvTitle.setText("Quiz 4 Instructions");
+        tvMessage.setText("Review each story scene and tap the image choice that correctly continues the Exodus timeline!\n\nFollow Moses from Egypt across the Red Sea to the Promised Land!");
+        
+        dialog.findViewById(R.id.btnInstructionGotIt).setOnClickListener(v -> {
+            dialog.dismiss();
+            resumeTimer();
+        });
+        dialog.setOnCancelListener(d -> resumeTimer());
+        
+        dialog.show();
+    }
+    
+    private void confirmExit() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_confirm_exit);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        
+        dialog.findViewById(R.id.btnExitStay).setOnClickListener(v -> dialog.dismiss());
+        dialog.findViewById(R.id.btnExitLeave).setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
+        
+        dialog.show();
     }
 
     private void saveResults() {
@@ -314,7 +393,7 @@ public class QuizExodus extends AppCompatActivity {
                         boolean leveledUp = false;
                         int newLevel = 1;
 
-                        if (totalXP > 0) {
+                        if (isSunday && totalXP > 0) {
                             Long currentXpLong = (documentSnapshot.exists() && documentSnapshot.contains("totalXP")) ? documentSnapshot.getLong("totalXP") : null;
                             long currentXP = currentXpLong != null ? currentXpLong : 0;
                             int oldLevel = (int) (currentXP / 250) + 1;
@@ -353,6 +432,9 @@ public class QuizExodus extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        if (ivMainScene != null) ivMainScene.setTag(null);
+        if (ivOption1 != null) ivOption1.setTag(null);
+        if (ivOption2 != null) ivOption2.setTag(null);
         super.onDestroy();
         if (questionTimer != null) {
             questionTimer.cancel();
@@ -363,6 +445,8 @@ public class QuizExodus extends AppCompatActivity {
     }
 
     private static class SequenceStep {
+        String description = "", correctCaption = "", wrongCaption = "";
+        byte[] mainBytes, correctBytes, wrongBytes;
         int mainSceneRes;
         int correctRes;
         int wrongRes;

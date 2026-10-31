@@ -12,6 +12,8 @@ import android.widget.FrameLayout;
 import androidx.core.view.ViewCompat;
 
 import com.google.androidgamesdk.GameActivity;
+import android.app.Activity;
+import android.util.Log;
 
 public class UnityPlayerGameActivity extends GameActivity implements IUnityPlayerLifecycleEvents, IUnityPermissionRequestSupport, IUnityPlayerSupport
 {
@@ -44,6 +46,7 @@ public class UnityPlayerGameActivity extends GameActivity implements IUnityPlaye
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        notifyArScan("attachUnityActivity", new Class<?>[]{Activity.class}, this);
     }
 
     @Override
@@ -89,24 +92,30 @@ public class UnityPlayerGameActivity extends GameActivity implements IUnityPlaye
     public void onUnityPlayerQuitted() {
     }
 
-    // Quit Unity
+    // Route Android Back through the app bridge so AR closes in the current task.
+    @Override public void onBackPressed()
+    {
+        if (!exitThroughArScan()) super.onBackPressed();
+    }
+
     @Override protected void onDestroy ()
     {
-        mUnityPlayer.destroy();
+        notifyArScan("detachUnityActivity", new Class<?>[]{Activity.class}, this);
+        if (mUnityPlayer != null) mUnityPlayer.destroy();
         super.onDestroy();
     }
 
     @Override protected void onStop()
     {
         // Note: we want Java onStop callbacks to be processed before the native part processes the onStop callback
-        mUnityPlayer.onStop();
+        if (mUnityPlayer != null) mUnityPlayer.onStop();
         super.onStop();
     }
 
     @Override protected void onStart()
     {
         // Note: we want Java onStart callbacks to be processed before the native part processes the onStart callback
-        mUnityPlayer.onStart();
+        if (mUnityPlayer != null) mUnityPlayer.onStart();
         super.onStart();
     }
 
@@ -114,7 +123,7 @@ public class UnityPlayerGameActivity extends GameActivity implements IUnityPlaye
     @Override protected void onPause()
     {
         // Note: we want Java onPause callbacks to be processed before the native part processes the onPause callback
-        mUnityPlayer.onPause();
+        if (mUnityPlayer != null) mUnityPlayer.onPause();
         super.onPause();
     }
 
@@ -122,21 +131,21 @@ public class UnityPlayerGameActivity extends GameActivity implements IUnityPlaye
     @Override protected void onResume()
     {
         // Note: we want Java onResume callbacks to be processed before the native part processes the onResume callback
-        mUnityPlayer.onResume();
+        if (mUnityPlayer != null) mUnityPlayer.onResume();
         super.onResume();
     }
 
     // Configuration changes are used by Video playback logic in Unity
     @Override public void onConfigurationChanged(Configuration newConfig)
     {
-        mUnityPlayer.configurationChanged(newConfig);
+        if (mUnityPlayer != null) mUnityPlayer.configurationChanged(newConfig);
         super.onConfigurationChanged(newConfig);
     }
 
     // Notify Unity of the focus change.
     @Override public void onWindowFocusChanged(boolean hasFocus)
     {
-        mUnityPlayer.windowFocusChanged(hasFocus);
+        if (mUnityPlayer != null) mUnityPlayer.windowFocusChanged(hasFocus);
         super.onWindowFocusChanged(hasFocus);
     }
 
@@ -148,25 +157,45 @@ public class UnityPlayerGameActivity extends GameActivity implements IUnityPlaye
         // to get the intent set on launch. To update that after launch we have to manually
         // replace the intent with the one caught here.
         setIntent(intent);
-        mUnityPlayer.newIntent(intent);
+        if (mUnityPlayer != null) mUnityPlayer.newIntent(intent);
+    }
+
+    private boolean exitThroughArScan() {
+        try {
+            Class<?> bridge = Class.forName("com.example.arbibleapp.ArScan");
+            Object handled = bridge.getMethod("exitUnityAR", Activity.class).invoke(null, this);
+            return Boolean.TRUE.equals(handled);
+        } catch (ReflectiveOperationException error) {
+            Log.w("UnityPlayerGameActivity", "AR exit bridge unavailable", error);
+            return false;
+        }
+    }
+
+    private void notifyArScan(String method, Class<?>[] parameterTypes, Object... arguments) {
+        try {
+            Class.forName("com.example.arbibleapp.ArScan").getMethod(method, parameterTypes)
+                    .invoke(null, arguments);
+        } catch (ReflectiveOperationException error) {
+            Log.w("UnityPlayerGameActivity", "AR lifecycle bridge unavailable: " + method, error);
+        }
     }
 
     @Override
     public void requestPermissions(PermissionRequest request)
     {
-        mUnityPlayer.addPermissionRequest(request);
+        if (mUnityPlayer != null) mUnityPlayer.addPermissionRequest(request);
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        mUnityPlayer.permissionResponse(this, requestCode, permissions, grantResults);
+        if (mUnityPlayer != null) mUnityPlayer.permissionResponse(this, requestCode, permissions, grantResults);
     }
 
     @Override public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig)
     {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
-        mUnityPlayer.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+        if (mUnityPlayer != null) mUnityPlayer.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
     }
 
 }

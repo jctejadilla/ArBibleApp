@@ -27,9 +27,14 @@ public class AdminDashboard extends AppCompatActivity {
     private FirebaseFirestore db;
     private ListenerRegistration proposalListener;
 
+    @Override protected void onResume() {
+        super.onResume(); VerifiedAccountFlow.guard(this);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!VerifiedAccountFlow.guard(this)) return;
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_dashboard);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

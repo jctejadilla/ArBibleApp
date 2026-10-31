@@ -71,14 +71,6 @@
                     android:text="Teacher"
                     android:textAllCaps="false" />
 
-                <Button
-                    android:id="@+id/btnAdminRegister"
-                    style="@style/Widget.ArBibleApp.ToggleButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Admin"
-                    android:textAllCaps="false" />
-
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <EditText

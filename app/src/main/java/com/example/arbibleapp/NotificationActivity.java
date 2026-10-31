@@ -139,7 +139,7 @@ public class NotificationActivity extends AppCompatActivity {
                             "Congratulations! You've reached Level " + lvl + " - " + getLevelName(lvl) + "!",
                             R.drawable.ic_quiz_champion,
                             "#FFF9C4",
-                            Timestamp.now(),
+                            new Timestamp(lvl, 0), // Use small fixed timestamp so it sorts to the bottom
                             "level"
                     ));
                 }
@@ -182,7 +182,7 @@ public class NotificationActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    addAttendanceBadges(uniqueDates.size(), latestAttendanceTs);
+                    addAttendanceBadges(uniqueDates.size());
                     sortAndRefresh();
                 });
 
@@ -246,7 +246,7 @@ public class NotificationActivity extends AppCompatActivity {
                         }
                     }
 
-                    addQuizBadges(uniqueStories.size(), latestQuizTs);
+                    addQuizBadges(uniqueStories.size());
                     checkLeaderboardStatus(uid);
                     sortAndRefresh();
                 });
@@ -271,7 +271,7 @@ public class NotificationActivity extends AppCompatActivity {
                                         "You are currently ranked #" + rank + " globally! Keep it up!",
                                         android.R.drawable.btn_star_big_on,
                                         "#E1BEE7",
-                                        Timestamp.now(),
+                                        new Timestamp(0, 0), // Use small fixed timestamp so it sorts to the bottom
                                         "leaderboard"
                                 ));
                             }
@@ -283,23 +283,23 @@ public class NotificationActivity extends AppCompatActivity {
                 });
     }
 
-    private void addAttendanceBadges(int count, Timestamp ts) {
-        if (count >= 1) addBadgeIfEarned("Best Worshipper", R.drawable.ic_worshippper, "#B2DFDB", "attendance_badge", ts);
-        if (count >= 2) addBadgeIfEarned("Growing Disciple", R.drawable.ic_growing_disciple, "#B3E5FC", "attendance_badge", ts);
-        if (count >= 3) addBadgeIfEarned("Faithfulness", R.drawable.ic_faithfulness, "#FFF9C4", "attendance_badge", ts);
-        if (count >= 4) addBadgeIfEarned("God’s House", R.drawable.ic_gods_house, "#FFE0B2", "attendance_badge", ts);
-        if (count >= 5) addBadgeIfEarned("Super Faithful", R.drawable.ic_super_faithfull, "#FFCDD2", "attendance_badge", ts);
+    private void addAttendanceBadges(int count) {
+        if (count >= 1) addBadgeIfEarned("Best Worshipper", R.drawable.ic_worshippper, "#B2DFDB", "attendance_badge", 20);
+        if (count >= 2) addBadgeIfEarned("Growing Disciple", R.drawable.ic_growing_disciple, "#B3E5FC", "attendance_badge", 21);
+        if (count >= 3) addBadgeIfEarned("Faithfulness", R.drawable.ic_faithfulness, "#FFF9C4", "attendance_badge", 22);
+        if (count >= 4) addBadgeIfEarned("God’s House", R.drawable.ic_gods_house, "#FFE0B2", "attendance_badge", 23);
+        if (count >= 5) addBadgeIfEarned("Super Faithful", R.drawable.ic_super_faithfull, "#FFCDD2", "attendance_badge", 24);
     }
 
-    private void addQuizBadges(int count, Timestamp ts) {
-        if (count >= 1) addBadgeIfEarned("Tryer", R.drawable.ic_tryer, "#F0F4C3", "quiz_badge", ts);
-        if (count >= 2) addBadgeIfEarned("Learner", R.drawable.ic_little_learner, "#E1BEE7", "quiz_badge", ts);
-        if (count >= 3) addBadgeIfEarned("Scholar", R.drawable.ic_growing_scholar, "#B2EBF2", "quiz_badge", ts);
-        if (count >= 4) addBadgeIfEarned("Explorer", R.drawable.ic_bible_explorer, "#C5CAE9", "quiz_badge", ts);
-        if (count >= 5) addBadgeIfEarned("Champion", R.drawable.ic_quiz_champion, "#F8BBD0", "quiz_badge", ts);
+    private void addQuizBadges(int count) {
+        if (count >= 1) addBadgeIfEarned("Tryer", R.drawable.ic_tryer, "#F0F4C3", "quiz_badge", 30);
+        if (count >= 2) addBadgeIfEarned("Learner", R.drawable.ic_little_learner, "#E1BEE7", "quiz_badge", 31);
+        if (count >= 3) addBadgeIfEarned("Scholar", R.drawable.ic_growing_scholar, "#B2EBF2", "quiz_badge", 32);
+        if (count >= 4) addBadgeIfEarned("Explorer", R.drawable.ic_bible_explorer, "#C5CAE9", "quiz_badge", 33);
+        if (count >= 5) addBadgeIfEarned("Champion", R.drawable.ic_quiz_champion, "#F8BBD0", "quiz_badge", 34);
     }
 
-    private void addBadgeIfEarned(String name, int icon, String color, String type, Timestamp ts) {
+    private void addBadgeIfEarned(String name, int icon, String color, String type, int tier) {
         String badgeId = "badge_" + name.replace(" ", "_");
         if (!dismissedIds.contains(badgeId)) {
             boolean alreadyInList = false;
@@ -316,7 +316,7 @@ public class NotificationActivity extends AppCompatActivity {
                         "You've earned the " + name + " badge!",
                         icon,
                         color,
-                        ts != null ? ts : Timestamp.now(),
+                        new Timestamp(tier, 0), // Base order on the tier of the badge
                         type
                 ));
             }

@@ -2,7 +2,6 @@ package com.example.arbibleapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,16 +14,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class login extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +32,6 @@ public class login extends AppCompatActivity {
         });
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         EditText etEmail = findViewById(R.id.etEmail);
         EditText etPassword = findViewById(R.id.etPassword);
@@ -46,6 +39,19 @@ public class login extends AppCompatActivity {
         TextView tvRegister = findViewById(R.id.tvRegister);
         TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
+        LoginModel model = new androidx.lifecycle.ViewModelProvider(this).get(LoginModel.class);
+        etPassword.setSaveEnabled(false);
+        if (savedInstanceState == null) etEmail.setText(getIntent().getStringExtra(VerifiedAccountFlow.EXTRA_EMAIL));
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override public void handleOnBackPressed() {
+                if (!model.busy) { FirebaseAuth.getInstance().signOut(); finish(); }
+            }
+        });
+        model.changes.observe(this, ignored -> {
+            btnLogin.setEnabled(!model.busy); tvRegister.setEnabled(!model.busy); tvForgotPassword.setEnabled(!model.busy);
+            if (model.error != null) { Toast.makeText(this, model.error, Toast.LENGTH_LONG).show(); model.error = null; }
+            if (model.destination != null) VerifiedAccountFlow.open(this, model.destination);
+        });
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
@@ -55,53 +61,7 @@ public class login extends AppCompatActivity {
                 return;
             }
 
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            String uid = mAuth.getCurrentUser().getUid();
-                            String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-
-                            Map<String, Object> updates = new HashMap<>();
-                            updates.put("password", password);
-                            if (deviceId != null) {
-                                updates.put("activeDeviceId", deviceId);
-                            }
-
-                            db.collection("users").document(uid)
-                                    .set(updates, SetOptions.merge())
-                                    .addOnCompleteListener(updateTask -> {
-                                        if (isFinishing()) return;
-                                        
-                                        db.collection("users").document(uid).get()
-                                                .addOnSuccessListener(documentSnapshot -> {
-                                                    if (isFinishing()) return;
-                                                    
-                                                    if (documentSnapshot.exists()) {
-                                                        String userType = documentSnapshot.getString("userType");
-                                                        Intent intent;
-                                                        if ("Admin".equals(userType)) {
-                                                            intent = new Intent(login.this, AdminDashboard.class);
-                                                        } else if ("Teacher".equals(userType)) {
-                                                            intent = new Intent(login.this, TeacherDashboard.class);
-                                                        } else {
-                                                            intent = new Intent(login.this, StudentDashboard.class);
-                                                        }
-                                                        startActivity(intent);
-                                                        finish();
-                                                    } else {
-                                                        Toast.makeText(login.this, "User data not found", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    if (isFinishing()) return;
-                                                    Toast.makeText(login.this, "Error fetching user data", Toast.LENGTH_SHORT).show();
-                                                });
-                                    });
-                        } else {
-                            Toast.makeText(login.this, "Login failed: " + task.getException().getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            model.signIn(email, password);
         });
 
         tvRegister.setOnClickListener(v -> {
@@ -110,7 +70,8 @@ public class login extends AppCompatActivity {
         });
 
         tvForgotPassword.setOnClickListener(v->{
-            Intent intent = new Intent(login.this, ForgotPassword.class);
+            Intent intent = new Intent(login.this, ForgotPassword.class)
+                    .putExtra(VerifiedAccountFlow.EXTRA_EMAIL, etEmail.getText().toString().trim());
             startActivity(intent);
         });
     }
