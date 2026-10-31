@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
@@ -33,6 +35,7 @@ public class UnityPlayerGameActivity extends GameActivity implements IUnityPlaye
     }
 
     protected UnityPlayerForGameActivity mUnityPlayer;
+    private OnBackInvokedCallback backInvokedCallback;
     protected String updateUnityCommandLineArguments(String cmdLine)
     {
         return cmdLine;
@@ -46,6 +49,11 @@ public class UnityPlayerGameActivity extends GameActivity implements IUnityPlaye
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            backInvokedCallback = this::handleBackPressed;
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                    OnBackInvokedDispatcher.PRIORITY_DEFAULT + 2, backInvokedCallback);
+        }
         notifyArScan("attachUnityActivity", new Class<?>[]{Activity.class}, this);
     }
 
@@ -92,14 +100,22 @@ public class UnityPlayerGameActivity extends GameActivity implements IUnityPlaye
     public void onUnityPlayerQuitted() {
     }
 
-    // Route Android Back through the app bridge so AR closes in the current task.
+    // Route both legacy and predictive Android Back through the app bridge.
     @Override public void onBackPressed()
     {
-        if (!exitThroughArScan()) super.onBackPressed();
+        handleBackPressed();
+    }
+
+    private void handleBackPressed() {
+        if (!exitThroughArScan()) finish();
     }
 
     @Override protected void onDestroy ()
     {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && backInvokedCallback != null) {
+            getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backInvokedCallback);
+            backInvokedCallback = null;
+        }
         notifyArScan("detachUnityActivity", new Class<?>[]{Activity.class}, this);
         if (mUnityPlayer != null) mUnityPlayer.destroy();
         super.onDestroy();
@@ -163,8 +179,8 @@ public class UnityPlayerGameActivity extends GameActivity implements IUnityPlaye
     private boolean exitThroughArScan() {
         try {
             Class<?> bridge = Class.forName("com.example.arbibleapp.ArScan");
-            Object handled = bridge.getMethod("exitUnityAR", Activity.class).invoke(null, this);
-            return Boolean.TRUE.equals(handled);
+            bridge.getMethod("exitUnityAR").invoke(null);
+            return true;
         } catch (ReflectiveOperationException error) {
             Log.w("UnityPlayerGameActivity", "AR exit bridge unavailable", error);
             return false;

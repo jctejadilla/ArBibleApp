@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -111,13 +112,15 @@ public class ArScan extends AppCompatActivity {
         });
     }
 
-    // Unity UI Back closes the AR activity; the existing dashboard is below it.
+    // Unity runs in its own process, so finishing it leaves the host dashboard alive.
     public static void exitUnityAR() {
         new Handler(Looper.getMainLooper()).post(() -> {
             Activity unity = unityActivity.get();
-            if (unity != null && !unity.isFinishing() && !unity.isDestroyed()) {
-                unity.finish();
-            } else if (appContext != null) {
+            if (unity != null) {
+                if (!unity.isFinishing() && !unity.isDestroyed()) unity.finish();
+                return;
+            }
+            if (appContext != null) {
                 appContext.startActivity(new Intent(appContext, StudentDashboard.class)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
                                 | Intent.FLAG_ACTIVITY_SINGLE_TOP));
@@ -125,10 +128,4 @@ public class ArScan extends AppCompatActivity {
         });
     }
 
-    public static boolean exitUnityAR(Activity activity) {
-        if (activity == null || unityActivity.get() != activity
-                || activity.isFinishing() || activity.isDestroyed()) return false;
-        activity.finish();
-        return true;
-    }
 }
