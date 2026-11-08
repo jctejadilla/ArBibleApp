@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -130,6 +131,9 @@ public class NotificationPopupManager implements Application.ActivityLifecycleCa
         }
 
         CardView cardNotif = popupView.findViewById(R.id.cardQuizNotification);
+        
+        setupSwipeToDismiss(popupView);
+
         TextView tvTitle = popupView.findViewById(R.id.tvNotificationTitle);
         TextView tvDesc = popupView.findViewById(R.id.tvNotificationDesc);
         ImageView ivIcon = popupView.findViewById(R.id.ivNotificationIcon);
@@ -157,6 +161,75 @@ public class NotificationPopupManager implements Application.ActivityLifecycleCa
         }
         dismissRunnable = this::onCurrentNotificationFinished;
         handler.postDelayed(dismissRunnable, remainingMs);
+    }
+
+    private void setupSwipeToDismiss(View popupView) {
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            private float startX;
+            private float initialTranslationX;
+            private boolean isSwiping;
+            private final int swipeThreshold = (int) (100 * popupView.getContext().getResources().getDisplayMetrics().density);
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        startX = event.getRawX();
+                        initialTranslationX = v.getTranslationX();
+                        isSwiping = false;
+                        v.animate().cancel(); // Stop any running animations
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        float deltaX = event.getRawX() - startX;
+                        if (Math.abs(deltaX) > 20) {
+                            isSwiping = true;
+                            v.getParent().requestDisallowInterceptTouchEvent(true);
+                        }
+                        if (isSwiping) {
+                            v.setTranslationX(initialTranslationX + deltaX);
+                            // Calculate fade based on distance
+                            float alpha = 1.0f - Math.min(1.0f, Math.abs(deltaX) / (v.getWidth() * 1.5f));
+                            v.setAlpha(alpha);
+                        }
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        if (isSwiping) {
+                            float finalDeltaX = event.getRawX() - startX;
+                            if (Math.abs(finalDeltaX) > swipeThreshold) {
+                                // Swiped far enough, dismiss it
+                                float direction = Math.signum(finalDeltaX);
+                                float screenWidth = v.getContext().getResources().getDisplayMetrics().widthPixels;
+                                v.animate()
+                                        .translationX(direction * screenWidth)
+                                        .alpha(0f)
+                                        .setDuration(200)
+                                        .withEndAction(() -> {
+                                            if (dismissRunnable != null) {
+                                                handler.removeCallbacks(dismissRunnable);
+                                            }
+                                            onCurrentNotificationFinished();
+                                        })
+                                        .start();
+                            } else {
+                                // Snap back to center
+                                v.animate()
+                                        .translationX(0f)
+                                        .alpha(1f)
+                                        .setDuration(200)
+                                        .start();
+                            }
+                        } else {
+                            // It was just a click
+                            v.performClick();
+                        }
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void onCurrentNotificationFinished() {

@@ -548,8 +548,12 @@ public class AdminQuestionApprovalActivity extends AppCompatActivity {
                         bytes = currentJudgesBank.get(item.index).imageBytes;
                     if (ready) {
                         holder.ivLawProposalImage.setVisibility(View.VISIBLE);
-                        LawImageCodec.display(holder.ivLawProposalImage, bytes,
-                                JudgesImages.resource(holder.itemView.getContext(), JudgesQuizGame.KEYS[item.index]));
+                        if (bytes == null) {
+                            int resourceId = JudgesImages.resource(holder.itemView.getContext(), JudgesQuizGame.KEYS[item.index]);
+                            LawImageCodec.display(holder.ivLawProposalImage, null, resourceId);
+                        } else {
+                            LawImageCodec.display(holder.ivLawProposalImage, bytes, 0);
+                        }
                     } else holder.tvLawImageAction.setText("Image: keep current (preview unavailable)");
                 }
             } else if (!restoreQuiz && isLaw) {
@@ -571,7 +575,11 @@ public class AdminQuestionApprovalActivity extends AppCompatActivity {
                     }
                     if (ready) {
                         holder.ivLawProposalImage.setVisibility(View.VISIBLE);
-                        LawImageCodec.display(holder.ivLawProposalImage, bytes, original.imageRes);
+                        if (bytes == null) {
+                            LawImageCodec.display(holder.ivLawProposalImage, null, original.imageRes);
+                        } else {
+                            LawImageCodec.display(holder.ivLawProposalImage, bytes, 0);
+                        }
                     }
                 }
             } else if (!restoreQuiz && isExodus) {

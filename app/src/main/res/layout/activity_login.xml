@@ -59,25 +59,34 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="32dp"
                 android:background="@drawable/bg_input_field"
-                android:hint="Email Address"
+                android:hint="example@gmail.com"
                 android:inputType="textEmailAddress"
                 android:paddingHorizontal="16dp"
                 android:textColor="@color/text_dark"
                 android:textColorHint="@color/text_grey"
                 app:layout_constraintTop_toBottomOf="@+id/tvSubtitle" />
 
-            <EditText
-                android:id="@+id/etPassword"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilPassword"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_input_field"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:paddingHorizontal="16dp"
-                android:textColor="@color/text_dark"
-                android:textColorHint="@color/text_grey"
-                app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+                app:hintEnabled="false"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="#757575"
+                app:layout_constraintTop_toBottomOf="@+id/etEmail">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="12345678"
+                    android:inputType="textPassword"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="@color/text_dark"
+                    android:textColorHint="@color/text_grey" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/tvForgotPassword"
@@ -87,8 +96,8 @@
                 android:text="Forgot Password?"
                 android:textColor="@color/primary_green"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="@+id/etPassword"
-                app:layout_constraintTop_toBottomOf="@+id/etPassword" />
+                app:layout_constraintEnd_toEndOf="@+id/tilPassword"
+                app:layout_constraintTop_toBottomOf="@+id/tilPassword" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnLogin"

@@ -25,9 +25,11 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 
 import java.text.SimpleDateFormat;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import android.widget.ImageView;
 
 public class AdminApprovalHistoryActivity extends AppCompatActivity {
 
@@ -151,7 +153,8 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
                                     story != null ? story : "Bible Story",
                                     origQ != null ? origQ : "",
                                     propQ != null ? propQ : "",
-                                    ts
+                                    ts,
+                                    doc.getData()
                             ));
                         }
                     }
@@ -180,8 +183,9 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
     private static class HistoryModel {
         String id, status, teacherName, storyTitle, originalQuestion, proposedQuestion;
         Timestamp timestamp;
+        Map<String, Object> raw;
 
-        HistoryModel(String id, String status, String teacherName, String storyTitle, String originalQuestion, String proposedQuestion, Timestamp timestamp) {
+        HistoryModel(String id, String status, String teacherName, String storyTitle, String originalQuestion, String proposedQuestion, Timestamp timestamp, Map<String, Object> raw) {
             this.id = id;
             this.status = status;
             this.teacherName = teacherName;
@@ -189,6 +193,7 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
             this.originalQuestion = originalQuestion;
             this.proposedQuestion = proposedQuestion;
             this.timestamp = timestamp;
+            this.raw = raw;
         }
     }
 
@@ -228,6 +233,36 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
             } else {
                 holder.tvTimestamp.setText("Recently");
             }
+            
+            holder.ivHistoryImagePreview.setVisibility(View.GONE);
+            holder.ivHistoryImagePreview.setImageDrawable(null);
+            
+            boolean isLaw = LawScenarioBank.STORY_TITLE.equals(item.storyTitle);
+            boolean isBabel = "The Tower of Babel and Abraham's Covenant".equals(item.storyTitle);
+            boolean isExodus = "Slavery in Egypt and the Exodus".equals(item.storyTitle);
+            boolean restoreQuiz = "RESTORE_ALL".equals(item.raw.get("operation"));
+            
+            if (!restoreQuiz) {
+                if (JudgesQuizGame.STORY_TITLE.equals(item.storyTitle)) {
+                    LawImageData image = LawImageData.read(item.raw.get("imageAction"), item.raw.get("imageBytes"));
+                    if ("REPLACE".equals(image.action) && image.bytes != null) {
+                        holder.ivHistoryImagePreview.setVisibility(View.VISIBLE);
+                        LawImageCodec.display(holder.ivHistoryImagePreview, image.bytes, 0);
+                    }
+                } else if (isLaw) {
+                    LawImageData image = LawImageData.read(item.raw.get("imageAction"), item.raw.get("imageBytes"));
+                    if ("REPLACE".equals(image.action) && image.bytes != null) {
+                        holder.ivHistoryImagePreview.setVisibility(View.VISIBLE);
+                        LawImageCodec.display(holder.ivHistoryImagePreview, image.bytes, 0);
+                    }
+                } else if (ReturnMatchingGame.STORY_TITLE.equals(item.storyTitle) || BirthWordBank.STORY_TITLE.equals(item.storyTitle)) {
+                    LawImageData image = LawImageData.read(item.raw.get("imageAction"), item.raw.get("imageBytes"));
+                    if ("REPLACE".equals(image.action) && image.bytes != null) {
+                        holder.ivHistoryImagePreview.setVisibility(View.VISIBLE);
+                        LawImageCodec.display(holder.ivHistoryImagePreview, image.bytes, 0);
+                    }
+                }
+            }
         }
 
         @Override
@@ -237,6 +272,7 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             TextView tvStatusBadge, tvStoryTitle, tvTimestamp, tvTeacherName, tvOriginalQuestion, tvProposedQuestion;
+            ImageView ivHistoryImagePreview;
 
             ViewHolder(View v) {
                 super(v);
@@ -246,6 +282,7 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
                 tvTeacherName = v.findViewById(R.id.tvTeacherName);
                 tvOriginalQuestion = v.findViewById(R.id.tvOriginalQuestion);
                 tvProposedQuestion = v.findViewById(R.id.tvProposedQuestion);
+                ivHistoryImagePreview = v.findViewById(R.id.ivHistoryImagePreview);
             }
         }
     }

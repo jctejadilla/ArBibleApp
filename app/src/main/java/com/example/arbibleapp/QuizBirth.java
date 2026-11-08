@@ -3,6 +3,7 @@ package com.example.arbibleapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -29,10 +30,17 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -41,14 +49,14 @@ import java.util.UUID;
 
 public class QuizBirth extends AppCompatActivity {
     private BirthWordGame game;
-    private java.util.List<BirthContentBank.Item> content = BirthContentBank.defaults();
-    private android.graphics.Bitmap[] preparedImages;
+    private List<BirthContentBank.Item> content = BirthContentBank.defaults();
+    private Bitmap[] preparedImages;
     private boolean contentReady, restoringContent;
-    private java.io.File snapshotFile() {
-        return new java.io.File(getFilesDir(), "birth-attempt-" + attemptId + ".bin");
+    private File snapshotFile() {
+        return new File(getFilesDir(), "birth-attempt-" + attemptId + ".bin");
     }
-    private void startContent(java.util.List<BirthContentBank.Item> bank,
-                              android.graphics.Bitmap[] images, boolean restored) {
+    private void startContent(List<BirthContentBank.Item> bank,
+                              Bitmap[] images, boolean restored) {
         if (isFinishing() || isDestroyed()) return;
         content = bank; preparedImages = images; contentReady = true; restoringContent = false;
         if (!restored) {
@@ -59,12 +67,12 @@ public class QuizBirth extends AppCompatActivity {
         }
         render();
     }
-    private void persistContent(java.util.List<BirthContentBank.Item> bank) {
+    private void persistContent(List<BirthContentBank.Item> bank) {
         LawImageCodec.WORKER.execute(() -> {
             try {
-                android.graphics.Bitmap[] images = BirthImages.prepare(this, bank);
-                try (java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(
-                        new java.io.FileOutputStream(snapshotFile()))) { out.writeObject(new ArrayList<>(bank)); }
+                Bitmap[] images = BirthImages.prepare(this, bank);
+                try (ObjectOutputStream out = new ObjectOutputStream(
+                        new FileOutputStream(snapshotFile()))) { out.writeObject(new ArrayList<>(bank)); }
                 runOnUiThread(() -> startContent(bank, images, false));
             } catch (Exception | OutOfMemoryError error) {
                 runOnUiThread(() -> contentError("Could not prepare this attempt. Please reopen the quiz."));
@@ -81,9 +89,9 @@ public class QuizBirth extends AppCompatActivity {
         if (state != null && state.getBoolean("contentReady")) {
             restoringContent = true;
             LawImageCodec.WORKER.execute(() -> {
-                try (java.io.ObjectInputStream in = new java.io.ObjectInputStream(new java.io.FileInputStream(snapshotFile()))) {
-                    java.util.List<BirthContentBank.Item> bank = (java.util.List<BirthContentBank.Item>)in.readObject();
-                    android.graphics.Bitmap[] images = BirthImages.prepare(this, bank);
+                try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(snapshotFile()))) {
+                    List<BirthContentBank.Item> bank = (List<BirthContentBank.Item>)in.readObject();
+                    Bitmap[] images = BirthImages.prepare(this, bank);
                     runOnUiThread(() -> startContent(bank, images, true));
                 } catch (Exception | OutOfMemoryError error) {
                     runOnUiThread(() -> contentError("This attempt could not be restored. Please reopen the quiz."));
@@ -96,7 +104,7 @@ public class QuizBirth extends AppCompatActivity {
                     if (!isFinishing() && !isDestroyed()) persistContent(BirthContentBank.load(result.getDocuments()));
                 }).addOnFailureListener(error -> {
                     if (isFinishing() || isDestroyed()) return;
-                    android.widget.Toast.makeText(this, "Could not load edits. Using default pictures.", android.widget.Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Could not load edits. Using default pictures.", Toast.LENGTH_LONG).show();
                     persistContent(BirthContentBank.defaults());
                 });
     }
@@ -109,10 +117,13 @@ public class QuizBirth extends AppCompatActivity {
     private ImageView picture;
     private Button submit, next, clear;
 
+    private TextView tvBirthProgress;
+    
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_quiz_birth);
+        tvBirthProgress = findViewById(R.id.tvBirthProgress);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (view, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
@@ -195,6 +206,9 @@ public class QuizBirth extends AppCompatActivity {
 
     private void render() {
         if (!contentReady) return;
+        
+        tvBirthProgress.setText((game.current + 1) + "/" + BirthWordBank.KEYS.length);
+        
         BirthWordGame.Round round = game.round();
         picture.setImageBitmap(preparedImages[game.contentIndices[game.current]]);
         picture.setContentDescription(getString(R.string.birth_picture));

@@ -50,7 +50,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Scrollable Stories Content -->a
+    <!-- Scrollable Stories Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -81,72 +81,6 @@
                 android:textSize="14sp"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Category Filter Buttons -->
-            <HorizontalScrollView
-                android:id="@+id/hsvCategories"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginStart="-20dp"
-                android:layout_marginEnd="-20dp"
-                android:paddingHorizontal="20dp"
-                android:clipToPadding="false"
-                android:fillViewport="true"
-                android:scrollbars="none"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/etSearch">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingVertical="2dp">
-
-                    <TextView
-                        android:id="@+id/btnAll"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_pill_btn_yellow"
-                        android:gravity="center"
-                        android:paddingHorizontal="12dp"
-                        android:text="All"
-                        android:textColor="#1D3B2E"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/btnOldTestament"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_cream_task_card"
-                        android:gravity="center"
-                        android:paddingHorizontal="12dp"
-                        android:text="Old Testament"
-                        android:textColor="#4A6956"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/btnNewTestament"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_cream_task_card"
-                        android:gravity="center"
-                        android:paddingHorizontal="12dp"
-                        android:text="New Testament"
-                        android:textColor="#4A6956"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-            </HorizontalScrollView>
-
             <!-- Stories 3D Grid -->
             <GridLayout
                 android:id="@+id/containerStories"
@@ -154,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:columnCount="2"
-                app:layout_constraintTop_toBottomOf="@+id/hsvCategories">
+                app:layout_constraintTop_toBottomOf="@+id/etSearch">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardCreationFall"

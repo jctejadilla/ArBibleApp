@@ -38,6 +38,21 @@ public class ForgotPassword extends AppCompatActivity {
 
 
         etEmail = findViewById(R.id.etEmail);
+        
+        etEmail.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                String currentEmail = etEmail.getText().toString().trim();
+                if (!currentEmail.isEmpty() && !currentEmail.endsWith("@gmail.com") && !currentEmail.endsWith("gmail.com")) {
+                    if (currentEmail.endsWith("@")) {
+                        etEmail.setText(currentEmail + "gmail.com");
+                    } else if (!currentEmail.contains("@")) {
+                        etEmail.setText(currentEmail + "@gmail.com");
+                    }
+                } else if (!currentEmail.isEmpty() && currentEmail.endsWith("gmail.com") && !currentEmail.endsWith("@gmail.com")) {
+                     etEmail.setText(currentEmail.substring(0, currentEmail.length() - 9) + "@gmail.com");
+                }
+            }
+        });
         if (savedInstanceState == null) etEmail.setText(getIntent().getStringExtra(VerifiedAccountFlow.EXTRA_EMAIL));
         btnResetPassword = findViewById(R.id.btnResetPassword);
         btnBack = findViewById(R.id.btnBack);

@@ -7,13 +7,18 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,17 +46,54 @@ public class Register extends AppCompatActivity {
         MaterialButtonToggleGroup toggleUserType = findViewById(R.id.toggleUserType);
         EditText etUsername = findViewById(R.id.etRegisterUsername);
         EditText etEmail = findViewById(R.id.etRegisterEmail);
+        
+        etEmail.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                String currentEmail = etEmail.getText().toString().trim();
+                if (!currentEmail.isEmpty() && !currentEmail.endsWith("@gmail.com") && !currentEmail.endsWith("gmail.com")) {
+                    if (currentEmail.endsWith("@")) {
+                        etEmail.setText(currentEmail + "gmail.com");
+                    } else if (!currentEmail.contains("@")) {
+                        etEmail.setText(currentEmail + "@gmail.com");
+                    }
+                } else if (!currentEmail.isEmpty() && currentEmail.endsWith("gmail.com") && !currentEmail.endsWith("@gmail.com")) {
+                     etEmail.setText(currentEmail.substring(0, currentEmail.length() - 9) + "@gmail.com");
+                }
+            }
+        });
         EditText etPassword = findViewById(R.id.etRegisterPassword);
         EditText etConfirmPassword = findViewById(R.id.etConfirmPassword);
         RadioGroup rgGender = findViewById(R.id.rgGender);
         Button btnRegister = findViewById(R.id.btnRegister);
         TextView tvLogin = findViewById(R.id.tvLogin);
+        
+        ImageView ivReqLength = findViewById(R.id.ivReqLength);
+        ImageView ivReqUpper = findViewById(R.id.ivReqUpper);
+        ImageView ivReqLower = findViewById(R.id.ivReqLower);
+        ImageView ivReqNumber = findViewById(R.id.ivReqNumber);
+        
+        etPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-        registration = new androidx.lifecycle.ViewModelProvider(this).get(RegistrationModel.class);
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String pass = s.toString();
+                ivReqLength.setImageResource(pass.length() >= 6 ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle);
+                ivReqUpper.setImageResource(pass.matches(".*[A-Z].*") ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle);
+                ivReqLower.setImageResource(pass.matches(".*[a-z].*") ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle);
+                ivReqNumber.setImageResource(pass.matches(".*[0-9].*") ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        registration = new ViewModelProvider(this).get(RegistrationModel.class);
         if (savedInstanceState != null && registration.existingEmail == null)
             registration.existingEmail = savedInstanceState.getString("existingEmail");
         etPassword.setSaveEnabled(false); etConfirmPassword.setSaveEnabled(false);
-        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
                 if (!registration.busy) { FirebaseAuth.getInstance().signOut(); finish(); }
             }
@@ -97,8 +139,8 @@ public class Register extends AppCompatActivity {
                 return;
             }
 
-            if (password.length() < 6) {
-                Toast.makeText(this, "Password should be at least 6 characters", Toast.LENGTH_SHORT).show();
+            if (password.length() < 6 || !password.matches(".*[A-Z].*") || !password.matches(".*[a-z].*") || !password.matches(".*[0-9].*")) {
+                Toast.makeText(this, "Password must be at least 6 characters, and contain at least 1 uppercase letter, 1 lowercase letter, and 1 number", Toast.LENGTH_LONG).show();
                 return;
             }
 

@@ -36,7 +36,6 @@ public class BibleStories extends AppCompatActivity {
     private ImageView btnBack;
     private EditText etSearch;
     private View containerStories;
-    private TextView btnAll, btnOldTestament, btnNewTestament;
     private ConstraintLayout cardCreationFall, cardFlood, cardBabelAbraham, cardExodus, cardLawDesert,
             cardJudges, cardMonarchy, cardDivisionExile, cardReturnMessiah,
             cardBirthMinistry;
@@ -65,16 +64,12 @@ public class BibleStories extends AppCompatActivity {
         initViews();
         setupListeners();
         setupSearch();
-        setupCategories();
     }
 
     private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         etSearch = findViewById(R.id.etSearch);
         containerStories = findViewById(R.id.containerStories);
-        btnAll = findViewById(R.id.btnAll);
-        btnOldTestament = findViewById(R.id.btnOldTestament);
-        btnNewTestament = findViewById(R.id.btnNewTestament);
 
         cardCreationFall = findViewById(R.id.cardCreationFall);
         cardFlood = findViewById(R.id.cardFlood);
@@ -129,10 +124,7 @@ public class BibleStories extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private enum Category { ALL, OLD_TESTAMENT, NEW_TESTAMENT }
-    private Category currentCategory = Category.ALL;
-
-    private void setupSearch() {
+        private void setupSearch() {
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -145,40 +137,6 @@ public class BibleStories extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
-    }
-
-    private void setupCategories() {
-        btnAll.setOnClickListener(v -> {
-            updateCategoryUI(btnAll);
-            currentCategory = Category.ALL;
-            applyFilters();
-        });
-
-        btnOldTestament.setOnClickListener(v -> {
-            updateCategoryUI(btnOldTestament);
-            currentCategory = Category.OLD_TESTAMENT;
-            applyFilters();
-        });
-
-        btnNewTestament.setOnClickListener(v -> {
-            updateCategoryUI(btnNewTestament);
-            currentCategory = Category.NEW_TESTAMENT;
-            applyFilters();
-        });
-    }
-
-    private void updateCategoryUI(TextView selectedBtn) {
-        resetCategoryButton(btnAll);
-        resetCategoryButton(btnOldTestament);
-        resetCategoryButton(btnNewTestament);
-
-        selectedBtn.setBackgroundResource(R.drawable.bg_pill_btn_yellow);
-        selectedBtn.setTextColor(Color.parseColor("#1D3B2E"));
-    }
-
-    private void resetCategoryButton(TextView btn) {
-        btn.setBackgroundResource(R.drawable.bg_cream_task_card);
-        btn.setTextColor(Color.parseColor("#4A6956"));
     }
 
     private void setVisibleCards(View... cards) {
@@ -198,21 +156,16 @@ public class BibleStories extends AppCompatActivity {
         String query = etSearch.getText() != null ? etSearch.getText().toString().toLowerCase().trim() : "";
         List<View> matches = new ArrayList<>();
 
-        if (currentCategory == Category.ALL || currentCategory == Category.OLD_TESTAMENT) {
-            checkAndAddMatch(matches, cardCreationFall, "Creation and the Fall", query);
-            checkAndAddMatch(matches, cardFlood, "Early Humanity and the Flood", query);
-            checkAndAddMatch(matches, cardBabelAbraham, "The Tower of Babel and Abraham's Covenant", query);
-            checkAndAddMatch(matches, cardExodus, "Slavery in Egypt and the Exodus", query);
-            checkAndAddMatch(matches, cardLawDesert, "The Law and Wandering in the Desert", query);
-            checkAndAddMatch(matches, cardJudges, "Entering the Promised Land and the Judges", query);
-            checkAndAddMatch(matches, cardMonarchy, "The Monarchy: Saul, David, and Solomon", query);
-            checkAndAddMatch(matches, cardDivisionExile, "Division of the Kingdom and Exile", query);
-            checkAndAddMatch(matches, cardReturnMessiah, "Return from Exile and Anticipation of the Messiah", query);
-        }
-
-        if (currentCategory == Category.ALL || currentCategory == Category.NEW_TESTAMENT) {
-            checkAndAddMatch(matches, cardBirthMinistry, "The Birth and Ministry of Jesus", query);
-        }
+        checkAndAddMatch(matches, cardCreationFall, "Creation and the Fall", query);
+        checkAndAddMatch(matches, cardFlood, "Early Humanity and the Flood", query);
+        checkAndAddMatch(matches, cardBabelAbraham, "The Tower of Babel and Abraham's Covenant", query);
+        checkAndAddMatch(matches, cardExodus, "Slavery in Egypt and the Exodus", query);
+        checkAndAddMatch(matches, cardLawDesert, "The Law and Wandering in the Desert", query);
+        checkAndAddMatch(matches, cardJudges, "Entering the Promised Land and the Judges", query);
+        checkAndAddMatch(matches, cardMonarchy, "The Monarchy: Saul, David, and Solomon", query);
+        checkAndAddMatch(matches, cardDivisionExile, "Division of the Kingdom and Exile", query);
+        checkAndAddMatch(matches, cardReturnMessiah, "Return from Exile and Anticipation of the Messiah", query);
+        checkAndAddMatch(matches, cardBirthMinistry, "The Birth and Ministry of Jesus", query);
 
         setVisibleCards(matches.toArray(new View[0]));
     }

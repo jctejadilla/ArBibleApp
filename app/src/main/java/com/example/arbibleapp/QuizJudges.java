@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -11,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
@@ -25,8 +28,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,12 +48,12 @@ import java.util.UUID;
 
 public class QuizJudges extends AppCompatActivity {
     private JudgesQuizGame game;
-    private java.util.List<JudgesContentBank.Item> content = JudgesContentBank.defaults();
+    private List<JudgesContentBank.Item> content = JudgesContentBank.defaults();
     private boolean contentReady, restoringContent;
-    private java.io.File snapshotFile() {
-        return new java.io.File(getFilesDir(), "judges-attempt-" + attemptId + ".bin");
+    private File snapshotFile() {
+        return new File(getFilesDir(), "judges-attempt-" + attemptId + ".bin");
     }
-    private void startContent(java.util.List<JudgesContentBank.Item> items, Bundle state) {
+    private void startContent(List<JudgesContentBank.Item> items, Bundle state) {
         if (isFinishing() || isDestroyed()) return;
         content = items;
         String[] words = new String[items.size()];
@@ -57,14 +68,14 @@ public class QuizJudges extends AppCompatActivity {
         contentReady = true;
         render();
     }
-    private void persistContent(java.util.List<JudgesContentBank.Item> items) {
+    private void persistContent(List<JudgesContentBank.Item> items) {
         LawImageCodec.WORKER.execute(() -> {
-            try (java.io.ObjectOutputStream output = new java.io.ObjectOutputStream(
-                    new java.io.FileOutputStream(snapshotFile()))) {
-                output.writeObject(new java.util.ArrayList<>(items));
+            try (ObjectOutputStream output = new ObjectOutputStream(
+                    new FileOutputStream(snapshotFile()))) {
+                output.writeObject(new ArrayList<>(items));
                 output.flush();
                 runOnUiThread(() -> startContent(items, null));
-            } catch (java.io.IOException error) {
+            } catch (IOException error) {
                 runOnUiThread(() -> contentError("Could not save this attempt. Please reopen the quiz."));
             }
         });
@@ -82,10 +93,10 @@ public class QuizJudges extends AppCompatActivity {
         if (state != null && state.getBoolean("contentReady")) {
             restoringContent = true;
             LawImageCodec.WORKER.execute(() -> {
-                try (java.io.ObjectInputStream input = new java.io.ObjectInputStream(
-                        new java.io.FileInputStream(snapshotFile()))) {
-                    java.util.List<JudgesContentBank.Item> items =
-                            (java.util.List<JudgesContentBank.Item>) input.readObject();
+                try (ObjectInputStream input = new ObjectInputStream(
+                        new FileInputStream(snapshotFile()))) {
+                    List<JudgesContentBank.Item> items =
+                            (List<JudgesContentBank.Item>) input.readObject();
                     runOnUiThread(() -> startContent(items, state));
                 } catch (Exception error) {
                     runOnUiThread(() -> contentError("This attempt could not be restored. Please reopen the quiz."));
@@ -99,7 +110,7 @@ public class QuizJudges extends AppCompatActivity {
                     if (!isFinishing() && !isDestroyed()) persistContent(JudgesContentBank.load(result.getDocuments()));
                 }).addOnFailureListener(error -> {
                     if (isFinishing() || isDestroyed()) return;
-                    android.widget.Toast.makeText(this, "Could not load edits. Using default content.", android.widget.Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Could not load edits. Using default content.", Toast.LENGTH_LONG).show();
                     persistContent(JudgesContentBank.defaults());
                 });
     }
@@ -113,11 +124,13 @@ public class QuizJudges extends AppCompatActivity {
     private ProgressBar progress;
     private LinearLayout choices;
     private Button next;
+    private TextView tvJudgesProgressText;
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_quiz_judges);
+        tvJudgesProgressText = findViewById(R.id.tvJudgesProgressText);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
@@ -188,6 +201,7 @@ public class QuizJudges extends AppCompatActivity {
     }
 
     private void render() {
+        tvJudgesProgressText.setText((roundIndex + 1) + "/" + game.rounds.size());
         JudgesQuizGame.Round round = game.rounds.get(roundIndex);
         boolean answered = game.selections[roundIndex] != -1;
         scramble.setText(round.scrambled);
@@ -235,7 +249,7 @@ public class QuizJudges extends AppCompatActivity {
                     caption.setText(status);
                     caption.setTextSize(16);
                     caption.setTextColor(Color.parseColor("#1D4A4B"));
-                    caption.setGravity(android.view.Gravity.CENTER);
+                    caption.setGravity(Gravity.CENTER);
                     content.addView(caption, new LinearLayout.LayoutParams(-1, -2));
                 }
                 card.setContentDescription(status.isEmpty() ? this.content.get(choice).description : status);
