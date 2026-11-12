@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:background="@drawable/bg_meh"
     tools:context=".TeacherDashboard">
 
     <ScrollView
@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Welcome back,"
-                android:textColor="@color/text_grey"
+                android:textColor="#1B4235"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -34,194 +34,254 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Teacher"
-                android:textColor="@color/text_dark"
+                android:textColor="@color/white"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvWelcomeBack" />
 
             <View
-                android:id="@+id/viewProfile"
+                android:id="@+id/view"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:alpha="0.6"
                 android:background="@drawable/bg_rounded_card"
-                android:alpha="0.4"
+                android:backgroundTint="#E0F2F1"
                 app:layout_constraintBottom_toBottomOf="@+id/tvTeacherName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvWelcomeBack" />
 
             <ImageView
-                android:layout_width="29dp"
-                android:layout_height="29dp"
-                android:src="@android:drawable/ic_menu_myplaces"
-                app:layout_constraintBottom_toBottomOf="@+id/viewProfile"
-                app:layout_constraintEnd_toEndOf="@+id/viewProfile"
-                app:layout_constraintStart_toStartOf="@+id/viewProfile"
-                app:layout_constraintTop_toTopOf="@+id/viewProfile"
-                app:tint="@color/text_dark" />
+                android:id="@+id/btnSettings"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="5dp"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:focusable="true"
+                android:tint="#1B4235"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/view"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                app:srcCompat="@drawable/ic_settings_gear" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cardStreak"
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerViewContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:background="@drawable/bg_rounded_card"
-                android:elevation="4dp"
-                android:padding="20dp"
                 app:layout_constraintTop_toBottomOf="@+id/tvTeacherName">
 
-                <TextView
-                    android:id="@+id/tvOverviewLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Monthly Overview"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvResetBadge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_rounded_card"
-                    android:backgroundTint="#4DFFFFFF"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
-                    android:text="Resets June 1"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <GridLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardStreak"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:columnCount="2"
-                    android:rowCount="2"
-                    app:layout_constraintTop_toBottomOf="@+id/tvOverviewLabel">
+                    android:background="@drawable/bg_rounded_card"
+                    android:backgroundTint="#1B4235"
+                    android:elevation="4dp"
+                    android:alpha="0.8"
+                    android:padding="20dp">
 
-                    <!-- Total Students -->
-                    <LinearLayout
+                    <ImageView
+                        android:id="@+id/iconCalendar"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tvOverviewLabel"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/calendar" />
+
+                    <TextView
+                        android:id="@+id/tvOverviewLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Monthly Overview"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/iconCalendar"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvResetBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_rounded_card"
+                        android:backgroundTint="#4DFFFFFF"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Grid Layout for Metrics -->
+                    <!-- Top Left: Students -->
+                    <ImageView
+                        android:id="@+id/iconStudents"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="24dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvOverviewLabel"
+                        app:srcCompat="@drawable/student_group" />
+
+                    <TextView
+                        android:id="@+id/tvStudentsLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="16dp">
+                        android:layout_marginStart="12dp"
+                        android:text="Total Students"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toStartOf="@+id/dividerVertical"
+                        app:layout_constraintStart_toEndOf="@+id/iconStudents"
+                        app:layout_constraintTop_toTopOf="@+id/iconStudents" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Total Students"
-                            android:textColor="#E0F2F1"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:id="@+id/tvTotalStudentsValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="0"
-                            android:textColor="@color/white"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Class Avg XP -->
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tvTotalStudentsValue"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="16dp">
+                        android:text="..."
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/dividerVertical"
+                        app:layout_constraintStart_toStartOf="@+id/tvStudentsLabel"
+                        app:layout_constraintTop_toBottomOf="@+id/tvStudentsLabel" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Class Avg XP"
-                            android:textColor="#E0F2F1"
-                            android:textSize="13sp" />
+                    <!-- Vertical Divider -->
+                    <View
+                        android:id="@+id/dividerVertical"
+                        android:layout_width="1dp"
+                        android:layout_height="130dp"
+                        android:layout_marginTop="24dp"
+                        android:background="#4DFFFFFF"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvOverviewLabel" />
 
-                        <TextView
-                            android:id="@+id/tvAvgXPValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="0"
-                            android:textColor="@color/white"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
+                    <!-- Top Right: Classes Conducted -->
+                    <ImageView
+                        android:id="@+id/iconClasses"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        app:layout_constraintStart_toEndOf="@+id/dividerVertical"
+                        app:layout_constraintTop_toBottomOf="@+id/tvOverviewLabel"
+                        app:srcCompat="@drawable/book_stack" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Monthly cycle"
-                            android:textColor="#B2DFDB"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                    <!-- Attendance Rate -->
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tvClassesLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:orientation="vertical">
+                        android:layout_marginStart="12dp"
+                        android:text="Quiz Submissions"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/iconClasses"
+                        app:layout_constraintTop_toTopOf="@+id/iconClasses" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Attendance Rate"
-                            android:textColor="#E0F2F1"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:id="@+id/tvAttendanceRateValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="0%"
-                            android:textColor="@color/white"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Avg Quiz Score -->
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tvQuizSubmissionsValue"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:orientation="vertical">
+                        android:text="..."
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvClassesLabel"
+                        app:layout_constraintTop_toBottomOf="@+id/tvClassesLabel" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Avg Quiz Score"
-                            android:textColor="#E0F2F1"
-                            android:textSize="13sp" />
+                    <!-- Horizontal Divider -->
+                    <View
+                        android:id="@+id/dividerHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="#4DFFFFFF"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTotalStudentsValue" />
 
-                        <TextView
-                            android:id="@+id/tvAvgQuizValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="0%"
-                            android:textColor="@color/white"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
+                    <!-- Bottom Left: Attendance -->
+                    <ImageView
+                        android:id="@+id/iconAttendance"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/dividerHorizontal"
+                        app:srcCompat="@drawable/attendance" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="This month"
-                            android:textColor="#B2DFDB"
-                            android:textSize="10sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvAttendanceLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="Attendance Rate"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toStartOf="@+id/dividerVertical"
+                        app:layout_constraintStart_toEndOf="@+id/iconAttendance"
+                        app:layout_constraintTop_toTopOf="@+id/iconAttendance" />
 
-                </GridLayout>
+                    <TextView
+                        android:id="@+id/tvAttendanceRateValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="..."
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/dividerVertical"
+                        app:layout_constraintStart_toStartOf="@+id/tvAttendanceLabel"
+                        app:layout_constraintTop_toBottomOf="@+id/tvAttendanceLabel" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <!-- Bottom Right: Avg Quiz -->
+                    <ImageView
+                        android:id="@+id/iconAvgQuiz"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintStart_toEndOf="@+id/dividerVertical"
+                        app:layout_constraintTop_toBottomOf="@+id/dividerHorizontal"
+                        app:srcCompat="@drawable/award_badge" />
+
+                    <TextView
+                        android:id="@+id/tvAvgQuizLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="Avg. Quiz Score"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/iconAvgQuiz"
+                        app:layout_constraintTop_toTopOf="@+id/iconAvgQuiz" />
+
+                    <TextView
+                        android:id="@+id/tvAvgQuizValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="..."
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvAvgQuizLabel"
+                        app:layout_constraintTop_toBottomOf="@+id/tvAvgQuizLabel" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
 
             <TextView
                 android:id="@+id/tvExplore"
@@ -229,11 +289,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:text="Explore Features"
-                android:textColor="@color/text_dark"
+                android:textColor="#1B4235"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardStreak" />
+                app:layout_constraintTop_toBottomOf="@+id/shimmerViewContainer" />
 
             <GridLayout
                 android:id="@+id/gridFeatures"
@@ -241,165 +301,210 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:columnCount="2"
-                android:rowCount="1"
+                android:rowCount="2"
                 app:layout_constraintTop_toBottomOf="@+id/tvExplore">
 
                 <!-- Quiz Results -->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <androidx.cardview.widget.CardView
                     android:id="@+id/cardQuizResults"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="180dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="16dp">
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_cream_task_card"
+                    android:alpha="0.8"
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
 
-                    <View
-                        android:id="@+id/iconQuiz"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
 
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@android:drawable/ic_menu_sort_by_size"
-                        app:layout_constraintBottom_toBottomOf="@+id/iconQuiz"
-                        app:layout_constraintEnd_toEndOf="@+id/iconQuiz"
-                        app:layout_constraintStart_toStartOf="@+id/iconQuiz"
-                        app:layout_constraintTop_toTopOf="@+id/iconQuiz"
-                        app:tint="@color/text_dark" />
+                        <ImageView
+                            android:id="@+id/iconQuiz"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            app:srcCompat="@drawable/quiz_pencil" />
 
-                    <TextView
-                        android:id="@+id/tvQuizTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Quiz Results"
-                        android:textColor="@color/text_dark"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iconQuiz" />
+                        <TextView
+                            android:id="@+id/tvQuizTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Quiz Results"
+                            android:textColor="#1B4235"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="View student submissions"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvQuizTitle" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center"
+                            android:text="View and manage students' quiz performance"
+                            android:textColor="#1B4235"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
                 <!-- Leaderboard -->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <androidx.cardview.widget.CardView
                     android:id="@+id/cardLeaderboard"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="180dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    android:background="@drawable/bg_white_card"
-                    android:elevation="2dp"
-                    android:padding="16dp">
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_cream_task_card"
+                    android:alpha="0.8"
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
 
-                    <View
-                        android:id="@+id/iconLeaderboard"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:alpha="0.4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
 
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@android:drawable/btn_star_big_on"
-                        app:layout_constraintBottom_toBottomOf="@+id/iconLeaderboard"
-                        app:layout_constraintEnd_toEndOf="@+id/iconLeaderboard"
-                        app:layout_constraintStart_toStartOf="@+id/iconLeaderboard"
-                        app:layout_constraintTop_toTopOf="@+id/iconLeaderboard"
-                        app:tint="@color/text_dark" />
+                        <ImageView
+                            android:id="@+id/iconLeaderboard"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            app:srcCompat="@drawable/trophy" />
 
-                    <TextView
-                        android:id="@+id/tvLeaderboardTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Leaderboard"
-                        android:textColor="@color/text_dark"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iconLeaderboard" />
+                        <TextView
+                            android:id="@+id/tvLeaderboardTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Leaderboard"
+                            android:textColor="#1B4235"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Student rankings"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvLeaderboardTitle" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center"
+                            android:text="See top-performing students"
+                            android:textColor="#1B4235"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Propose Question Edit -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardProposeQuestion"
+                    android:layout_width="0dp"
+                    android:layout_height="180dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_cream_task_card"
+                    android:alpha="0.8"
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:id="@+id/iconPropose"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            app:srcCompat="@drawable/propose_edit" />
+
+                        <TextView
+                            android:id="@+id/tvProposeTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Propose Edit"
+                            android:textColor="#1B4235"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center"
+                            android:text="Suggest question text or option edits for Admin approval"
+                            android:textColor="#1B4235"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Enroll Student -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardEnrollStudent"
+                    android:layout_width="0dp"
+                    android:layout_height="180dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_cream_task_card"
+                    android:alpha="0.8"
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:id="@+id/iconEnroll"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            app:srcCompat="@drawable/attendance" />
+
+                        <TextView
+                            android:id="@+id/tvEnrollTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Enroll Student"
+                            android:textColor="#1B4235"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center"
+                            android:text="Scan QR code to add them to your class"
+                            android:textColor="#1B4235"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
             </GridLayout>
-
-            <!-- Propose Question Edit Card -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cardProposeQuestion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_white_card"
-                android:elevation="2dp"
-                android:padding="16dp"
-                app:layout_constraintTop_toBottomOf="@+id/gridFeatures">
-
-                <ImageView
-                    android:id="@+id/iconPropose"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@android:drawable/ic_menu_edit"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/primary_green" />
-
-                <TextView
-                    android:id="@+id/tvProposeTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Propose Question Edit"
-                    android:textColor="@color/text_dark"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@+id/iconPropose"
-                    app:layout_constraintTop_toTopOf="@+id/iconPropose" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="2dp"
-                    android:text="Suggest question text or option edits for Admin approval"
-                    android:textColor="@color/text_grey"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/iconPropose"
-                    app:layout_constraintTop_toBottomOf="@+id/tvProposeTitle" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
@@ -407,9 +512,10 @@
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="#FFFFFF"
-        android:elevation="8dp"
+        android:layout_height="wrap_content"
+        android:minHeight="72dp"
+        android:background="@drawable/bg_bottom_nav_glass"
+        android:elevation="12dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -417,7 +523,7 @@
         <LinearLayout
             android:id="@+id/navHome"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
@@ -425,19 +531,23 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_home"/>
+                android:src="@drawable/home"
+                app:tint="#1B4235" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Home"
-                android:textSize="12sp"/>
+                android:textColor="#1B4235"
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navStudentsTab"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
@@ -445,19 +555,23 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_myplaces"/>
+                android:src="@drawable/people"
+                app:tint="#1B4235" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Students"
-                android:textSize="12sp"/>
+                android:textColor="#1B4235"
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navAttendanceTab"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
@@ -465,20 +579,23 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_today"/>
+                android:src="@drawable/book_stack"
+                app:tint="#1B4235" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Attendance"
+                android:textColor="#1B4235"
                 android:textSize="12sp"
-                android:textColor="#607D6B"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navAnalyticsTab"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
@@ -486,13 +603,17 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_sort_by_size"/>
+                android:src="@drawable/stats"
+                app:tint="#1B4235" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Analytics"
-                android:textSize="12sp"/>
+                android:textColor="#1B4235"
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 

@@ -6,6 +6,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +42,7 @@ public class StudentDashboard extends AppCompatActivity {
     LinearLayout navHome, navStories, navLeaderboard, navProfile;
     TextView tvStudentName, tvXPValue, tvStreakLabel, tvStreakValue;
     ImageView btnNotifications;
+    ShimmerFrameLayout shimmerViewContainer;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private ListenerRegistration ssoListener, attendanceListener;
@@ -86,6 +88,8 @@ public class StudentDashboard extends AppCompatActivity {
         tvStreakLabel = findViewById(R.id.tvStreakLabel);
         tvStreakValue = findViewById(R.id.tvStreakValue);
         btnNotifications = findViewById(R.id.btnNotifications);
+        shimmerViewContainer = findViewById(R.id.shimmerViewContainer);
+        if (shimmerViewContainer != null) shimmerViewContainer.startShimmer();
 
         arScan = findViewById(R.id.arScan);
         attendance = findViewById(R.id.attendance);
@@ -180,8 +184,16 @@ public class StudentDashboard extends AppCompatActivity {
                                 }
                             }
                         }
+                        if (shimmerViewContainer != null) {
+                            shimmerViewContainer.stopShimmer();
+                            shimmerViewContainer.setShimmer(null);
+                        }
                     })
                     .addOnFailureListener(e -> {
+                        if (shimmerViewContainer != null) {
+                            shimmerViewContainer.stopShimmer();
+                            shimmerViewContainer.setShimmer(null);
+                        }
                         if (isFinishing()) return;
                         Toast.makeText(this, "Error fetching user data", Toast.LENGTH_SHORT).show();
                     });
@@ -332,6 +344,9 @@ public class StudentDashboard extends AppCompatActivity {
                 .addOnSuccessListener(querySnapshots -> {
                     Set<String> uniqueStories = new HashSet<>();
                     for (DocumentSnapshot doc : querySnapshots) {
+                        Boolean isSunday = doc.getBoolean("isSunday");
+                        if (isSunday != null && !isSunday) continue; // Skip trial quizzes
+                        
                         String story = doc.getString("storyTitle");
                         if (story != null) uniqueStories.add(story);
                     }

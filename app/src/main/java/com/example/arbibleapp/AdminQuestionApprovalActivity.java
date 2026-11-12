@@ -32,12 +32,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import com.example.arbibleapp.databinding.ActivityAdminQuestionApprovalBinding;
+import com.example.arbibleapp.databinding.ItemAdminProposalBinding;
+import androidx.recyclerview.widget.DiffUtil;
 import java.util.Map;
 
 public class AdminQuestionApprovalActivity extends AppCompatActivity {
 
-    private RecyclerView rvProposals;
-    private TextView tvEmptyState;
+    private ActivityAdminQuestionApprovalBinding binding;
     private FirebaseFirestore db;
     private ProposalAdapter adapter;
     private final List<ProposalModel> proposalList = new ArrayList<>();
@@ -60,8 +62,9 @@ public class AdminQuestionApprovalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_admin_question_approval);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        binding = ActivityAdminQuestionApprovalBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -69,12 +72,10 @@ public class AdminQuestionApprovalActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-        tvEmptyState = findViewById(R.id.tvEmptyState);
-        rvProposals = findViewById(R.id.rvProposals);
-        rvProposals.setLayoutManager(new LinearLayoutManager(this));
+        binding.btnBack.setOnClickListener(v -> finish());
+        binding.rvProposals.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ProposalAdapter(proposalList);
-        rvProposals.setAdapter(adapter);
+        binding.rvProposals.setAdapter(adapter);
 
         loadPendingProposals();
         returnImageListener = db.collection("quiz_questions")
@@ -144,6 +145,16 @@ public class AdminQuestionApprovalActivity extends AppCompatActivity {
                             ? LawScenarioBank.load(snapshots.getDocuments()) : null;
                     adapter.notifyDataSetChanged();
                 });
+                
+        binding.rvProposals.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    currentLimit += 20;
+                    loadPendingProposals();
+                }
+            }
+        });
     }
 
     @Override
@@ -158,18 +169,21 @@ public class AdminQuestionApprovalActivity extends AppCompatActivity {
         if (lawImageListener != null) lawImageListener.remove();
         if (babelImageListener != null) babelImageListener.remove();
         if (exodusImageListener != null) exodusImageListener.remove();
-        rvProposals.setAdapter(null);
+        binding.rvProposals.setAdapter(null);
     }
+
+    private int currentLimit = 20;
 
     private void loadPendingProposals() {
         if (proposalListener != null) proposalListener.remove();
 
         proposalListener = db.collection("question_edit_proposals")
                 .whereEqualTo("status", "PENDING")
+                .limit(currentLimit)
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null || snapshots == null) return;
 
-                    proposalList.clear();
+                    List<ProposalModel> newProposals = new ArrayList<>();
                     for (DocumentSnapshot doc : snapshots) {
                         String id = doc.getId();
                         String teacherName = doc.getString("teacherName");
@@ -180,7 +194,7 @@ public class AdminQuestionApprovalActivity extends AppCompatActivity {
                         Long correctIdxLong = doc.getLong("correctAnswerIndex");
                         Timestamp ts = doc.getTimestamp("timestamp");
 
-                        proposalList.add(new ProposalModel(
+                        newProposals.add(new ProposalModel(
                                 id,
                                 teacherName != null ? teacherName : "Teacher",
                                 story != null ? story : "Story Quiz",
@@ -192,15 +206,52 @@ public class AdminQuestionApprovalActivity extends AppCompatActivity {
                         ));
                     }
 
+                    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ProposalDiffCallback(proposalList, newProposals));
+                    proposalList.clear();
+                    proposalList.addAll(newProposals);
+                    diffResult.dispatchUpdatesTo(adapter);
+
                     if (proposalList.isEmpty()) {
-                        tvEmptyState.setVisibility(View.VISIBLE);
-                        rvProposals.setVisibility(View.GONE);
+                        binding.tvEmptyState.setVisibility(View.VISIBLE);
+                        binding.rvProposals.setVisibility(View.GONE);
                     } else {
-                        tvEmptyState.setVisibility(View.GONE);
-                        rvProposals.setVisibility(View.VISIBLE);
-                        adapter.notifyDataSetChanged();
+                        binding.tvEmptyState.setVisibility(View.GONE);
+                        binding.rvProposals.setVisibility(View.VISIBLE);
                     }
                 });
+    }
+
+    private static class ProposalDiffCallback extends DiffUtil.Callback {
+        private final List<ProposalModel> oldList;
+        private final List<ProposalModel> newList;
+
+        public ProposalDiffCallback(List<ProposalModel> oldList, List<ProposalModel> newList) {
+            this.oldList = oldList;
+            this.newList = newList;
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldList.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newList.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldList.get(oldItemPosition).id.equals(newList.get(newItemPosition).id);
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            ProposalModel oldItem = oldList.get(oldItemPosition);
+            ProposalModel newItem = newList.get(newItemPosition);
+            return oldItem.teacherName.equals(newItem.teacherName) &&
+                   oldItem.storyTitle.equals(newItem.storyTitle);
+        }
     }
 
     private void approveProposal(ProposalModel proposal) {

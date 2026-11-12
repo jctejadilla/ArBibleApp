@@ -4,10 +4,17 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
+
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import org.json.JSONObject;
 
@@ -18,29 +25,47 @@ public class RegistrationModel extends AndroidViewModel {
     String existingEmail;
     interface Backend {
         String uid();
-        com.google.android.gms.tasks.Task<String> create(String email, String password);
-        com.google.android.gms.tasks.Task<Void> save(String uid, Map<String,Object> data);
+        Task<String> create(String email, String password);
+        Task<Void> save(String uid, Map<String,Object> data);
     }
     private final Backend backend;
     private final SharedPreferences pending;
     public RegistrationModel(Application app) {
         this(app, new Backend() {
             public String uid() { FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser(); return u == null ? null : u.getUid(); }
-            public com.google.android.gms.tasks.Task<String> create(String email, String password) {
+            public Task<String> create(String email, String password) {
                 return FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).continueWith(task -> {
                     if (!task.isSuccessful()) throw task.getException(); return task.getResult().getUser().getUid();
                 });
             }
-            public com.google.android.gms.tasks.Task<Void> save(String uid, Map<String,Object> data) {
-                com.google.firebase.firestore.DocumentReference ref = FirebaseFirestore.getInstance().collection("users").document(uid);
+            public Task<Void> save(String uid, Map<String,Object> data) {
+                DocumentReference ref = FirebaseFirestore.getInstance().collection("users").document(uid);
                 return FirebaseFirestore.getInstance().runTransaction(transaction -> {
                     VerifiedAccountFlow.requireUser(uid);
                     if (!transaction.get(ref).exists()) transaction.set(ref, data);
                     return null;
                 });
             }
-        }, app.getSharedPreferences("pending-registration", 0));
+        }, createEncryptedPrefs(app));
     }
+    
+    private static SharedPreferences createEncryptedPrefs(Application app) {
+        try {
+            MasterKey masterKey = new MasterKey.Builder(app)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+            return EncryptedSharedPreferences.create(
+                    app,
+                    "pending-registration-secure",
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            return app.getSharedPreferences("pending-registration", 0);
+        }
+    }
+    
     RegistrationModel(Application app, Backend backend, SharedPreferences pending) {
         super(app); this.backend = backend; this.pending = pending;
     }
@@ -54,7 +79,7 @@ public class RegistrationModel extends AndroidViewModel {
         busy = true; error = null; existingEmail = null; changed();
         backend.create(email, password).addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
-                if (task.getException() instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+                if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                     busy = false; existingEmail = email; changed();
                 } else fail("Could not create account: " + task.getException().getMessage());
                 return;
@@ -74,7 +99,7 @@ public class RegistrationModel extends AndroidViewModel {
         Map<String,Object> data = new HashMap<>();
         try {
             JSONObject json = new JSONObject(pending.getString(uid, ""));
-            java.util.Iterator<String> keys = json.keys();
+            Iterator<String> keys = json.keys();
             while (keys.hasNext()) { String key = keys.next(); data.put(key, json.get(key)); }
         } catch (Exception e) { fail("Registration details are unavailable. Please contact your administrator."); return; }
         if (!isRegistrableRole(data.get("userType") instanceof String ? (String) data.get("userType") : null)) {

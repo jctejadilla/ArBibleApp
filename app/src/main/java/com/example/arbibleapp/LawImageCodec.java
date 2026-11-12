@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Handler;
@@ -18,10 +20,20 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Arrays;
+import android.util.LruCache;
 
 final class LawImageCodec {
     static final int MAX_DIMENSION = 1024;
     static final ExecutorService WORKER = Executors.newFixedThreadPool(2);
+
+    private static final int CACHE_SIZE = (int) (Runtime.getRuntime().maxMemory() / 1024) / 8;
+    private static final LruCache<Integer, Bitmap> BITMAP_CACHE = new LruCache<Integer, Bitmap>(CACHE_SIZE) {
+        @Override
+        protected int sizeOf(Integer key, Bitmap bitmap) {
+            return bitmap.getByteCount() / 1024; // Use KB
+        }
+    };
 
     static byte[] prepare(ContentResolver resolver, Uri uri) throws IOException {
         return prepare(resolver, uri, LawImageData.MAX_BYTES);
@@ -85,8 +97,8 @@ final class LawImageCodec {
         Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(image);
         canvas.drawColor(Color.WHITE);
-        android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.FILTER_BITMAP_FLAG);
-        canvas.drawBitmap(source, null, new android.graphics.Rect(0, 0, width, height), paint);
+        Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        canvas.drawBitmap(source, null, new Rect(0, 0, width, height), paint);
         try {
             while (true) {
                 for (int quality = 85; quality >= 45; quality -= 10) {
@@ -128,21 +140,35 @@ final class LawImageCodec {
     static Future<?> display(ImageView view, byte[] bytes, int defaultImage) {
         Object token = new Object();
         view.setTag(token);
+        
+        if (bytes == null || bytes.length == 0) {
+            view.setImageResource(defaultImage);
+            return null;
+        }
+
+        int cacheKey = Arrays.hashCode(bytes);
+        Bitmap cachedBitmap = BITMAP_CACHE.get(cacheKey);
+        if (cachedBitmap != null) {
+            view.setImageBitmap(cachedBitmap);
+            return null;
+        }
+
         view.setImageResource(defaultImage);
-        if (bytes == null) return null;
         WeakReference<ImageView> target = new WeakReference<>(view);
         return WORKER.submit(() -> {
             Bitmap bitmap = decode(bytes);
+            if (bitmap != null) {
+                BITMAP_CACHE.put(cacheKey, bitmap);
+            }
             ImageView current = target.get();
             if (current == null) {
-                if (bitmap != null) bitmap.recycle();
                 return;
             }
             new Handler(Looper.getMainLooper()).post(() -> {
                 ImageView destination = target.get();
                 if (destination != null && destination.getTag() == token) {
                     if (bitmap != null) destination.setImageBitmap(bitmap);
-                } else if (bitmap != null) bitmap.recycle();
+                }
             });
         });
     }

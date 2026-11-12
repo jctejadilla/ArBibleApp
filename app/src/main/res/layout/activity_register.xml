@@ -139,88 +139,52 @@
                     android:textSize="13sp"
                     android:layout_marginBottom="4dp"/>
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvReqLength"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:text="At least 6 characters length"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/ic_cancel_circle"
+                    android:drawablePadding="8dp"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="2dp">
-                    <ImageView
-                        android:id="@+id/ivReqLength"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_cancel_circle" />
-                    <TextView
-                        android:id="@+id/tvReqLength"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="At least 6 characters length"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        android:layout_marginStart="8dp"/>
-                </LinearLayout>
+                    android:layout_marginBottom="4dp"/>
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvReqUpper"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:text="At least 1 uppercase letter (A...Z)"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/ic_cancel_circle"
+                    android:drawablePadding="8dp"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="2dp">
-                    <ImageView
-                        android:id="@+id/ivReqUpper"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_cancel_circle" />
-                    <TextView
-                        android:id="@+id/tvReqUpper"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="At least 1 uppercase letter (A...Z)"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        android:layout_marginStart="8dp"/>
-                </LinearLayout>
+                    android:layout_marginBottom="4dp"/>
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvReqLower"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:text="At least 1 lowercase letter (a...z)"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/ic_cancel_circle"
+                    android:drawablePadding="8dp"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="2dp">
-                    <ImageView
-                        android:id="@+id/ivReqLower"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_cancel_circle" />
-                    <TextView
-                        android:id="@+id/tvReqLower"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="At least 1 lowercase letter (a...z)"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        android:layout_marginStart="8dp"/>
-                </LinearLayout>
+                    android:layout_marginBottom="4dp"/>
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvReqNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <ImageView
-                        android:id="@+id/ivReqNumber"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_cancel_circle" />
-                    <TextView
-                        android:id="@+id/tvReqNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="At least 1 number (0...9)"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp"
-                        android:layout_marginStart="8dp"/>
-                </LinearLayout>
+                    android:text="At least 1 number (0...9)"
+                    android:textColor="@color/text_grey"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/ic_cancel_circle"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"/>
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout

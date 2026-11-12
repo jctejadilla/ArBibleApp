@@ -1038,7 +1038,6 @@ public class TeacherProposeQuestionActivity extends AppCompatActivity {
 
             db.collection("question_edit_proposals").add(proposal)
                     .addOnSuccessListener(ref -> {
-                        Toast.makeText(this, "Proposal Submitted for Admin Approval!", Toast.LENGTH_LONG).show();
                         NotificationPopupManager.getInstance().showNotification(
                                 this,
                                 "Proposal Submitted!",

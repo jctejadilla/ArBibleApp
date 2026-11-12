@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -75,7 +77,7 @@ public class TeacherQuizResultsByStory extends AppCompatActivity {
     }
 
     private void setupTabs() {
-        TextView tabAll = findViewById(R.id.tabAll);
+        LinearLayout tabAll = findViewById(R.id.tabAll);
         if (tabAll != null) {
             tabAll.setOnClickListener(v -> {
                 Intent intent = new Intent(this, TeacherQuizResults.class);
@@ -114,17 +116,20 @@ public class TeacherQuizResultsByStory extends AppCompatActivity {
     }
 
     private void fetchQuizResultsForStudents(List<String> studentUids) {
-        db.collection("quiz_results")
-                .whereIn("studentUid", studentUids)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
+        TeacherQuizResultsLoader.fetchForStudents(db, studentUids)
+                .addOnSuccessListener(resultData -> {
                     List<TeacherQuizResults.QuizResultModel> results = new ArrayList<>();
                     // Use TreeMap to keep story titles sorted
                     Map<String, List<TeacherQuizResults.QuizResultModel>> grouped = new TreeMap<>();
 
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        TeacherQuizResults.QuizResultModel result = doc.toObject(TeacherQuizResults.QuizResultModel.class);
+                    for (DocumentSnapshot doc : resultData.documents) {
+                        TeacherQuizResults.QuizResultModel result =
+                                doc.toObject(TeacherQuizResults.QuizResultModel.class);
                         if (result != null) {
+                            String currentUsername = resultData.userNames.get(result.studentUid);
+                            if (currentUsername != null && !currentUsername.isEmpty()) {
+                                result.username = currentUsername;
+                            }
                             results.add(result);
                             String title = result.storyTitle != null ? result.storyTitle : "General Quiz";
                             if (!grouped.containsKey(title)) {
@@ -138,7 +143,7 @@ public class TeacherQuizResultsByStory extends AppCompatActivity {
                     for (Map.Entry<String, List<TeacherQuizResults.QuizResultModel>> entry : grouped.entrySet()) {
                         String title = entry.getKey();
                         List<TeacherQuizResults.QuizResultModel> storyResults = entry.getValue();
-                        
+
                         // Sort results within each group by timestamp descending
                         Collections.sort(storyResults, (r1, r2) -> {
                             if (r1.timestamp == null || r2.timestamp == null) return 0;
@@ -222,32 +227,23 @@ public class TeacherQuizResultsByStory extends AppCompatActivity {
                 
                 String dateTime = r.date != null ? r.date : "Recently";
                 if (r.timestamp != null) {
-                    String time = new java.text.SimpleDateFormat("hh:mm a", Locale.getDefault()).format(r.timestamp.toDate());
+                    String time = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(r.timestamp.toDate());
                     dateTime += " • " + time;
                 }
                 vh.tvDate.setText(dateTime);
 
                 vh.tvScore.setText(String.format(Locale.getDefault(), "%d/%d", r.score, r.totalQuestions));
                 
-                String name = r.username != null ? r.username : "ST";
-                if (name.length() >= 2) {
-                    vh.tvInitials.setText(name.substring(0, 2).toUpperCase());
-                } else {
-                    vh.tvInitials.setText(name.toUpperCase());
+                ImageView avatar = vh.itemView.findViewById(R.id.avatarView);
+                if (avatar != null) {
+                    avatar.setImageResource(R.drawable.ic_def_avatar);
                 }
 
                 vh.itemView.setOnClickListener(null);
                 if (DivisionPairBank.STORY_TITLE.equals(r.storyTitle) && r.matchedPairs != null) {
                     vh.itemView.setOnClickListener(v -> DivisionPairReview.showForTeacher(v.getContext(), r));
                 }
-                double percent = r.totalQuestions > 0 ? (double) r.score / r.totalQuestions : 0;
-                if (percent >= 0.8) {
-                    vh.tvScore.setTextColor(Color.parseColor("#2E7D32"));
-                } else if (percent >= 0.5) {
-                    vh.tvScore.setTextColor(Color.parseColor("#EF6C00"));
-                } else {
-                    vh.tvScore.setTextColor(Color.parseColor("#C62828"));
-                }
+                // Default styling handles the color now
             }
         }
 
@@ -264,13 +260,12 @@ public class TeacherQuizResultsByStory extends AppCompatActivity {
         }
 
         static class ItemViewHolder extends RecyclerView.ViewHolder {
-            TextView tvName, tvDate, tvScore, tvInitials;
+            TextView tvName, tvDate, tvScore;
             ItemViewHolder(View v) {
                 super(v);
                 tvName = v.findViewById(R.id.tvStudentName);
                 tvDate = v.findViewById(R.id.tvDate);
                 tvScore = v.findViewById(R.id.tvScoreBadge);
-                tvInitials = v.findViewById(R.id.tvAvatarInitials);
             }
         }
     }

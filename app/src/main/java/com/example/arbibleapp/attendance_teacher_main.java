@@ -31,6 +31,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -133,19 +134,22 @@ public class attendance_teacher_main extends AppCompatActivity {
     }
 
     private void updateFilterButtonsUI() {
-        int primaryGreen = ContextCompat.getColor(this, R.color.primary_green);
+        int forestGreen = Color.parseColor("#1B4235");
+        int presentGreen = Color.parseColor("#2E7D32");
+        int absentRed = ContextCompat.getColor(this, R.color.red);
         int white = ContextCompat.getColor(this, R.color.white);
 
-        btnFilterAll.setBackgroundTintList(android.content.res.ColorStateList.valueOf(currentFilter.equals("All") ? primaryGreen : white));
-        btnFilterAll.setTextColor(currentFilter.equals("All") ? white : primaryGreen);
+        boolean allSelected = currentFilter.equals("All");
+        boolean presentSelected = currentFilter.equals("Present");
+        boolean absentSelected = currentFilter.equals("Absent");
 
-        btnFilterPresent.setBackgroundTintList(android.content.res.ColorStateList.valueOf(currentFilter.equals("Present") ? primaryGreen : white));
-        btnFilterPresent.setTextColor(currentFilter.equals("Present") ? white : primaryGreen);
-
-        btnFilterAbsent.setBackgroundTintList(android.content.res.ColorStateList.valueOf(currentFilter.equals("Absent") ? primaryGreen : white));
-        btnFilterAbsent.setTextColor(currentFilter.equals("Absent") ? white : primaryGreen);
+        btnFilterAll.setBackgroundTintList(android.content.res.ColorStateList.valueOf(allSelected ? forestGreen : white));
+        btnFilterAll.setTextColor(allSelected ? white : forestGreen);
+        btnFilterPresent.setBackgroundTintList(android.content.res.ColorStateList.valueOf(presentSelected ? presentGreen : white));
+        btnFilterPresent.setTextColor(presentSelected ? white : presentGreen);
+        btnFilterAbsent.setBackgroundTintList(android.content.res.ColorStateList.valueOf(absentSelected ? absentRed : white));
+        btnFilterAbsent.setTextColor(absentSelected ? white : absentRed);
     }
-
     private void filterList() {
         String searchQuery = etSearchStudents.getText().toString().toLowerCase();
         List<EnrolledStudent> filteredList = new ArrayList<>();
@@ -181,32 +185,56 @@ public class attendance_teacher_main extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     enrolledList.clear();
+                    
+                    HashSet<String> addedUids = new HashSet<>();
 
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         String studentUid = doc.getString("studentUid");
                         String studentName = doc.getString("studentName");
-                        enrolledList.add(new EnrolledStudent(studentUid, studentName));
+                        
+                        if (studentUid != null && !addedUids.contains(studentUid)) {
+                            addedUids.add(studentUid);
+                            enrolledList.add(new EnrolledStudent(studentUid, studentName));
+                        } else if (studentUid != null && addedUids.contains(studentUid)) {
+                            // If it's a duplicate enrollment document in the database, delete it to keep it clean
+                            doc.getReference().delete();
+                        }
                     }
 
-                    enrolledList.sort((s1, s2) ->
-                            s1.name.compareToIgnoreCase(s2.name)
-                    );
+                    enrolledList.sort((s1, s2) -> {
+                        String name1 = s1.name != null ? s1.name : "";
+                        String name2 = s2.name != null ? s2.name : "";
+                        return name1.compareToIgnoreCase(name2);
+                    });
 
                     checkAttendanceForToday();
                 });
     }
 
     private void checkAttendanceForToday() {
+        if (mAuth.getCurrentUser() == null) return;
+        String teacherUid = mAuth.getCurrentUser().getUid();
+
         db.collection("attendance")
                 .whereEqualTo("date", todayDate)
+                .whereEqualTo("teacherUid", teacherUid)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     int presentCount = 0;
+                    HashSet<String> processedAttendanceUids = new HashSet<>();
                     for (EnrolledStudent student : enrolledList) {
                         student.isPresent = false;
                         student.time = "--:--";
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            if (doc.getString("studentUid").equals(student.uid)) {
+                            String studentUid = doc.getString("studentUid");
+                            if (studentUid != null && studentUid.equals(student.uid)) {
+                                if (processedAttendanceUids.contains(studentUid)) {
+                                    // Duplicate attendance record found, delete it
+                                    doc.getReference().delete();
+                                    continue;
+                                }
+                                processedAttendanceUids.add(studentUid);
+                                
                                 student.isPresent = true;
                                 String rawTime = doc.getString("timestamp");
                                 if (rawTime != null) {
@@ -222,7 +250,6 @@ public class attendance_teacher_main extends AppCompatActivity {
                                     }
                                 }
                                 presentCount++;
-                                break;
                             }
                         }
                     }
@@ -282,9 +309,11 @@ public class attendance_teacher_main extends AppCompatActivity {
             holder.time.setText(student.time);
             if (student.isPresent) {
                 holder.status.setText("Status: Present");
+                holder.status.setTextColor(Color.parseColor("#1B4235"));
                 holder.indicator.setBackgroundColor(ContextCompat.getColor(attendance_teacher_main.this, R.color.primary_green));
             } else {
                 holder.status.setText("Status: Absent");
+                holder.status.setTextColor(ContextCompat.getColor(attendance_teacher_main.this, R.color.red));
                 holder.indicator.setBackgroundColor(ContextCompat.getColor(attendance_teacher_main.this, R.color.red));
             }
         }

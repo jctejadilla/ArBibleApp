@@ -5,23 +5,23 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:background="@drawable/bg_meh"
     tools:context=".AnalyticsActivity">
 
     <!-- Header Section -->
     <ImageView
         android:id="@+id/btnBack"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/bg_circle_white"
-        android:elevation="2dp"
-        android:padding="12dp"
-        android:src="@android:drawable/ic_menu_revert"
+        android:background="@drawable/bg_circle_translucent"
+        android:elevation="3dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_back_arrow_curved"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/text_dark" />
+        app:tint="#1D3B2E" />
 
     <TextView
         android:id="@+id/tvTitle"
@@ -29,12 +29,25 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Class Analytics"
-        android:textColor="@color/text_dark"
-        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/btnBack"
         app:layout_constraintStart_toEndOf="@+id/btnBack"
         app:layout_constraintTop_toTopOf="@+id/btnBack" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:text="Review class performance, quiz progress, and attendance"
+        android:textColor="#E8F4EC"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -44,7 +57,7 @@
         android:paddingBottom="24dp"
 
         app:layout_constraintBottom_toTopOf="@+id/bottomNav"
-        app:layout_constraintTop_toBottomOf="@+id/btnBack">
+        app:layout_constraintTop_toBottomOf="@+id/tvSubtitle">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,7 +79,10 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     app:cardCornerRadius="20dp"
-                    app:cardBackgroundColor="#00C853">
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@color/badge_red"
+                    android:background="@drawable/bg_cream_task_card"
+                    android:alpha="0.8">
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -78,14 +94,14 @@
                             android:src="@android:drawable/ic_menu_sort_by_size"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/white" />
+                            app:tint="#1B4235" />
                         <TextView
                             android:id="@+id/tvAvgXPValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:text="0"
-                            android:textColor="@color/white"
+                            android:textColor="#1B4235"
                             android:textSize="22sp"
                             android:textStyle="bold"
                             app:layout_constraintStart_toStartOf="parent"
@@ -94,7 +110,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Avg XP per Student"
-                            android:textColor="#E0F2F1"
+                            android:textColor="#5F786C"
                             android:textSize="11sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/tvAvgXPValue" />
@@ -108,7 +124,10 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     app:cardCornerRadius="20dp"
-                    app:cardBackgroundColor="#2962FF">
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@color/badge_lime"
+                    android:background="@drawable/bg_cream_task_card"
+                    android:alpha="0.8">
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -120,14 +139,14 @@
                             android:src="@android:drawable/btn_star_big_on"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/white" />
+                            app:tint="#1B4235" />
                         <TextView
                             android:id="@+id/tvAvgQuizValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:text="0%"
-                            android:textColor="@color/white"
+                            android:textColor="#1B4235"
                             android:textSize="22sp"
                             android:textStyle="bold"
                             app:layout_constraintStart_toStartOf="parent"
@@ -136,7 +155,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Avg Quiz Score"
-                            android:textColor="#E3F2FD"
+                            android:textColor="#5F786C"
                             android:textSize="11sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/tvAvgQuizValue" />
@@ -150,7 +169,10 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     app:cardCornerRadius="20dp"
-                    app:cardBackgroundColor="#9C27B0">
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@color/badge_blue"
+                    android:background="@drawable/bg_cream_task_card"
+                    android:alpha="0.8">
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -162,14 +184,14 @@
                             android:src="@android:drawable/ic_menu_today"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/white" />
+                            app:tint="#1B4235" />
                         <TextView
                             android:id="@+id/tvAvgAttendanceValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:text="0/0"
-                            android:textColor="@color/white"
+                            android:textColor="#1B4235"
                             android:textSize="22sp"
                             android:textStyle="bold"
                             app:layout_constraintStart_toStartOf="parent"
@@ -178,7 +200,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Avg Attendance"
-                            android:textColor="#F3E5F5"
+                            android:textColor="#5F786C"
                             android:textSize="11sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/tvAvgAttendanceValue" />
@@ -192,7 +214,10 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="6dp"
                     app:cardCornerRadius="20dp"
-                    app:cardBackgroundColor="#FF6D00">
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@color/badge_orange"
+                    android:background="@drawable/bg_cream_task_card"
+                    android:alpha="0.8">
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -204,14 +229,14 @@
                             android:src="@android:drawable/ic_menu_recent_history"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/white" />
+                            app:tint="#1B4235" />
                         <TextView
                             android:id="@+id/tvAvgSessionValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:text="0m"
-                            android:textColor="@color/white"
+                            android:textColor="#1B4235"
                             android:textSize="22sp"
                             android:textStyle="bold"
                             app:layout_constraintStart_toStartOf="parent"
@@ -220,7 +245,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Avg Session Time"
-                            android:textColor="#FFF3E0"
+                            android:textColor="#5F786C"
                             android:textSize="11sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/tvAvgSessionValue" />
@@ -235,7 +260,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Class XP Trend (This Month)"
-                android:textColor="@color/text_dark"
+                android:textColor="#1B4235"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -245,14 +270,17 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
+                android:background="@drawable/bg_cream_task_card"
+                android:alpha="0.9">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="20dp"
-                    android:background="@drawable/bg_white_card">
+>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -272,11 +300,11 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:background="@drawable/bg_rounded_card"
-                            android:backgroundTint="#FFF9C4"
+                            android:backgroundTint="#DCEBE3"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="4dp"
                             android:text="Resets in 14 days"
-                            android:textColor="#FBC02D"
+                            android:textColor="#1B4235"
                             android:textSize="11sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
@@ -298,7 +326,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Quiz Performance by Story"
-                    android:textColor="@color/text_dark"
+                    android:textColor="#1B4235"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -307,11 +335,11 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:background="@drawable/bg_rounded_card"
-                    android:backgroundTint="#E3F2FD"
+                    android:backgroundTint="#DCEBE3"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="4dp"
                     android:text="Sunday releases"
-                    android:textColor="#1565C0"
+                    android:textColor="#1B4235"
                     android:textSize="11sp"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -322,13 +350,15 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
+                android:background="@drawable/bg_cream_task_card"
+                android:alpha="0.9">
 
                 <com.github.mikephil.charting.charts.BarChart
                     android:id="@+id/barChartPerformance"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:background="@drawable/bg_white_card"
                     android:padding="10dp"/>
             </androidx.cardview.widget.CardView>
 
@@ -337,7 +367,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Student Engagement Distribution"
-                android:textColor="@color/text_dark"
+                android:textColor="#1B4235"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -347,14 +377,17 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
+                android:background="@drawable/bg_cream_task_card"
+                android:alpha="0.9">
 
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/pieChartEngagement"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     android:padding="16dp"
-                    android:background="@drawable/bg_white_card"/>
+/>
             </androidx.cardview.widget.CardView>
 
             <!-- Attendance Tracking Card -->
@@ -362,7 +395,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Attendance Tracking"
-                android:textColor="@color/text_dark"
+                android:textColor="#1B4235"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -372,14 +405,17 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
+                android:background="@drawable/bg_cream_task_card"
+                android:alpha="0.9">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="20dp"
-                    android:background="@drawable/bg_white_card">
+>
 
                     <com.github.mikephil.charting.charts.BarChart
                         android:id="@+id/barChartAttendance"
@@ -394,7 +430,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Story Completion Breakdown"
-                android:textColor="@color/text_dark"
+                android:textColor="#1B4235"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -404,14 +440,16 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
+                android:background="@drawable/bg_cream_task_card"
+                android:alpha="0.9">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvStoryCompletion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:background="@drawable/bg_white_card"
                     android:nestedScrollingEnabled="false" />
             </androidx.cardview.widget.CardView>
 
@@ -422,9 +460,10 @@
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="#FFFFFF"
-        android:elevation="8dp"
+        android:layout_height="wrap_content"
+        android:minHeight="72dp"
+        android:background="@drawable/bg_bottom_nav_glass"
+        android:elevation="12dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -432,77 +471,86 @@
         <LinearLayout
             android:id="@+id/navHome"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_home"
-                app:tint="@color/text_grey"/>
+                android:src="@drawable/home"
+                app:tint="#73867D" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Home"
-                android:textSize="12sp"/>
+                android:textColor="#73867D"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navStudentsTab"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_myplaces"/>
+                android:src="@drawable/people"
+                app:tint="#73867D" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Students"
-                android:textSize="12sp"/>
+                android:textColor="#73867D"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navAttendanceTab"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_today"/>
+                android:src="@drawable/book_stack"
+                app:tint="#73867D" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Attendance"
-                android:textSize="12sp"/>
+                android:textColor="#73867D"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navAnalyticsTab"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_sort_by_size"
-                app:tint="@color/primary_green"/>
+                android:src="@drawable/stats"
+                app:tint="#1B4235" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Analytics"
-                android:textColor="@color/primary_green"
-                android:textSize="12sp"/>
+                android:textColor="#1B4235"
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

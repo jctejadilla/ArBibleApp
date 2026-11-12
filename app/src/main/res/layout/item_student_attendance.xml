@@ -4,18 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-
-    >
+    app:cardCornerRadius="24dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/white"
+    android:background="@drawable/bg_cream_task_card"
+    android:alpha="0.8">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:gravity="center_vertical"
-        android:background="@color/bg_light">
+        android:gravity="center_vertical">
 
         <View
             android:id="@+id/viewStudentStatus"
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:text="Student Name"
                 android:textStyle="bold"
-                android:textColor="@color/text_dark"
+                android:textColor="#1B4235"
                 android:textSize="16sp"/>
 
             <TextView

@@ -6,7 +6,9 @@
     android:layout_marginBottom="12dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="#F8F9FA">
+    app:cardBackgroundColor="@color/white"
+    android:background="@drawable/bg_cream_task_card"
+    android:alpha="0.8">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

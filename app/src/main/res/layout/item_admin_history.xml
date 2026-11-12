@@ -6,79 +6,90 @@
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp">
+    android:background="@drawable/bg_cream_task_card"
+    android:alpha="0.8"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="4dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvStatusBadge"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:background="@drawable/bg_rounded_card"
+            android:backgroundTint="@color/primary_green"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="APPROVED"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tvStatusBadge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_rounded_card"
-                android:backgroundTint="@color/primary_green"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:text="APPROVED"
-                android:textColor="@color/white"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/tvStoryTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Creation and the Fall"
+            android:textColor="#1B4235"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/tvStatusBadge"
+            app:layout_constraintEnd_toStartOf="@id/tvTimestamp"
+            app:layout_constraintTop_toTopOf="@id/tvStatusBadge"
+            app:layout_constraintBottom_toBottomOf="@id/tvStatusBadge" />
 
-            <TextView
-                android:id="@+id/tvStoryTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Creation and the Fall"
-                android:textColor="@color/text_dark"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvTimestamp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Jun 01, 10:00 AM"
-                android:textColor="@color/text_dark"
-                android:textSize="11sp" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tvTimestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jun 01, 10:00 AM"
+            android:textColor="#1B4235"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvStatusBadge"
+            app:layout_constraintBottom_toBottomOf="@id/tvStatusBadge" />
 
         <TextView
             android:id="@+id/tvTeacherName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Proposed by Teacher"
-            android:textColor="@color/text_dark"
+            android:textColor="#1B4235"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/tvStatusBadge" />
 
         <View
+            android:id="@+id/vDivider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginVertical="10dp"
-            android:background="#EEEEEE" />
+            android:background="#DCEBE3"
+            app:layout_constraintTop_toBottomOf="@id/tvTeacherName"
+            app:layout_constraintBottom_toTopOf="@id/tvOriginalLabel" />
 
         <TextView
+            android:id="@+id/tvOriginalLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="Original Content:"
-            android:textColor="@color/text_dark"
+            android:textColor="#1B4235"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/vDivider" />
 
         <TextView
             android:id="@+id/tvOriginalQuestion"
@@ -86,17 +97,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="Original question text..."
-            android:textColor="@color/text_dark"
-            android:textSize="13sp" />
+            android:textColor="#1B4235"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/tvOriginalLabel" />
 
         <TextView
+            android:id="@+id/tvProposedLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Proposed Content:"
-            android:textColor="@color/text_dark"
+            android:textColor="#1B4235"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvOriginalQuestion" />
 
         <TextView
             android:id="@+id/tvProposedQuestion"
@@ -104,9 +119,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="Proposed question wording..."
-            android:textColor="@color/text_dark"
+            android:textColor="#1B4235"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/tvProposedLabel" />
 
         <ImageView
             android:id="@+id/ivHistoryImagePreview"
@@ -114,7 +130,8 @@
             android:layout_height="140dp"
             android:layout_marginTop="8dp"
             android:scaleType="fitCenter"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/tvProposedQuestion" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -1,15 +1,34 @@
 package com.example.arbibleapp;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
+import android.app.Dialog;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
+import android.view.ViewGroup;
+import android.content.Intent;
+import android.os.Bundle;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -21,10 +40,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class TeacherProfile extends AppCompatActivity {
 
     ImageView btnBack;
-    LinearLayout navHome, navStudentsTab, navAttendanceTab, navAnalyticsTab;
-    Button btnLogout, btnSendEmail;
-    EditText etSubject, etMessage;
-    TextView tvTeacherName, tvStudentsCount, tvLessonsCount;
+    Button btnLogout;
+    TextView tvTeacherName;
+
+    private EditText etUsername;
+    private RadioGroup rgGender;
+    private RadioButton rbMale, rbFemale;
+    private TextView tvRoleLabel;
+    private Button btnSaveChanges, btnCancelChanges, btnChangeEmail, btnChangePassword;
+    
+    private String originalUsername = "";
+    private String originalGender = "";
+
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -44,43 +71,28 @@ public class TeacherProfile extends AppCompatActivity {
 
         initViews();
         setupNavigation();
-        setupEmailLogic();
         fetchTeacherData();
     }
 
     private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         btnLogout = findViewById(R.id.btnLogout);
-        btnSendEmail = findViewById(R.id.btnSendEmail);
-
-        etSubject = findViewById(R.id.etEmailSubject);
-        etMessage = findViewById(R.id.etEmailMessage);
 
         tvTeacherName = findViewById(R.id.tvTeacherLabel);
-        tvStudentsCount = findViewById(R.id.tvStudentsCount);
-        tvLessonsCount = findViewById(R.id.tvLessonsCount);
 
-        navHome = findViewById(R.id.navHome);
-        navStudentsTab = findViewById(R.id.navStudentsTab);
-        navAttendanceTab = findViewById(R.id.navAttendanceTab);
-        navAnalyticsTab = findViewById(R.id.navAnalyticsTab);
+        etUsername = findViewById(R.id.etUsername);
+        rgGender = findViewById(R.id.rgGender);
+        rbMale = findViewById(R.id.rbMale);
+        rbFemale = findViewById(R.id.rbFemale);
+        tvRoleLabel = findViewById(R.id.tvRoleLabel);
+        btnSaveChanges = findViewById(R.id.btnSaveChanges);
+        btnCancelChanges = findViewById(R.id.btnCancelChanges);
+        btnChangeEmail = findViewById(R.id.btnChangeEmail);
+        btnChangePassword = findViewById(R.id.btnChangePassword);
     }
 
     private void setupNavigation() {
         btnBack.setOnClickListener(v -> finish());
-
-        navHome.setOnClickListener(v -> {
-            startActivity(new Intent(this, TeacherDashboard.class));
-            finish();
-        });
-        navStudentsTab.setOnClickListener(v -> {
-            startActivity(new Intent(this, ClassManagement.class));
-            finish();
-        });
-        navAttendanceTab.setOnClickListener(v -> {
-            startActivity(new Intent(this, attendance_teacher_main.class));
-            finish();
-        });
 
         btnLogout.setOnClickListener(v -> {
             mAuth.signOut();
@@ -90,35 +102,108 @@ public class TeacherProfile extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+        
+        btnCancelChanges.setOnClickListener(v -> restoreOriginalAccountDetails());
+        btnSaveChanges.setOnClickListener(v -> saveAccountDetails());
+        btnChangePassword.setOnClickListener(v -> {
+            Intent intent = new Intent(TeacherProfile.this, ForgotPassword.class);
+            if (mAuth.getCurrentUser() != null) {
+                intent.putExtra("email", mAuth.getCurrentUser().getEmail());
+            }
+            startActivity(intent);
+        });
+        btnChangeEmail.setOnClickListener(v -> promptChangeEmail());
     }
 
-    private void setupEmailLogic() {
-        btnSendEmail.setOnClickListener(v -> {
-            String subject = etSubject.getText().toString().trim();
-            String message = etMessage.getText().toString().trim();
-            String admin = "persyjak03@gmail.com";
+    private void restoreOriginalAccountDetails() {
+        if (etUsername != null) etUsername.setText(originalUsername);
+        if (originalGender.equalsIgnoreCase("Male")) {
+            rbMale.setChecked(true);
+        } else if (originalGender.equalsIgnoreCase("Female")) {
+            rbFemale.setChecked(true);
+        } else {
+            rgGender.clearCheck();
+        }
+    }
 
-            if (subject.isEmpty() || message.isEmpty()) {
-                Toast.makeText(this, "Please fill in subject and message", Toast.LENGTH_SHORT).show();
+    private void saveAccountDetails() {
+        if (mAuth.getCurrentUser() == null) return;
+        String uid = mAuth.getCurrentUser().getUid();
+        
+        String newUsername = etUsername.getText().toString().trim();
+        String tempGender;
+        if (rbMale.isChecked()) tempGender = "Male";
+        else if (rbFemale.isChecked()) tempGender = "Female";
+        else tempGender = "";
+        
+        final String newGender = tempGender;
+        
+        if (newUsername.isEmpty()) {
+            Toast.makeText(this, "Username cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        db.collection("users").document(uid)
+                .update("username", newUsername, "gender", newGender)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Account details saved", Toast.LENGTH_SHORT).show();
+                    originalUsername = newUsername;
+                    originalGender = newGender;
+                    tvTeacherName.setText(newUsername);
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to save details", Toast.LENGTH_SHORT).show());
+    }
+
+    private void promptChangeEmail() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) return;
+        
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_change_email);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        
+        EditText etCurrentPassword = dialog.findViewById(R.id.etCurrentPassword);
+        EditText etNewEmail = dialog.findViewById(R.id.etNewEmail);
+        Button btnCancel = dialog.findViewById(R.id.btnCancelEmailChange);
+        Button btnConfirm = dialog.findViewById(R.id.btnConfirmEmailChange);
+        
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        
+        btnConfirm.setOnClickListener(v -> {
+            String password = etCurrentPassword.getText().toString().trim();
+            String newEmail = etNewEmail.getText().toString().trim();
+            
+            if (password.isEmpty() || newEmail.isEmpty()) {
+                Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            String fullMessage = message + "\n\n---\nSent by Teacher: " + tvTeacherName.getText().toString();
-
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("message/rfc822");
-            intent.setPackage("com.google.android.gm");
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{admin});
-            intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-            intent.putExtra(Intent.EXTRA_TEXT, fullMessage);
-
-            try {
-                startActivity(intent);
-            } catch (android.content.ActivityNotFoundException ex) {
-                Intent chooser = Intent.createChooser(intent, "Send Email");
-                startActivity(chooser);
+            
+            String currentEmail = user.getEmail();
+            if (currentEmail == null) {
+                Toast.makeText(this, "Current email not found", Toast.LENGTH_SHORT).show();
+                return;
             }
+            
+            AuthCredential credential = EmailAuthProvider.getCredential(currentEmail, password);
+            user.reauthenticate(credential).addOnSuccessListener(aVoid -> user.verifyBeforeUpdateEmail(newEmail).addOnSuccessListener(aVoid2 -> {
+                Toast.makeText(this, "Verification email sent to " + newEmail + ". You will now be logged out.", Toast.LENGTH_LONG).show();
+                db.collection("users").document(user.getUid())
+                        .update("email", newEmail)
+                        .addOnSuccessListener(aVoid3 -> {
+                            dialog.dismiss();
+                            mAuth.signOut();
+                            Intent intent = new Intent(TeacherProfile.this, login.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        });
+            }).addOnFailureListener(e -> Toast.makeText(this, "Failed to change email: " + e.getMessage(), Toast.LENGTH_SHORT).show())).addOnFailureListener(e -> Toast.makeText(this, "Authentication failed. Check your password.", Toast.LENGTH_SHORT).show());
         });
+        
+        dialog.show();
     }
 
     private void fetchTeacherData() {
@@ -129,15 +214,33 @@ public class TeacherProfile extends AppCompatActivity {
             if (doc.exists()) {
                 String name = doc.getString("username");
                 if (name == null) name = doc.getString("fullName");
-                tvTeacherName.setText(name != null ? name : "Teacher");
+                
+                originalUsername = name != null ? name : "";
+                if (etUsername != null) {
+                    etUsername.setText(originalUsername);
+                }
+                
+                originalGender = doc.getString("gender");
+                if (originalGender == null) originalGender = "";
+                
+                ImageView ivAvatar = findViewById(R.id.ivAvatar);
+                
+                if (originalGender.equalsIgnoreCase("Male")) {
+                    rbMale.setChecked(true);
+                    if (ivAvatar != null) ivAvatar.setImageResource(R.drawable.ic_def_avatar);
+                } else if (originalGender.equalsIgnoreCase("Female")) {
+                    rbFemale.setChecked(true);
+                    if (ivAvatar != null) ivAvatar.setImageResource(R.drawable.ic_def_avatar_fem);
+                } else {
+                    if (ivAvatar != null) ivAvatar.setImageResource(R.drawable.ic_def_avatar);
+                }
+                
+                if (tvRoleLabel != null && mAuth.getCurrentUser().getEmail() != null) {
+                    tvRoleLabel.setText(mAuth.getCurrentUser().getEmail());
+                }
+
+                tvTeacherName.setText(originalUsername.isEmpty() ? "Teacher" : originalUsername);
             }
         });
-
-        db.collection("enrollments").whereEqualTo("teacherUid", uid).get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    tvStudentsCount.setText(String.valueOf(queryDocumentSnapshots.size()));
-                });
-
-        tvLessonsCount.setText("5");
     }
 }

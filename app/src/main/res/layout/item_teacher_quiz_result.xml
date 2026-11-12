@@ -4,30 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    android:background="@drawable/bg_white_card"
-    android:elevation="2dp"
+    android:background="@drawable/bg_rounded_card"
+    android:backgroundTint="#B3E8F5E9"
+    android:elevation="0dp"
     android:padding="16dp">
 
-    <View
+    <ImageView
         android:id="@+id/avatarView"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:alpha="0.2"
-        android:background="@drawable/bg_rounded_card"
+        android:src="@drawable/ic_def_avatar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvAvatarInitials"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/text_dark"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/avatarView"
-        app:layout_constraintEnd_toEndOf="@+id/avatarView"
-        app:layout_constraintStart_toStartOf="@+id/avatarView"
-        app:layout_constraintTop_toTopOf="@+id/avatarView" />
 
     <TextView
         android:id="@+id/tvStudentName"
@@ -35,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Student Name"
-        android:textColor="@color/text_dark"
+        android:textColor="#1B4235"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/tvScoreBadge"
@@ -47,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2024001"
-        android:textColor="@color/text_grey"
+        android:textColor="#1B4235"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@+id/tvStudentName"
         app:layout_constraintTop_toBottomOf="@+id/tvStudentName" />
@@ -64,23 +52,32 @@
         app:layout_constraintStart_toStartOf="@+id/tvStudentName"
         app:layout_constraintTop_toBottomOf="@+id/tvStudentId">
 
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginEnd="4dp"
+            android:src="@drawable/book_stack"
+            app:tint="#1B4235" />
+
         <TextView
             android:id="@+id/tvStoryTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Story Title"
-            android:textColor="@color/text_grey"
-            android:textSize="12sp" />
+            android:textColor="#1B4235"
+            android:textSize="12sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tvScoreBadge"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:background="@drawable/bg_score_badge"
+        android:background="@drawable/bg_circle_white"
+        android:backgroundTint="#B3E8F5E9"
         android:gravity="center"
         android:text="0/0"
-        android:textColor="@color/primary_green"
+        android:textColor="#1B4235"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -97,24 +94,24 @@
         <ImageView
             android:layout_width="14dp"
             android:layout_height="14dp"
-            android:src="@android:drawable/ic_menu_today"
-            app:tint="@color/text_grey" />
+            android:src="@drawable/calendar"
+            app:tint="#1B4235" />
 
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="Date &amp; Time"
-            android:textColor="@color/text_grey"
+            android:text="Date &amp; Time:"
+            android:textColor="#1B4235"
             android:textSize="12sp" />
 
         <ImageView
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:layout_marginStart="16dp"
-            android:src="@android:drawable/ic_menu_recent_history"
-            app:tint="@color/text_grey" />
+            android:src="@drawable/activity_logs"
+            app:tint="#1B4235" />
 
         <TextView
             android:id="@+id/tvDuration"
@@ -122,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:text="0:00"
-            android:textColor="@color/text_grey"
+            android:textColor="#1B4235"
             android:textSize="12sp" />
     </LinearLayout>
 

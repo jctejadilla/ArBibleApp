@@ -9,11 +9,11 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -22,67 +22,55 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.firebase.auth.FirebaseAuth;
-
+import com.example.arbibleapp.databinding.ActivityRegisterBinding;
 
 public class Register extends AppCompatActivity {
 
     private RegistrationModel registration;
     private FirebaseAuth mAuth;
-    private androidx.appcompat.app.AlertDialog recoveryDialog;
+    private AlertDialog recoveryDialog;
+    private ActivityRegisterBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_register);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
         mAuth = FirebaseAuth.getInstance();
-
-        MaterialButtonToggleGroup toggleUserType = findViewById(R.id.toggleUserType);
-        EditText etUsername = findViewById(R.id.etRegisterUsername);
-        EditText etEmail = findViewById(R.id.etRegisterEmail);
         
-        etEmail.setOnFocusChangeListener((v, hasFocus) -> {
+        binding.etRegisterEmail.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
-                String currentEmail = etEmail.getText().toString().trim();
+                String currentEmail = binding.etRegisterEmail.getText().toString().trim();
                 if (!currentEmail.isEmpty() && !currentEmail.endsWith("@gmail.com") && !currentEmail.endsWith("gmail.com")) {
                     if (currentEmail.endsWith("@")) {
-                        etEmail.setText(currentEmail + "gmail.com");
+                        binding.etRegisterEmail.setText(currentEmail + "gmail.com");
                     } else if (!currentEmail.contains("@")) {
-                        etEmail.setText(currentEmail + "@gmail.com");
+                        binding.etRegisterEmail.setText(currentEmail + "@gmail.com");
                     }
                 } else if (!currentEmail.isEmpty() && currentEmail.endsWith("gmail.com") && !currentEmail.endsWith("@gmail.com")) {
-                     etEmail.setText(currentEmail.substring(0, currentEmail.length() - 9) + "@gmail.com");
+                     binding.etRegisterEmail.setText(currentEmail.substring(0, currentEmail.length() - 9) + "@gmail.com");
                 }
             }
         });
-        EditText etPassword = findViewById(R.id.etRegisterPassword);
-        EditText etConfirmPassword = findViewById(R.id.etConfirmPassword);
-        RadioGroup rgGender = findViewById(R.id.rgGender);
-        Button btnRegister = findViewById(R.id.btnRegister);
-        TextView tvLogin = findViewById(R.id.tvLogin);
         
-        ImageView ivReqLength = findViewById(R.id.ivReqLength);
-        ImageView ivReqUpper = findViewById(R.id.ivReqUpper);
-        ImageView ivReqLower = findViewById(R.id.ivReqLower);
-        ImageView ivReqNumber = findViewById(R.id.ivReqNumber);
-        
-        etPassword.addTextChangedListener(new TextWatcher() {
+        binding.etRegisterPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String pass = s.toString();
-                ivReqLength.setImageResource(pass.length() >= 6 ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle);
-                ivReqUpper.setImageResource(pass.matches(".*[A-Z].*") ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle);
-                ivReqLower.setImageResource(pass.matches(".*[a-z].*") ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle);
-                ivReqNumber.setImageResource(pass.matches(".*[0-9].*") ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle);
+                binding.tvReqLength.setCompoundDrawablesWithIntrinsicBounds(pass.length() >= 6 ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle, 0, 0, 0);
+                binding.tvReqUpper.setCompoundDrawablesWithIntrinsicBounds(pass.matches(".*[A-Z].*") ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle, 0, 0, 0);
+                binding.tvReqLower.setCompoundDrawablesWithIntrinsicBounds(pass.matches(".*[a-z].*") ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle, 0, 0, 0);
+                binding.tvReqNumber.setCompoundDrawablesWithIntrinsicBounds(pass.matches(".*[0-9].*") ? R.drawable.ic_check_circle : R.drawable.ic_cancel_circle, 0, 0, 0);
             }
 
             @Override
@@ -92,37 +80,37 @@ public class Register extends AppCompatActivity {
         registration = new ViewModelProvider(this).get(RegistrationModel.class);
         if (savedInstanceState != null && registration.existingEmail == null)
             registration.existingEmail = savedInstanceState.getString("existingEmail");
-        etPassword.setSaveEnabled(false); etConfirmPassword.setSaveEnabled(false);
+        binding.etRegisterPassword.setSaveEnabled(false); binding.etConfirmPassword.setSaveEnabled(false);
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
                 if (!registration.busy) { FirebaseAuth.getInstance().signOut(); finish(); }
             }
         });
         registration.changes.observe(this, ignored -> {
-            btnRegister.setEnabled(!registration.busy);
-            tvLogin.setEnabled(!registration.busy);
-            btnRegister.setText(registration.hasPending() ? "Retry profile setup" : "Register");
+            binding.btnRegister.setEnabled(!registration.busy);
+            binding.tvLogin.setEnabled(!registration.busy);
+            binding.btnRegister.setText(registration.hasPending() ? "Retry profile setup" : "Register");
             if (registration.error != null) {
                 Toast.makeText(this, registration.error, Toast.LENGTH_LONG).show(); registration.error = null;
             }
             showExistingAccount();
             if (registration.complete) VerifiedAccountFlow.open(this, EmailVerificationActivity.class);
         });
-        btnRegister.setText(registration.hasPending() ? "Retry profile setup" : "Register");
-        btnRegister.setOnClickListener(v -> {
+        binding.btnRegister.setText(registration.hasPending() ? "Retry profile setup" : "Register");
+        binding.btnRegister.setOnClickListener(v -> {
             if (registration.busy) return;
             if (registration.hasPending()) { registration.retry(); return; }
-            String username = etUsername.getText().toString().trim();
-            String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
-            String confirmPassword = etConfirmPassword.getText().toString().trim();
+            String username = binding.etRegisterUsername.getText().toString().trim();
+            String email = binding.etRegisterEmail.getText().toString().trim();
+            String password = binding.etRegisterPassword.getText().toString().trim();
+            String confirmPassword = binding.etConfirmPassword.getText().toString().trim();
             
             String userType = "Student";
-            if (toggleUserType.getCheckedButtonId() == R.id.btnTeacherRegister) {
+            if (binding.toggleUserType.getCheckedButtonId() == R.id.btnTeacherRegister) {
                 userType = "Teacher";
             }
 
-            int selectedGenderId = rgGender.getCheckedRadioButtonId();
+            int selectedGenderId = binding.rgGender.getCheckedRadioButtonId();
             String gender = "";
             if (selectedGenderId != -1) {
                 RadioButton rbSelected = findViewById(selectedGenderId);
@@ -152,7 +140,7 @@ public class Register extends AppCompatActivity {
             registration.register(username, email, password, gender, userType);
         });
 
-        tvLogin.setOnClickListener(v -> {
+        binding.tvLogin.setOnClickListener(v -> {
             mAuth.signOut();
             finish();
         });
@@ -161,7 +149,7 @@ public class Register extends AppCompatActivity {
     private void showExistingAccount() {
         if (registration.existingEmail == null || (recoveryDialog != null && recoveryDialog.isShowing())) return;
         final String email = registration.existingEmail;
-        recoveryDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+        recoveryDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.account_exists_title)
                 .setMessage(R.string.account_exists_message)
                 .setPositiveButton(R.string.account_continue_login, (dialog, which) -> {

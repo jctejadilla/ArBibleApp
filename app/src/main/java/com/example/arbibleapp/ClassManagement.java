@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -21,6 +20,8 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,8 +41,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public class ClassManagement extends AppCompatActivity {
+    static final String EXTRA_OPEN_ENROLLMENT_SCANNER =
+            "com.example.arbibleapp.extra.OPEN_ENROLLMENT_SCANNER";
 
     private EditText etSearch;
     private ImageView btnBack;
@@ -53,7 +58,6 @@ public class ClassManagement extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private Spinner spinnerFilter;
-    private Button btnEnrollQR;
 
     private final androidx.activity.result.ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
             result -> {
@@ -67,24 +71,20 @@ public class ClassManagement extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_class_management);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            androidx.core.graphics.Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
         etSearch = findViewById(R.id.etSearchAllStudents);
         rvStudents = findViewById(R.id.rvStudentResults);
-        btnEnrollQR = findViewById(R.id.btnEnrollQR);
         btnBack = findViewById(R.id.btnBack);
         spinnerFilter = findViewById(R.id.spinnerFilter);
 
-        btnEnrollQR.setOnClickListener(v -> {
-            ScanOptions options = new ScanOptions();
-            options.setPrompt("Scan Student QR Code to Enroll");
-            options.setBeepEnabled(true);
-            options.setOrientationLocked(true);
-            options.setCameraId(0);
-            barcodeLauncher.launch(options);
-        });
 
         btnBack.setOnClickListener(v -> finish());
 
@@ -105,8 +105,20 @@ public class ClassManagement extends AppCompatActivity {
         loadEnrolledStudents();
 
         setupBottomNav();
+
+        if (getIntent().getBooleanExtra(EXTRA_OPEN_ENROLLMENT_SCANNER, false)) {
+            launchEnrollmentScanner();
+        }
     }
 
+    private void launchEnrollmentScanner() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Scan Student QR Code to Enroll");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCameraId(0);
+        barcodeLauncher.launch(options);
+    }
     private void setupBottomNav() {
         findViewById(R.id.navHome).setOnClickListener(v -> {
             startActivity(new Intent(this, TeacherDashboard.class));
@@ -193,20 +205,29 @@ public class ClassManagement extends AppCompatActivity {
                 .addOnSuccessListener(results -> {
                     if (!results.isEmpty()) {
                         double totalPercentage = 0;
-                        int count = results.size();
+                        int validResults = 0;
+                        int storiesCompleted = 0;
                         for (DocumentSnapshot d : results) {
+                            Boolean isSunday = d.getBoolean("isSunday");
+                            if (isSunday != null && !isSunday) continue; // Skip trial quizzes
+                            
+                            storiesCompleted++;
                             Long score = d.getLong("score");
                             Long totalQuestions = d.getLong("totalQuestions");
                             
                             if (score != null && totalQuestions != null && totalQuestions > 0) {
                                 totalPercentage += (score.doubleValue() / totalQuestions.doubleValue()) * 100.0;
+                                validResults++;
                             } else if (score != null) {
                                 totalPercentage += (score.doubleValue() / 5.0) * 100.0;
+                                validResults++;
                             }
                         }
-                        int avg = (int) (totalPercentage / count);
-                        student.quizAvg = Math.min(100, avg);
-                        student.storiesCompleted = count;
+                        if (validResults > 0) {
+                            int avg = (int) (totalPercentage / validResults);
+                            student.quizAvg = Math.min(100, avg);
+                        }
+                        student.storiesCompleted = storiesCompleted;
                     }
                     
                     // Fetch Attendance Rate and Latest Attendance
@@ -275,38 +296,66 @@ public class ClassManagement extends AppCompatActivity {
 
     private void enrollStudentByUid(String studentUid) {
         if (mAuth.getCurrentUser() == null) return;
-        String teacherUid = mAuth.getCurrentUser().getUid();
 
+        final String scannedStudentUid = studentUid == null ? "" : studentUid.trim();
+        if (scannedStudentUid.isEmpty() || scannedStudentUid.contains("/")) {
+            Toast.makeText(this, "Invalid Student QR", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String teacherUid = mAuth.getCurrentUser().getUid();
         db.collection("enrollments")
                 .whereEqualTo("teacherUid", teacherUid)
-                .whereEqualTo("studentUid", studentUid)
+                .whereEqualTo("studentUid", scannedStudentUid)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         Toast.makeText(this, "Student already enrolled", Toast.LENGTH_SHORT).show();
-                    } else {
-                        db.collection("users").document(studentUid).get().addOnSuccessListener(userDoc -> {
-                            if (userDoc.exists()) {
+                        return;
+                    }
+
+                    db.collection("users").document(scannedStudentUid).get()
+                            .addOnSuccessListener(userDoc -> {
+                                if (!userDoc.exists()
+                                        || !"Student".equals(userDoc.getString("userType"))) {
+                                    Toast.makeText(this, "Invalid Student QR", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
                                 String studentName = userDoc.getString("username");
-                                if (studentName == null) studentName = userDoc.getString("fullName");
+                                if (studentName == null || studentName.trim().isEmpty()) {
+                                    studentName = userDoc.getString("fullName");
+                                }
+                                if (studentName == null || studentName.trim().isEmpty()) {
+                                    studentName = "Student";
+                                }
 
                                 Map<String, Object> enrollment = new HashMap<>();
                                 enrollment.put("teacherUid", teacherUid);
-                                enrollment.put("studentUid", studentUid);
+                                enrollment.put("studentUid", scannedStudentUid);
                                 enrollment.put("studentName", studentName);
                                 enrollment.put("enrolledAt", com.google.firebase.Timestamp.now());
 
                                 String finalName = studentName;
-                                db.collection("enrollments").add(enrollment).addOnSuccessListener(ref -> {
-                                    Toast.makeText(this, "Enrolled " + finalName, Toast.LENGTH_SHORT).show();
-                                    loadEnrolledStudents();
-                                });
-                            } else {
-                                Toast.makeText(this, "Invalid Student QR", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
+                                db.collection("enrollments").document(enrollmentDocumentId(teacherUid, scannedStudentUid)).set(enrollment)
+                                        .addOnSuccessListener(ref -> {
+                                            Toast.makeText(this, "Enrolled " + finalName, Toast.LENGTH_SHORT).show();
+                                            loadEnrolledStudents();
+                                        })
+                                        .addOnFailureListener(e ->
+                                                Toast.makeText(this, "Failed to enroll student", Toast.LENGTH_SHORT).show());
+                            })
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(this, "Could not validate Student QR", Toast.LENGTH_SHORT).show());
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Could not check existing enrollment", Toast.LENGTH_SHORT).show());
+    }
+
+    private static String enrollmentDocumentId(String teacherUid, String studentUid) {
+        String pairKey = teacherUid.length() + ":" + teacherUid
+                + studentUid.length() + ":" + studentUid;
+        return UUID.nameUUIDFromBytes(pairKey.getBytes(StandardCharsets.UTF_8)).toString();
     }
 
     private static class StudentStatusModel {

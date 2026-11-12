@@ -1,12 +1,16 @@
 package com.example.arbibleapp;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -14,15 +18,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class StudentDetailsActivity extends AppCompatActivity {
 
@@ -69,18 +78,60 @@ public class StudentDetailsActivity extends AppCompatActivity {
         adapter = new QuizResultAdapter(quizResults);
         rvQuizzes.setAdapter(adapter);
 
+        Button btnRemoveStudent = findViewById(R.id.btnRemoveStudent);
+        btnRemoveStudent.setOnClickListener(v -> promptRemoveStudent());
+
         tvName.setText(studentName);
         tvXP.setText("0");
         tvRank.setText("#--");
         tvQuizAvg.setText("0%");
-        tvAttendance.setText("0/4");
+        tvAttendance.setText("0/0");
         tvStories.setText("0");
-        tvAvgSession.setText("0m");
+        tvAvgSession.setText("0s");
 
         if (studentName != null && studentName.length() >= 1) {
             tvInitials.setText(studentName.substring(0, Math.min(2, studentName.length())).toUpperCase());
         }
         tvId.setText("ID: #" + studentUid.substring(0, Math.min(6, studentUid.length())).toUpperCase());
+    }
+
+    private void promptRemoveStudent() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_remove_student);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        TextView tvRemoveMessage = dialog.findViewById(R.id.tvRemoveMessage);
+        tvRemoveMessage.setText("Are you sure you want to remove " + studentName + " from your class? This action cannot be undone.");
+
+        Button btnCancel = dialog.findViewById(R.id.btnCancelRemove);
+        Button btnConfirm = dialog.findViewById(R.id.btnConfirmRemove);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnConfirm.setOnClickListener(v -> {
+            removeStudentFromClass();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void removeStudentFromClass() {
+        if (teacherUid == null || studentUid == null) return;
+        db.collection("enrollments")
+            .whereEqualTo("teacherUid", teacherUid)
+            .whereEqualTo("studentUid", studentUid)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                    doc.getReference().delete();
+                }
+                Toast.makeText(this, studentName + " removed from class.", Toast.LENGTH_SHORT).show();
+                finish();
+            })
+            .addOnFailureListener(e -> Toast.makeText(this, "Failed to remove student", Toast.LENGTH_SHORT).show());
     }
 
     private void loadStudentData() {
@@ -131,60 +182,127 @@ public class StudentDetailsActivity extends AppCompatActivity {
             }
         });
 
-        db.collection("quiz_results").whereEqualTo("studentUid", studentUid).get().addOnSuccessListener(query -> {
-            if (!query.isEmpty()) {
-                double totalPercentage = 0;
-                long totalSeconds = 0;
-                int count = query.size();
-                for (DocumentSnapshot d : query) {
-                    Long score = d.getLong("score");
-                    Long totalQuestions = d.getLong("totalQuestions");
-                    
-                    if (score != null && totalQuestions != null && totalQuestions > 0) {
-                        totalPercentage += (score.doubleValue() / totalQuestions.doubleValue()) * 100.0;
-                    } else if (score != null) {
-                        totalPercentage += (score.doubleValue() / 5.0) * 100.0;
+        loadPerformanceOverview();
+    }
+
+    private void loadPerformanceOverview() {
+        db.collection("quiz_results")
+                .whereEqualTo("studentUid", studentUid)
+                .get()
+                .addOnSuccessListener(query -> {
+                    Set<String> completedStories = new HashSet<>();
+                    double totalPercentage = 0;
+                    int validQuizzes = 0;
+                    long totalSessionSeconds = 0;
+                    int validSessions = 0;
+
+                    for (DocumentSnapshot document : query) {
+                        Boolean isSunday = document.getBoolean("isSunday");
+                        if (Boolean.FALSE.equals(isSunday)) continue;
+
+                        String storyTitle = document.getString("storyTitle");
+                        if (storyTitle != null && !storyTitle.trim().isEmpty()) {
+                            completedStories.add(storyTitle.trim());
+                        }
+
+                        Long score = document.getLong("score");
+                        Long totalQuestions = document.getLong("totalQuestions");
+                        if (score != null && totalQuestions != null
+                                && totalQuestions > 0 && score >= 0 && score <= totalQuestions) {
+                            totalPercentage += (score.doubleValue() / totalQuestions.doubleValue()) * 100.0;
+                            validQuizzes++;
+                        }
+
+                        Long durationSeconds = parseDurationSeconds(document.getString("duration"));
+                        if (durationSeconds != null) {
+                            totalSessionSeconds += durationSeconds;
+                            validSessions++;
+                        }
                     }
 
-                    String duration = d.getString("duration");
-                    if (duration != null && duration.contains("m") && duration.contains("s")) {
-                        try {
-                            String[] parts = duration.split(" ");
-                            int m = Integer.parseInt(parts[0].replace("m", ""));
-                            int s = Integer.parseInt(parts[1].replace("s", ""));
-                            totalSeconds += (m * 60L) + s;
-                        } catch (Exception ignored) {}
+                    int averagePercentage = validQuizzes == 0
+                            ? 0 : (int) (totalPercentage / validQuizzes);
+                    tvQuizAvg.setText(averagePercentage + "%");
+                    tvStories.setText(String.valueOf(completedStories.size()));
+
+                    if (validSessions == 0) {
+                        tvAvgSession.setText("0s");
+                    } else {
+                        long averageSeconds = Math.round((double) totalSessionSeconds / validSessions);
+                        if (averageSeconds >= 60) {
+                            tvAvgSession.setText((averageSeconds / 60) + "m " + (averageSeconds % 60) + "s");
+                        } else {
+                            tvAvgSession.setText(averageSeconds + "s");
+                        }
                     }
-                }
-                int avg = (int) (totalPercentage / count);
-                if (avg > 100) avg = 100;
-                tvQuizAvg.setText(avg + "%");
-                tvStories.setText(String.valueOf(count));
+                });
 
-                long avgSec = totalSeconds / count;
-                if (avgSec >= 60) {
-                    tvAvgSession.setText((avgSec / 60) + "m " + (avgSec % 60) + "s");
-                } else {
-                    tvAvgSession.setText(avgSec + "s");
-                }
-            } else {
-                tvQuizAvg.setText("0%");
-                tvStories.setText("0");
-                tvAvgSession.setText("0s");
-            }
-        });
-
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH, -30);
-        final int daysToCheck = 30;
+        Calendar today = Calendar.getInstance();
+        Calendar firstDayOfMonth = (Calendar) today.clone();
+        firstDayOfMonth.set(Calendar.DAY_OF_MONTH, 1);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        dateFormat.setLenient(false);
+        String monthStart = dateFormat.format(firstDayOfMonth.getTime());
+        String todayString = dateFormat.format(today.getTime());
+        int totalSundays = countSundaysInMonth(today);
+        tvAttendance.setText("0/" + totalSundays);
 
         db.collection("attendance")
                 .whereEqualTo("studentUid", studentUid)
-                .whereGreaterThanOrEqualTo("date", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.getTime()))
-                .get().addOnSuccessListener(query -> {
-            int attended = query.size();
-            tvAttendance.setText(attended + "/" + daysToCheck + " days");
-        });
+                .whereGreaterThanOrEqualTo("date", monthStart)
+                .whereLessThanOrEqualTo("date", todayString)
+                .get()
+                .addOnSuccessListener(query -> {
+                    Set<String> attendedSundays = new HashSet<>();
+                    for (DocumentSnapshot document : query) {
+                        String date = document.getString("date");
+                        if (isSundayDate(date)) attendedSundays.add(date);
+                    }
+                    tvAttendance.setText(attendedSundays.size() + "/" + totalSundays);
+                });
+    }
+
+    private int countSundaysInMonth(Calendar currentDate) {
+        Calendar day = (Calendar) currentDate.clone();
+        day.set(Calendar.DAY_OF_MONTH, 1);
+        int daysInMonth = day.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int sundayCount = 0;
+        for (int date = 1; date <= daysInMonth; date++) {
+            day.set(Calendar.DAY_OF_MONTH, date);
+            if (day.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) sundayCount++;
+        }
+        return sundayCount;
+    }
+
+    private boolean isSundayDate(String value) {
+        if (value == null) return false;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        dateFormat.setLenient(false);
+        try {
+            Date parsedDate = dateFormat.parse(value);
+            if (parsedDate == null || !value.equals(dateFormat.format(parsedDate))) return false;
+            Calendar date = Calendar.getInstance();
+            date.setTime(parsedDate);
+            return date.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
+        } catch (ParseException ignored) {
+            return false;
+        }
+    }
+
+    private Long parseDurationSeconds(String duration) {
+        if (duration == null) return null;
+        String trimmedDuration = duration.trim();
+        if (!trimmedDuration.matches("\\d+m\\s+\\d+s")) return null;
+
+        String[] parts = trimmedDuration.split("\\s+");
+        try {
+            long minutes = Long.parseLong(parts[0].substring(0, parts[0].length() - 1));
+            long seconds = Long.parseLong(parts[1].substring(0, parts[1].length() - 1));
+            if (seconds >= 60 || minutes > (Long.MAX_VALUE - seconds) / 60) return null;
+            return minutes * 60 + seconds;
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
     }
 
     private void loadRecentQuizzes() {
@@ -196,8 +314,8 @@ public class StudentDetailsActivity extends AppCompatActivity {
                     List<DocumentSnapshot> docs = new ArrayList<>(query.getDocuments());
                     
                     docs.sort((d1, d2) -> {
-                        com.google.firebase.Timestamp t1 = d1.getTimestamp("timestamp");
-                        com.google.firebase.Timestamp t2 = d2.getTimestamp("timestamp");
+                        Timestamp t1 = d1.getTimestamp("timestamp");
+                        Timestamp t2 = d2.getTimestamp("timestamp");
                         if (t1 == null || t2 == null) return 0;
                         return t2.compareTo(t1);
                     });

@@ -1,6 +1,15 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
+    id("com.google.firebase.crashlytics")
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 
 android {
@@ -18,6 +27,9 @@ android {
         ndk {
             abiFilters.add("arm64-v8a")
         }
+
+        val apiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
+        buildConfigField("String", "GEMINI_API_KEY", "\"$apiKey\"")
     }
 
     sourceSets {
@@ -28,7 +40,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -39,6 +52,14 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildFeatures {
@@ -70,9 +91,12 @@ dependencies {
     //implementation("io.github.sceneview:arsceneview:0.10.0")
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+    implementation("com.google.firebase:firebase-crashlytics:19.4.0")
     implementation(libs.zxing.android.embedded)
     implementation(libs.room.compiler)
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

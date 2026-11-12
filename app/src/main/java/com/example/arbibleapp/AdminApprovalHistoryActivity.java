@@ -31,11 +31,13 @@ import java.util.List;
 import java.util.Locale;
 import android.widget.ImageView;
 
+import com.example.arbibleapp.databinding.ActivityAdminApprovalHistoryBinding;
+import com.example.arbibleapp.databinding.ItemAdminHistoryBinding;
+import androidx.recyclerview.widget.DiffUtil;
+
 public class AdminApprovalHistoryActivity extends AppCompatActivity {
 
-    private RecyclerView rvHistory;
-    private TextView tvEmptyState;
-    private MaterialButtonToggleGroup toggleFilter;
+    private ActivityAdminApprovalHistoryBinding binding;
     private FirebaseFirestore db;
     private HistoryAdapter adapter;
 
@@ -44,13 +46,15 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
     private ListenerRegistration historyListener;
 
     private String currentFilter = "ALL";
+    private int currentLimit = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_admin_approval_history);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        binding = ActivityAdminApprovalHistoryBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -58,21 +62,28 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-        tvEmptyState = findViewById(R.id.tvEmptyState);
-        toggleFilter = findViewById(R.id.toggleFilter);
-
-        rvHistory = findViewById(R.id.rvHistory);
-        rvHistory.setLayoutManager(new LinearLayoutManager(this));
+        binding.btnBack.setOnClickListener(v -> finish());
+        
+        binding.rvHistory.setLayoutManager(new LinearLayoutManager(this));
         adapter = new HistoryAdapter(filteredList);
-        rvHistory.setAdapter(adapter);
+        binding.rvHistory.setAdapter(adapter);
+        
+        binding.rvHistory.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    currentLimit += 20;
+                    loadApprovalHistory();
+                }
+            }
+        });
 
         setupFilterToggle();
         loadApprovalHistory();
     }
 
     private void setupFilterToggle() {
-        toggleFilter.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+        binding.toggleFilter.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (!isChecked) return;
             if (checkedId == R.id.btnFilterAll) {
                 currentFilter = "ALL";
@@ -96,6 +107,7 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
 
         historyListener = db.collection("question_edit_proposals")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(currentLimit)
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null || snapshots == null) return;
 
@@ -121,11 +133,11 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
                             }
                             if (MonarchyScenarioBank.STORY_TITLE.equals(story) && !"RESTORE_ALL".equals(doc.getString("operation"))) {
                                 Object rows = doc.get("scenes");
-                                if (rows instanceof java.util.List) {
+                                if (rows instanceof List) {
                                     StringBuilder summary = new StringBuilder(propQ == null ? "" : propQ);
                                     int position = 1;
-                                    for (Object row : (java.util.List<?>) rows) if (row instanceof java.util.Map) {
-                                        java.util.Map<?,?> scene = (java.util.Map<?,?>) row;
+                                    for (Object row : (List<?>) rows) if (row instanceof Map) {
+                                        Map<?,?> scene = (Map<?,?>) row;
                                         summary.append("\n").append(position++).append(". ").append(scene.get("caption"))
                                                 .append(" (image: ").append(scene.get("imageAction")).append(")");
                                     }
@@ -163,20 +175,58 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
     }
 
     private void applyFilter() {
-        filteredList.clear();
+        List<HistoryModel> newFilteredList = new ArrayList<>();
         for (HistoryModel item : allHistoryList) {
             if ("ALL".equals(currentFilter) || currentFilter.equals(item.status)) {
-                filteredList.add(item);
+                newFilteredList.add(item);
             }
         }
 
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new HistoryDiffCallback(filteredList, newFilteredList));
+        filteredList.clear();
+        filteredList.addAll(newFilteredList);
+        diffResult.dispatchUpdatesTo(adapter);
+
         if (filteredList.isEmpty()) {
-            tvEmptyState.setVisibility(View.VISIBLE);
-            rvHistory.setVisibility(View.GONE);
+            binding.tvEmptyState.setVisibility(View.VISIBLE);
+            binding.rvHistory.setVisibility(View.GONE);
         } else {
-            tvEmptyState.setVisibility(View.GONE);
-            rvHistory.setVisibility(View.VISIBLE);
-            adapter.notifyDataSetChanged();
+            binding.tvEmptyState.setVisibility(View.GONE);
+            binding.rvHistory.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private static class HistoryDiffCallback extends DiffUtil.Callback {
+        private final List<HistoryModel> oldList;
+        private final List<HistoryModel> newList;
+
+        public HistoryDiffCallback(List<HistoryModel> oldList, List<HistoryModel> newList) {
+            this.oldList = oldList;
+            this.newList = newList;
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldList.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newList.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldList.get(oldItemPosition).id.equals(newList.get(newItemPosition).id);
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            HistoryModel oldItem = oldList.get(oldItemPosition);
+            HistoryModel newItem = newList.get(newItemPosition);
+            return oldItem.status.equals(newItem.status) &&
+                   oldItem.storyTitle.equals(newItem.storyTitle) &&
+                   oldItem.teacherName.equals(newItem.teacherName);
         }
     }
 
@@ -207,35 +257,35 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_admin_history, parent, false);
-            return new ViewHolder(v);
+            ItemAdminHistoryBinding itemBinding = ItemAdminHistoryBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new ViewHolder(itemBinding);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             HistoryModel item = list.get(position);
-            holder.tvStatusBadge.setText(item.status);
+            holder.binding.tvStatusBadge.setText(item.status);
 
             if ("APPROVED".equals(item.status)) {
-                holder.tvStatusBadge.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
+                holder.binding.tvStatusBadge.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
             } else {
-                holder.tvStatusBadge.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D32F2F")));
+                holder.binding.tvStatusBadge.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D32F2F")));
             }
 
-            holder.tvStoryTitle.setText(item.storyTitle);
-            holder.tvTeacherName.setText("Proposed by: " + item.teacherName);
-            holder.tvOriginalQuestion.setText(item.originalQuestion);
-            holder.tvProposedQuestion.setText(item.proposedQuestion);
+            holder.binding.tvStoryTitle.setText(item.storyTitle);
+            holder.binding.tvTeacherName.setText("Proposed by: " + item.teacherName);
+            holder.binding.tvOriginalQuestion.setText(item.originalQuestion);
+            holder.binding.tvProposedQuestion.setText(item.proposedQuestion);
 
             if (item.timestamp != null) {
                 String timeStr = new SimpleDateFormat("MMM dd, hh:mm a", Locale.getDefault()).format(item.timestamp.toDate());
-                holder.tvTimestamp.setText(timeStr);
+                holder.binding.tvTimestamp.setText(timeStr);
             } else {
-                holder.tvTimestamp.setText("Recently");
+                holder.binding.tvTimestamp.setText("Recently");
             }
             
-            holder.ivHistoryImagePreview.setVisibility(View.GONE);
-            holder.ivHistoryImagePreview.setImageDrawable(null);
+            holder.binding.ivHistoryImagePreview.setVisibility(View.GONE);
+            holder.binding.ivHistoryImagePreview.setImageDrawable(null);
             
             boolean isLaw = LawScenarioBank.STORY_TITLE.equals(item.storyTitle);
             boolean isBabel = "The Tower of Babel and Abraham's Covenant".equals(item.storyTitle);
@@ -246,20 +296,20 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
                 if (JudgesQuizGame.STORY_TITLE.equals(item.storyTitle)) {
                     LawImageData image = LawImageData.read(item.raw.get("imageAction"), item.raw.get("imageBytes"));
                     if ("REPLACE".equals(image.action) && image.bytes != null) {
-                        holder.ivHistoryImagePreview.setVisibility(View.VISIBLE);
-                        LawImageCodec.display(holder.ivHistoryImagePreview, image.bytes, 0);
+                        holder.binding.ivHistoryImagePreview.setVisibility(View.VISIBLE);
+                        LawImageCodec.display(holder.binding.ivHistoryImagePreview, image.bytes, 0);
                     }
                 } else if (isLaw) {
                     LawImageData image = LawImageData.read(item.raw.get("imageAction"), item.raw.get("imageBytes"));
                     if ("REPLACE".equals(image.action) && image.bytes != null) {
-                        holder.ivHistoryImagePreview.setVisibility(View.VISIBLE);
-                        LawImageCodec.display(holder.ivHistoryImagePreview, image.bytes, 0);
+                        holder.binding.ivHistoryImagePreview.setVisibility(View.VISIBLE);
+                        LawImageCodec.display(holder.binding.ivHistoryImagePreview, image.bytes, 0);
                     }
                 } else if (ReturnMatchingGame.STORY_TITLE.equals(item.storyTitle) || BirthWordBank.STORY_TITLE.equals(item.storyTitle)) {
                     LawImageData image = LawImageData.read(item.raw.get("imageAction"), item.raw.get("imageBytes"));
                     if ("REPLACE".equals(image.action) && image.bytes != null) {
-                        holder.ivHistoryImagePreview.setVisibility(View.VISIBLE);
-                        LawImageCodec.display(holder.ivHistoryImagePreview, image.bytes, 0);
+                        holder.binding.ivHistoryImagePreview.setVisibility(View.VISIBLE);
+                        LawImageCodec.display(holder.binding.ivHistoryImagePreview, image.bytes, 0);
                     }
                 }
             }
@@ -271,18 +321,11 @@ public class AdminApprovalHistoryActivity extends AppCompatActivity {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvStatusBadge, tvStoryTitle, tvTimestamp, tvTeacherName, tvOriginalQuestion, tvProposedQuestion;
-            ImageView ivHistoryImagePreview;
+            ItemAdminHistoryBinding binding;
 
-            ViewHolder(View v) {
-                super(v);
-                tvStatusBadge = v.findViewById(R.id.tvStatusBadge);
-                tvStoryTitle = v.findViewById(R.id.tvStoryTitle);
-                tvTimestamp = v.findViewById(R.id.tvTimestamp);
-                tvTeacherName = v.findViewById(R.id.tvTeacherName);
-                tvOriginalQuestion = v.findViewById(R.id.tvOriginalQuestion);
-                tvProposedQuestion = v.findViewById(R.id.tvProposedQuestion);
-                ivHistoryImagePreview = v.findViewById(R.id.ivHistoryImagePreview);
+            ViewHolder(ItemAdminHistoryBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
             }
         }
     }

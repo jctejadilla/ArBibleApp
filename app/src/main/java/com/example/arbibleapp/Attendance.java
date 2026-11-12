@@ -14,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,6 +25,7 @@ import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
 import android.widget.TextView;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -108,15 +110,32 @@ public class Attendance extends AppCompatActivity {
 
     private void listenForAttendanceMarked(String uid) {
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        
+
         if (attendanceListener != null) attendanceListener.remove();
-        
+
+        final boolean[] hasInitialServerSnapshot = {false};
         attendanceListener = db.collection("attendance")
                 .whereEqualTo("studentUid", uid)
                 .whereEqualTo("date", today)
-                .addSnapshotListener((snapshots, e) -> {
-                    if (e != null || snapshots == null || snapshots.isEmpty()) return;
-                    
+                .addSnapshotListener(com.google.firebase.firestore.MetadataChanges.INCLUDE, (snapshots, e) -> {
+                    if (e != null || snapshots == null) return;
+
+                    // Ignore cached and initial server data; it may contain attendance recorded earlier.
+                    if (!hasInitialServerSnapshot[0]) {
+                        if (snapshots.getMetadata().isFromCache()) return;
+                        hasInitialServerSnapshot[0] = true;
+                        return;
+                    }
+
+                    boolean attendanceAdded = false;
+                    for (com.google.firebase.firestore.DocumentChange change : snapshots.getDocumentChanges()) {
+                        if (change.getType() == com.google.firebase.firestore.DocumentChange.Type.ADDED) {
+                            attendanceAdded = true;
+                            break;
+                        }
+                    }
+                    if (!attendanceAdded) return;
+
                     if (attendanceListener != null) {
                         attendanceListener.remove();
                         attendanceListener = null;
@@ -154,6 +173,13 @@ public class Attendance extends AppCompatActivity {
     }
 
     private void markAttendance(String studentUid) {
+        Calendar calendar = Calendar.getInstance();
+        if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+            Toast.makeText(this, "Attendance can only be recorded on Sundays.", Toast.LENGTH_LONG).show();
+            barcodeScanner.resume();
+            return;
+        }
+
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         db.collection("attendance")
@@ -178,7 +204,7 @@ public class Attendance extends AppCompatActivity {
                                         attendanceData.put("username", username);
                                         attendanceData.put("date", date);
                                         attendanceData.put("timestamp", timestamp);
-                                        attendanceData.put("fullTimestamp", com.google.firebase.Timestamp.now());
+                                        attendanceData.put("fullTimestamp", Timestamp.now());
 
                                         String finalUsername = username;
                                         db.collection("attendance").add(attendanceData)

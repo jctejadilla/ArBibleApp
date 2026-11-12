@@ -222,29 +222,43 @@ public class Leaderboards extends AppCompatActivity {
         tvUserPoints.setText("0");
         tvXPToRankup.setText("-");
 
+        int displayRank = 1;
         for (int i = 0; i < sortedDocs.size(); i++) {
             DocumentSnapshot doc = sortedDocs.get(i);
-            int rank = i + 1;
             String username = doc.getString("username");
             if (username == null) username = doc.getString("fullName");
             if (username == null) username = "Student";
             long xp = doc.contains("totalXP") ? doc.getLong("totalXP") : 0;
 
-            addLeaderboardItem(rank, username, xp, doc.getId().equals(currentUid), false);
-
             if (doc.getId().equals(currentUid)) {
-                tvUserRank.setText(rank + getRankSuffix(rank));
+                tvUserRank.setText(displayRank + getRankSuffix(displayRank));
                 tvUserPoints.setText(String.valueOf(xp));
-                if (i > 0) {
-                    long aboveXP = sortedDocs.get(i - 1).contains("totalXP") ? sortedDocs.get(i - 1).getLong("totalXP") : 0;
-                    tvXPToRankup.setText(String.valueOf((aboveXP - xp) + 10));
+                if (displayRank > 1) {
+                    long aboveXP = 0;
+                    for (int j = i - 1; j >= 0; j--) {
+                        long checkXP = sortedDocs.get(j).contains("totalXP") ? sortedDocs.get(j).getLong("totalXP") : 0;
+                        if (checkXP > 0) {
+                            aboveXP = checkXP;
+                            break;
+                        }
+                    }
+                    if (aboveXP > 0) {
+                        tvXPToRankup.setText(String.valueOf((aboveXP - xp) + 10));
+                    } else {
+                        tvXPToRankup.setText("-");
+                    }
                 } else {
                     tvXPToRankup.setText("Top Rank!");
                 }
             }
+
+            if (xp > 0) {
+                addLeaderboardItem(displayRank, username, xp, doc.getId().equals(currentUid), false);
+                displayRank++;
+            }
         }
         
-        if (sortedDocs.isEmpty()) {
+        if (displayRank == 1) {
             showEmptyState("No data found");
         }
     }
@@ -297,6 +311,9 @@ public class Leaderboards extends AppCompatActivity {
         int rankInStory = 0;
 
         for (DocumentSnapshot doc : sortedResults) {
+            long currentScore = doc.contains("score") ? doc.getLong("score") : 0;
+            if (currentScore <= 0) continue; // Skip displaying records with 0 score
+            
             String story = doc.getString("storyTitle");
             if (story == null) story = "Unknown Story";
 
@@ -310,10 +327,9 @@ public class Leaderboards extends AppCompatActivity {
 
             String name = doc.getString("username");
             if (name == null || name.isEmpty()) name = "Student";
-            long score = doc.contains("score") ? doc.getLong("score") : 0;
             boolean isMe = currentUid.equals(doc.getString("studentUid"));
 
-            addLeaderboardItem(rankInStory, name, score, isMe, true);
+            addLeaderboardItem(rankInStory, name, currentScore, isMe, true);
         }
     }
 

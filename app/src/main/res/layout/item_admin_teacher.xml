@@ -6,8 +6,10 @@
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="3dp">
+    android:background="@drawable/bg_cream_task_card"
+    android:alpha="0.8"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Teacher Name"
-                    android:textColor="@color/text_dark"
+                    android:textColor="#1B4235"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -50,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:text="teacher@gmail.com"
-                    android:textColor="@color/text_grey"
+                    android:textColor="#5F786C"
                     android:textSize="13sp" />
             </LinearLayout>
 
@@ -72,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginVertical="12dp"
-            android:background="#EEEEEE" />
+            android:background="#DCEBE3" />
 
         <LinearLayout
             android:id="@+id/llStudentHeader"
@@ -86,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Assigned Students"
-                android:textColor="@color/text_dark"
+                android:textColor="#1B4235"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -95,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tap to View Students"
-                android:textColor="@color/primary_green"
+                android:textColor="#1B4235"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>

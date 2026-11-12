@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -73,7 +75,7 @@ public class TeacherQuizResults extends AppCompatActivity {
     }
 
     private void setupTabs() {
-        TextView tabByStory = findViewById(R.id.tabByStory);
+        LinearLayout tabByStory = findViewById(R.id.tabByStory);
         if (tabByStory != null) {
             tabByStory.setOnClickListener(v -> {
                 Intent intent = new Intent(this, TeacherQuizResultsByStory.class);
@@ -113,24 +115,27 @@ public class TeacherQuizResults extends AppCompatActivity {
     }
 
     private void fetchQuizResultsForStudents(List<String> studentUids) {
-        db.collection("quiz_results")
-                .whereIn("studentUid", studentUids)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
+        TeacherQuizResultsLoader.fetchForStudents(db, studentUids)
+                .addOnSuccessListener(resultData -> {
                     quizResultsList.clear();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                    for (DocumentSnapshot doc : resultData.documents) {
                         QuizResultModel result = doc.toObject(QuizResultModel.class);
                         if (result != null) {
+                            // Resolve current username, fallback to saved username
+                            String currentUsername = resultData.userNames.get(result.studentUid);
+                            if (currentUsername != null && !currentUsername.isEmpty()) {
+                                result.username = currentUsername;
+                            }
                             quizResultsList.add(result);
                         }
                     }
-                    
+
                     // Sort locally by timestamp descending
                     Collections.sort(quizResultsList, (r1, r2) -> {
                         if (r1.timestamp == null || r2.timestamp == null) return 0;
                         return r2.timestamp.compareTo(r1.timestamp);
                     });
-                    
+
                     adapter.notifyDataSetChanged();
                     updateSummary(quizResultsList);
                 })
@@ -209,39 +214,30 @@ public class TeacherQuizResults extends AppCompatActivity {
             
             String dateTime = r.date != null ? r.date : "Recently";
             if (r.timestamp != null) {
-                String time = new java.text.SimpleDateFormat("hh:mm a", Locale.getDefault()).format(r.timestamp.toDate());
+                String time = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(r.timestamp.toDate());
                 dateTime += " • " + time;
             }
             holder.tvDate.setText(dateTime);
 
             holder.tvDuration.setText(r.duration != null ? r.duration : "--");
             
-            String name = r.username != null ? r.username : "ST";
-            if (name.length() >= 2) {
-                holder.tvInitials.setText(name.substring(0, 2).toUpperCase());
-            } else {
-                holder.tvInitials.setText(name.toUpperCase());
+            ImageView avatar = holder.itemView.findViewById(R.id.avatarView);
+            if (avatar != null) {
+                avatar.setImageResource(R.drawable.ic_def_avatar);
             }
             
             holder.itemView.setOnClickListener(null);
             if (DivisionPairBank.STORY_TITLE.equals(r.storyTitle) && r.matchedPairs != null) {
                 holder.itemView.setOnClickListener(v -> DivisionPairReview.showForTeacher(v.getContext(), r));
             }
-            double percent = r.totalQuestions > 0 ? (double) r.score / r.totalQuestions : 0;
-            if (percent >= 0.8) {
-                holder.tvScore.setTextColor(Color.parseColor("#2E7D32"));
-            } else if (percent >= 0.5) {
-                holder.tvScore.setTextColor(Color.parseColor("#EF6C00"));
-            } else {
-                holder.tvScore.setTextColor(Color.parseColor("#C62828"));
-            }
+            // Default styling handles the color now, removed dynamic coloring
         }
 
         @Override
         public int getItemCount() { return list.size(); }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvName, tvId, tvStory, tvScore, tvDate, tvDuration, tvInitials;
+            TextView tvName, tvId, tvStory, tvScore, tvDate, tvDuration;
             ViewHolder(View v) {
                 super(v);
                 tvName = v.findViewById(R.id.tvStudentName);
@@ -250,7 +246,6 @@ public class TeacherQuizResults extends AppCompatActivity {
                 tvScore = v.findViewById(R.id.tvScoreBadge);
                 tvDate = v.findViewById(R.id.tvDate);
                 tvDuration = v.findViewById(R.id.tvDuration);
-                tvInitials = v.findViewById(R.id.tvAvatarInitials);
             }
         }
     }

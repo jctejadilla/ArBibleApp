@@ -2,10 +2,22 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.ArBibleApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <item name="android:windowAnimationStyle">@style/NoActivityAnimation</item>
+        <item name="android:windowAnimationStyle">@style/SlideActivityAnimation</item>
     </style>
 
     <style name="Theme.ArBibleApp" parent="Base.Theme.ArBibleApp" />
+
+    <!-- Quiz specific theme that disables transition animations -->
+    <style name="Theme.ArBibleApp.Quiz" parent="Theme.ArBibleApp">
+        <item name="android:windowAnimationStyle">@style/NoActivityAnimation</item>
+    </style>
+
+    <style name="SlideActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
 
     <style name="NoActivityAnimation" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/no_animation</item>

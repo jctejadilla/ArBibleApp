@@ -147,7 +147,7 @@ public class AdminTeacherMonitoringActivity extends AppCompatActivity {
                             holder.llStudentsContainer.removeAllViews();
                             TextView tvEmpty = new TextView(AdminTeacherMonitoringActivity.this);
                             tvEmpty.setText("No QR registered students yet");
-                            tvEmpty.setTextColor(Color.GRAY);
+                            tvEmpty.setTextColor(Color.parseColor("#5F786C"));
                             tvEmpty.setPadding(16, 16, 16, 16);
                             holder.llStudentsContainer.addView(tvEmpty);
                             return;
@@ -203,23 +203,19 @@ public class AdminTeacherMonitoringActivity extends AppCompatActivity {
             if (teacher.students.isEmpty()) {
                 TextView tvEmpty = new TextView(AdminTeacherMonitoringActivity.this);
                 tvEmpty.setText("No QR registered students found");
-                tvEmpty.setTextColor(Color.GRAY);
+                tvEmpty.setTextColor(Color.parseColor("#5F786C"));
                 tvEmpty.setPadding(16, 16, 16, 16);
                 holder.llStudentsContainer.addView(tvEmpty);
             } else {
                 for (StudentModel s : teacher.students) {
                     View studentView = LayoutInflater.from(AdminTeacherMonitoringActivity.this)
-                            .inflate(android.R.layout.simple_list_item_2, holder.llStudentsContainer, false);
-                    TextView text1 = studentView.findViewById(android.R.id.text1);
-                    TextView text2 = studentView.findViewById(android.R.id.text2);
+                            .inflate(R.layout.item_admin_student, holder.llStudentsContainer, false);
+                    TextView text1 = studentView.findViewById(R.id.tvStudentNameEmail);
+                    TextView text2 = studentView.findViewById(R.id.tvStudentLevelXp);
 
                     text1.setText("• " + s.name + " (" + s.email + ")");
-                    text1.setTextColor(Color.DKGRAY);
-                    text1.setTextSize(14f);
 
                     text2.setText("Level " + s.level + " • " + s.totalXP + " XP");
-                    text2.setTextColor(Color.GRAY);
-                    text2.setTextSize(12f);
 
                     holder.llStudentsContainer.addView(studentView);
                 }

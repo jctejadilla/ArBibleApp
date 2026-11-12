@@ -8,6 +8,7 @@ material = "1.13.0"
 activity = "1.11.0"
 constraintlayout = "2.2.1"
 googleGmsGoogleServices = "4.4.4"
+firebaseCrashlyticsPlugin = "3.0.2"
 firebaseFirestore = "26.1.1"
 firebaseAuth = "23.2.0"
 zxingAndroidEmbedded = "4.3.0"
@@ -26,6 +27,7 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version = "19.4.0" }
 zxing-android-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 androidx-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "animationVersion" }
@@ -35,3 +37,4 @@ androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", ve
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }

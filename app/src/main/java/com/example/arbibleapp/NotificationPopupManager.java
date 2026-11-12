@@ -120,11 +120,14 @@ public class NotificationPopupManager implements Application.ActivityLifecycleCa
             popupView = LayoutInflater.from(activity).inflate(R.layout.layout_quiz_notification, root, false);
             
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT
             );
             params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
             params.topMargin = (int) (48 * activity.getResources().getDisplayMetrics().density);
+            int horizontalInset = (int) (16 * activity.getResources().getDisplayMetrics().density);
+            params.leftMargin = horizontalInset;
+            params.rightMargin = horizontalInset;
 
             root.addView(popupView, params);
             attachedPopupViews.put(activity, popupView);

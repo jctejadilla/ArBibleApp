@@ -151,7 +151,7 @@ public class AnalyticsActivity extends AppCompatActivity {
         xAxis.setValueFormatter(new IndexAxisValueFormatter(new String[]{"Week 1", "Week 2", "Week 3", "Week 4"}));
         xAxis.setGranularity(1f);
         xAxis.setDrawAxisLine(false);
-        xAxis.setTextColor(Color.GRAY);
+        xAxis.setTextColor(Color.parseColor("#6F8178"));
 
         YAxis leftAxis = lineChartXP.getAxisLeft();
         leftAxis.setDrawGridLines(true);
@@ -162,7 +162,7 @@ public class AnalyticsActivity extends AppCompatActivity {
         leftAxis.setAxisMaximum(2000f);
         leftAxis.setLabelCount(5, true);
         leftAxis.setDrawAxisLine(false);
-        leftAxis.setTextColor(Color.GRAY);
+        leftAxis.setTextColor(Color.parseColor("#6F8178"));
 
         lineChartXP.getAxisRight().setEnabled(false);
         lineChartXP.getLegend().setEnabled(false);
@@ -182,7 +182,7 @@ public class AnalyticsActivity extends AppCompatActivity {
         xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f);
         xAxis.setDrawAxisLine(false);
-        xAxis.setTextColor(Color.GRAY);
+        xAxis.setTextColor(Color.parseColor("#6F8178"));
         
         YAxis leftAxis = barChartPerformance.getAxisLeft();
         leftAxis.setAxisMaximum(100f);
@@ -191,7 +191,7 @@ public class AnalyticsActivity extends AppCompatActivity {
         leftAxis.setDrawAxisLine(false);
         leftAxis.setGridColor(Color.parseColor("#EEEEEE"));
         leftAxis.enableGridDashedLine(10f, 10f, 0f);
-        leftAxis.setTextColor(Color.GRAY);
+        leftAxis.setTextColor(Color.parseColor("#6F8178"));
 
         barChartPerformance.getLegend().setEnabled(false);
     }
@@ -205,7 +205,7 @@ public class AnalyticsActivity extends AppCompatActivity {
         pieChartEngagement.setDrawHoleEnabled(true);
         pieChartEngagement.setHoleColor(Color.WHITE);
         pieChartEngagement.setTransparentCircleRadius(61f);
-        pieChartEngagement.setEntryLabelColor(Color.BLACK);
+        pieChartEngagement.setEntryLabelColor(Color.parseColor("#1B4235"));
         pieChartEngagement.setEntryLabelTextSize(12f);
 
         pieChartEngagement.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
@@ -228,8 +228,42 @@ public class AnalyticsActivity extends AppCompatActivity {
     }
 
     private void showStudentNamesDialog(String category, List<String> names) {
-        if (names.isEmpty()) {
-            Toast.makeText(this, "No students in " + category + " engagement", Toast.LENGTH_SHORT).show();
+        int indicatorColor;
+        if ("High".equals(category)) indicatorColor = Color.parseColor("#1D4A4B");
+        else if ("Moderate".equals(category)) indicatorColor = Color.parseColor("#8CB6A3");
+        else indicatorColor = Color.parseColor("#C85F5F");
+
+        showStudentNamesDialog(
+                category + " Engagement",
+                names == null ? 0 : names.size(),
+                "students in this category",
+                names,
+                indicatorColor,
+                false,
+                "No students in " + category + " engagement"
+        );
+    }
+
+    private void showAttendanceStudentsDialog(String status, String dateLabel, List<String> names) {
+        boolean isPresent = "Present".equals(status);
+        int statusColor = Color.parseColor(isPresent ? "#1B4235" : "#C85F5F");
+        String statusText = isPresent ? "present" : "absent";
+        String studentLabel = names != null && names.size() == 1 ? "student " : "students ";
+        showStudentNamesDialog(
+                status + " on " + dateLabel,
+                names == null ? 0 : names.size(),
+                studentLabel + statusText,
+                names,
+                statusColor,
+                true,
+                "No students marked " + statusText + " on " + dateLabel
+        );
+    }
+
+    private void showStudentNamesDialog(String title, int studentCount, String subtitleSuffix,
+                                        List<String> names, int indicatorColor, boolean colorStudentNames, String emptyMessage) {
+        if (names == null || names.isEmpty()) {
+            Toast.makeText(this, emptyMessage, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -247,22 +281,18 @@ public class AnalyticsActivity extends AppCompatActivity {
         LinearLayout layoutList = dialogView.findViewById(R.id.layoutStudentList);
         View btnClose = dialogView.findViewById(R.id.btnClose);
 
-        tvTitle.setText(category + " Engagement");
-        tvSubtitle.setText(names.size() + " students in this category");
-
-        int indicatorColor;
-        if ("High".equals(category)) indicatorColor = Color.parseColor("#1D4A4B");
-        else if ("Moderate".equals(category)) indicatorColor = Color.parseColor("#8CB6A3");
-        else indicatorColor = Color.parseColor("#C85F5F");
+        tvTitle.setText(title);
+        tvSubtitle.setText(studentCount + " " + subtitleSuffix);
 
         for (String name : names) {
             View itemView = getLayoutInflater().inflate(R.layout.item_engagement_dialog_student, layoutList, false);
             TextView tvName = itemView.findViewById(R.id.tvStudentName);
             View indicator = itemView.findViewById(R.id.viewIndicator);
-            
+
             tvName.setText(name);
+            if (colorStudentNames) tvName.setTextColor(indicatorColor);
             indicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(indicatorColor));
-            
+
             layoutList.addView(itemView);
         }
 
@@ -408,7 +438,7 @@ public class AnalyticsActivity extends AppCompatActivity {
                     set1.setCircleColor(Color.parseColor("#8CB6A3"));
                     set1.setCircleRadius(5f);
                     set1.setDrawValues(true);
-                    set1.setValueTextColor(Color.GRAY);
+                    set1.setValueTextColor(Color.parseColor("#6F8178"));
                     set1.setDrawFilled(true);
                     set1.setFillColor(Color.parseColor("#8CB6A3"));
                     set1.setFillAlpha(30);
@@ -504,7 +534,7 @@ public class AnalyticsActivity extends AppCompatActivity {
                     BarDataSet set = new BarDataSet(entries, "");
                     set.setColor(Color.parseColor("#8CB6A3"));
                     set.setDrawValues(true);
-                    set.setValueTextColor(Color.GRAY);
+                    set.setValueTextColor(Color.parseColor("#6F8178"));
 
                     BarData data = new BarData(set);
                     data.setBarWidth(0.6f);
@@ -636,13 +666,13 @@ public class AnalyticsActivity extends AppCompatActivity {
         xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f);
         xAxis.setCenterAxisLabels(true);
-        xAxis.setTextColor(Color.GRAY);
+        xAxis.setTextColor(Color.parseColor("#6F8178"));
 
         YAxis leftAxis = barChartAttendance.getAxisLeft();
         leftAxis.setDrawGridLines(true);
         leftAxis.setGridColor(Color.parseColor("#EEEEEE"));
         leftAxis.setAxisMinimum(0f);
-        leftAxis.setTextColor(Color.GRAY);
+        leftAxis.setTextColor(Color.parseColor("#6F8178"));
 
         barChartAttendance.getAxisRight().setEnabled(false);
         barChartAttendance.getLegend().setEnabled(true);
@@ -674,7 +704,7 @@ public class AnalyticsActivity extends AppCompatActivity {
                         boolean isPresentBar = h.getDataSetIndex() == 0;
                         List<String> names = isPresentBar ? attendancePresentNames.get(dateKey) : attendanceAbsentNames.get(dateKey);
                         String category = isPresentBar ? "Present" : "Absent";
-                        showStudentNamesDialog(category + " on " + label, names != null ? names : new ArrayList<>());
+                        showAttendanceStudentsDialog(category, label, names != null ? names : new ArrayList<>());
                     }
                 }
             }
@@ -690,13 +720,23 @@ public class AnalyticsActivity extends AppCompatActivity {
         SimpleDateFormat labelSdf = new SimpleDateFormat("MMM d", Locale.getDefault());
         List<String> labels = new ArrayList<>();
 
-        Calendar cal = Calendar.getInstance();
-        // Get last 7 days including today
-        for (int i = 0; i < 7; i++) {
-            dates.add(0, sdf.format(cal.getTime()));
-            labels.add(0, labelSdf.format(cal.getTime()));
-            cal.add(Calendar.DAY_OF_MONTH, -1);
+        Calendar today = Calendar.getInstance();
+        String todayKey = sdf.format(today.getTime());
+        Calendar monthDate = (Calendar) today.clone();
+        monthDate.set(Calendar.DAY_OF_MONTH, 1);
+        int daysInMonth = monthDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int elapsedSundayCount = 0;
+        for (int dayOfMonth = 1; dayOfMonth <= daysInMonth; dayOfMonth++) {
+            monthDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            if (monthDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                String date = sdf.format(monthDate.getTime());
+                dates.add(date);
+                labels.add(labelSdf.format(monthDate.getTime()));
+                if (date.compareTo(todayKey) <= 0) elapsedSundayCount++;
+            }
         }
+
+        final int elapsedSundayCountForSummary = elapsedSundayCount;
 
         db.collection("attendance")
                 .whereIn("date", dates)
@@ -708,12 +748,12 @@ public class AnalyticsActivity extends AppCompatActivity {
                     attendanceSundayLabels.addAll(labels);
 
                     Map<String, List<String>> presentMap = new HashMap<>();
-                    for (String d : dates) presentMap.put(d, new ArrayList<>());
+                    for (String date : dates) presentMap.put(date, new ArrayList<>());
 
                     for (DocumentSnapshot doc : results) {
                         String sUid = doc.getString("studentUid");
                         String date = doc.getString("date");
-                        if (sUid != null && studentUids.contains(sUid) && date != null) {
+                        if (sUid != null && studentUids.contains(sUid) && date != null && date.compareTo(todayKey) <= 0) {
                             List<String> current = presentMap.get(date);
                             if (current != null) {
                                 String name = studentNames.get(sUid);
@@ -730,28 +770,29 @@ public class AnalyticsActivity extends AppCompatActivity {
                         String date = dates.get(i);
                         List<String> presentList = presentMap.get(date);
                         if (presentList == null) presentList = new ArrayList<>();
-                        
+
                         List<String> absentList = new ArrayList<>();
-                        for (String uid : studentUids) {
-                            String name = studentNames.get(uid);
-                            if (name != null && !presentList.contains(name)) {
-                                absentList.add(name);
+                        if (date.compareTo(todayKey) <= 0) {
+                            for (String uid : studentUids) {
+                                String name = studentNames.get(uid);
+                                if (name != null && !presentList.contains(name)) {
+                                    absentList.add(name);
+                                }
                             }
                         }
 
                         attendancePresentNames.put(date, presentList);
                         attendanceAbsentNames.put(date, absentList);
-                        
                         presentEntries.add(new BarEntry(i, (float) presentList.size()));
                         absentEntries.add(new BarEntry(i, (float) absentList.size()));
                     }
 
                     BarDataSet set1 = new BarDataSet(presentEntries, "Present");
-                    set1.setColor(Color.parseColor("#00C853"));
+                    set1.setColor(Color.parseColor("#1B4235"));
                     set1.setDrawValues(false);
 
                     BarDataSet set2 = new BarDataSet(absentEntries, "Absent");
-                    set2.setColor(Color.parseColor("#EF5350"));
+                    set2.setColor(Color.parseColor("#C85F5F"));
                     set2.setDrawValues(false);
 
                     BarData data = new BarData(set1, set2);
@@ -760,22 +801,20 @@ public class AnalyticsActivity extends AppCompatActivity {
                     float barWidth = 0.25f;
 
                     int totalPresent = 0;
-                    for (List<String> p : presentMap.values()) totalPresent += p.size();
-                    int totalPossible = studentUids.size() * dates.size();
-                    if (totalPossible > 0) {
-                        tvAvgAttendanceValue.setText(totalPresent + "/" + totalPossible);
-                    }
+                    for (List<String> present : presentMap.values()) totalPresent += present.size();
+                    int totalPossible = studentUids.size() * elapsedSundayCountForSummary;
+                    tvAvgAttendanceValue.setText(totalPresent + "/" + totalPossible);
 
                     data.setBarWidth(barWidth);
                     barChartAttendance.setData(data);
                     barChartAttendance.groupBars(0, groupSpace, barSpace);
-                    
+
                     XAxis xAxis = barChartAttendance.getXAxis();
                     xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
                     xAxis.setAxisMinimum(0);
                     xAxis.setAxisMaximum(labels.size());
                     xAxis.setCenterAxisLabels(true);
-                    
+
                     barChartAttendance.getAxisLeft().setAxisMaximum(Math.max(10, studentUids.size() + 5));
                     barChartAttendance.invalidate();
                     barChartAttendance.animateY(1000);
@@ -783,17 +822,14 @@ public class AnalyticsActivity extends AppCompatActivity {
     }
 
     private void loadStoryCompletionData() {
-        String[] stories = {
-            "Creation and the Fall",
-            "Early Humanity and the Flood",
-            "The Tower of Babel",
-            "Slavery in Egypt and the Exodus",
-            "The Law and Wandering in the Desert"
-        };
-        
-        completionList.clear();
+        String[] stories = new String[10];
         for (int i = 0; i < stories.length; i++) {
-            completionList.add(new StoryCompletionModel(stories[i], "", studentUids.size()));
+            stories[i] = QuizResetPolicy.story(i + 1);
+        }
+
+        completionList.clear();
+        for (String story : stories) {
+            completionList.add(new StoryCompletionModel(story, "", studentUids.size()));
         }
         completionAdapter.notifyDataSetChanged();
 
@@ -801,11 +837,8 @@ public class AnalyticsActivity extends AppCompatActivity {
         if (sessionsListener != null) sessionsListener.remove();
 
         resultsListener = db.collection("quiz_results").addSnapshotListener((results, e) -> {
-            if (e != null) {
-                return;
-            }
-            if (results == null) return;
-            
+            if (e != null || results == null) return;
+
             for (StoryCompletionModel model : completionList) {
                 model.completedUids.clear();
             }
@@ -815,21 +848,14 @@ public class AnalyticsActivity extends AppCompatActivity {
                 if (isSunday != null && !isSunday) continue;
 
                 String sUid = doc.getString("studentUid");
-                String story = doc.getString("storyTitle");
-                
-                if (sUid != null && story != null) {
-                    sUid = sUid.trim();
-                    story = story.trim();
-                    
-                    if (studentUids.contains(sUid)) {
-                        for (StoryCompletionModel model : completionList) {
-                            if (model.title.equalsIgnoreCase(story)) {
-                                if (!model.completedUids.contains(sUid)) {
-                                    model.completedUids.add(sUid);
-                                }
-                                break;
-                            }
-                        }
+                String story = normalizeAnalyticsStoryTitle(doc.getString("storyTitle"));
+                if (sUid == null || story == null || !studentUids.contains(sUid.trim())) continue;
+
+                sUid = sUid.trim();
+                for (StoryCompletionModel model : completionList) {
+                    if (model.title.equalsIgnoreCase(story)) {
+                        if (!model.completedUids.contains(sUid)) model.completedUids.add(sUid);
+                        break;
                     }
                 }
             }
@@ -837,39 +863,30 @@ public class AnalyticsActivity extends AppCompatActivity {
         });
 
         sessionsListener = db.collection("quiz_sessions").addSnapshotListener((sessions, e) -> {
-            if (e != null) {
-                return;
-            }
-            if (sessions == null) return;
+            if (e != null || sessions == null) return;
 
             for (StoryCompletionModel model : completionList) {
                 model.inProgressUids.clear();
             }
 
             for (DocumentSnapshot doc : sessions) {
-                String sUid = doc.getId().trim(); // Student UID is the document ID
-                String story = doc.getString("storyTitle");
-                
-                if (story != null) {
-                    story = story.trim();
+                String sUid = doc.getId().trim();
+                String story = normalizeAnalyticsStoryTitle(doc.getString("storyTitle"));
+                if (story == null) continue;
 
-                    boolean isMyStudent = false;
-                    for (String enrolledUid : studentUids) {
-                        if (enrolledUid.equalsIgnoreCase(sUid)) {
-                            isMyStudent = true;
-                            break;
-                        }
+                boolean isMyStudent = false;
+                for (String enrolledUid : studentUids) {
+                    if (enrolledUid.equalsIgnoreCase(sUid)) {
+                        isMyStudent = true;
+                        break;
                     }
+                }
+                if (!isMyStudent) continue;
 
-                    if (isMyStudent) {
-                        for (StoryCompletionModel model : completionList) {
-                            if (model.title.equalsIgnoreCase(story)) {
-                                if (!model.inProgressUids.contains(sUid)) {
-                                    model.inProgressUids.add(sUid);
-                                }
-                                break;
-                            }
-                        }
+                for (StoryCompletionModel model : completionList) {
+                    if (model.title.equalsIgnoreCase(story)) {
+                        if (!model.inProgressUids.contains(sUid)) model.inProgressUids.add(sUid);
+                        break;
                     }
                 }
             }
@@ -877,6 +894,16 @@ public class AnalyticsActivity extends AppCompatActivity {
         });
     }
 
+    private String normalizeAnalyticsStoryTitle(String story) {
+        if (story == null) return null;
+        String trimmedStory = story.trim();
+        if ("The Tower of Babel".equalsIgnoreCase(trimmedStory)) {
+            return QuizResetPolicy.story(3);
+        }
+
+        int quizType = QuizResetPolicy.type(trimmedStory);
+        return quizType == 0 ? trimmedStory : QuizResetPolicy.story(quizType);
+    }
     private void refreshProgressUI() {
         completionAdapter.notifyDataSetChanged();
     }
@@ -956,7 +983,7 @@ public class AnalyticsActivity extends AppCompatActivity {
                 holder.tvProg.setTextColor(Color.parseColor("#FFB300"));
                 holder.tvProg.setTypeface(null, android.graphics.Typeface.BOLD);
             } else {
-                holder.tvProg.setTextColor(Color.GRAY);
+                holder.tvProg.setTextColor(Color.parseColor("#6F8178"));
                 holder.tvProg.setTypeface(null, android.graphics.Typeface.NORMAL);
             }
 

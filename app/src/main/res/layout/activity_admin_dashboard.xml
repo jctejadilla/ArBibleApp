@@ -5,14 +5,15 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light"
+    android:background="@drawable/bg_meh"
     tools:context=".AdminDashboard">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -24,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Administrator Portal,"
-                android:textColor="@color/text_grey"
+                android:textColor="#1B4235"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -34,166 +35,241 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Admin"
-                android:textColor="@color/text_dark"
+                android:textColor="@color/white"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvWelcomeBack" />
 
-            <ImageView
-                android:id="@+id/btnLogout"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_circle_white"
+            <!-- System Overview Card -->
+            <View
+                android:id="@+id/view"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:alpha="0.6"
+                android:background="@drawable/bg_rounded_card"
                 android:backgroundTint="#FFEBEE"
-                android:clickable="true"
-                android:focusable="true"
-                android:elevation="2dp"
-                android:padding="12dp"
-                android:layout_margin="5dp"
-                app:srcCompat="@drawable/ic_power_off"
-                app:tint="#D32F2F"
-                app:layout_constraintBottom_toBottomOf="@+id/tvAdminName"
+                app:layout_constraintBottom_toBottomOf="@+id/tvTeacherName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvWelcomeBack" />
 
-            <!-- System Overview Card -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cardSystemOverview"
+            <ImageView
+                android:id="@+id/btnLogout"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="5dp"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/view"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                app:srcCompat="@drawable/ic_power_off"
+                app:tint="#D32F2F" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerViewContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:background="@drawable/bg_rounded_card"
-                android:elevation="4dp"
-                android:padding="20dp"
+                android:layout_marginTop="25dp"
                 app:layout_constraintTop_toBottomOf="@+id/tvAdminName">
 
-                <TextView
-                    android:id="@+id/tvOverviewLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="System Statistics"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvStatusBadge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_rounded_card"
-                    android:backgroundTint="#4DFFFFFF"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
-                    android:text="Active Admin"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <GridLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardSystemOverview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:columnCount="3"
-                    android:rowCount="1"
-                    app:layout_constraintTop_toBottomOf="@+id/tvOverviewLabel">
+                    android:background="@drawable/bg_rounded_card"
+                    android:backgroundTint="#1B4235"
+                    android:elevation="4dp"
+                    android:alpha="0.8"
+                    android:padding="20dp">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <ImageView
+                        android:id="@+id/iconStats"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tvOverviewLabel"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/stats" />
+
+                    <TextView
+                        android:id="@+id/tvOverviewLabel"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:layout_marginStart="8dp"
+                        android:text="System Statistics"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/iconStats"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/tvTeacherCountVal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textColor="@color/white"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Teachers"
-                            android:textColor="#E0E0E0"
-                            android:textSize="12sp" />
-                    </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <!-- Divider lines -->
+                    <View
+                        android:id="@+id/divider1"
+                        android:layout_width="1dp"
+                        android:layout_height="50dp"
+                        android:background="#4DFFFFFF"
+                        android:layout_marginTop="30dp"
+                        app:layout_constraintTop_toBottomOf="@+id/tvOverviewLabel"
+                        app:layout_constraintStart_toEndOf="@+id/tvTeacherCountVal"
+                        app:layout_constraintEnd_toStartOf="@+id/tvStudentCountVal" />
+
+                    <View
+                        android:id="@+id/divider2"
+                        android:layout_width="1dp"
+                        android:layout_height="50dp"
+                        android:background="#4DFFFFFF"
+                        android:layout_marginTop="30dp"
+                        app:layout_constraintTop_toBottomOf="@+id/tvOverviewLabel"
+                        app:layout_constraintStart_toEndOf="@+id/tvStudentCountVal"
+                        app:layout_constraintEnd_toStartOf="@+id/tvPendingProposalsVal" />
+
+                    <ImageView
+                        android:id="@+id/iconTeachers"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toStartOf="@+id/divider1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvOverviewLabel"
+                        app:srcCompat="@drawable/teacher_profile" />
+
+                    <TextView
+                        android:id="@+id/tvTeacherCountVal"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
+                        android:layout_marginTop="8dp"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:text="..."
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/iconTeachers"
+                        app:layout_constraintStart_toStartOf="@+id/iconTeachers"
+                        app:layout_constraintTop_toBottomOf="@+id/iconTeachers" />
 
-                        <TextView
-                            android:id="@+id/tvStudentCountVal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textColor="@color/white"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Students"
-                            android:textColor="#E0E0E0"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/tvTeacherLabel"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:text="Teachers"
+                        android:textColor="#E0E0E0"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/iconTeachers"
+                        app:layout_constraintStart_toStartOf="@+id/iconTeachers"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTeacherCountVal" />
 
-                        <TextView
-                            android:id="@+id/tvPendingProposalsVal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textColor="@color/white"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/iconStudents"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:layout_constraintEnd_toStartOf="@+id/divider2"
+                        app:layout_constraintStart_toEndOf="@+id/divider1"
+                        app:layout_constraintTop_toTopOf="@+id/iconTeachers"
+                        app:srcCompat="@drawable/student_group" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Pending Edits"
-                            android:textColor="#E0E0E0"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </GridLayout>
+                    <TextView
+                        android:id="@+id/tvStudentCountVal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="..."
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/iconStudents"
+                        app:layout_constraintStart_toStartOf="@+id/iconStudents"
+                        app:layout_constraintTop_toBottomOf="@+id/iconStudents" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/tvStudentLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Students"
+                        android:textColor="#E0E0E0"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/iconStudents"
+                        app:layout_constraintStart_toStartOf="@+id/iconStudents"
+                        app:layout_constraintTop_toBottomOf="@+id/tvStudentCountVal" />
 
-            <TextView
-                android:id="@+id/tvQuickActions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="Admin Management"
-                android:textColor="@color/text_dark"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardSystemOverview" />
+                    <ImageView
+                        android:id="@+id/iconPending"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/divider2"
+                        app:layout_constraintTop_toTopOf="@+id/iconTeachers"
+                        app:srcCompat="@drawable/clipboard_check" />
+
+                    <TextView
+                        android:id="@+id/tvPendingProposalsVal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="..."
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/iconPending"
+                        app:layout_constraintStart_toStartOf="@+id/iconPending"
+                        app:layout_constraintTop_toBottomOf="@+id/iconPending" />
+
+                    <TextView
+                        android:id="@+id/tvPendingLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Pending\nEdits"
+                        android:textColor="#E0E0E0"
+                        android:textAlignment="center"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/iconPending"
+                        app:layout_constraintStart_toStartOf="@+id/iconPending"
+                        app:layout_constraintTop_toBottomOf="@+id/tvPendingProposalsVal" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <ImageView
+                        android:id="@+id/iconAdminSettings"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_settings_gear"
+                        app:tint="#124B3D"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tvQuickActions"
+                        app:layout_constraintBottom_toBottomOf="@+id/tvQuickActions"/>
+
+                    <TextView
+                        android:id="@+id/tvQuickActions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginStart="8dp"
+                        android:text="Admin Management"
+                        android:textColor="#124B3D"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/iconAdminSettings"
+                        app:layout_constraintTop_toBottomOf="@+id/shimmerViewContainer" />
 
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:columnCount="2"
-                android:rowCount="3"
+                android:rowCount="2"
                 app:layout_constraintTop_toBottomOf="@+id/tvQuickActions">
 
                 <!-- Monitoring Card -->
@@ -206,29 +282,29 @@
                     android:layout_margin="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="@color/white"
+                    android:background="@drawable/bg_cream_task_card"
                     app:cardCornerRadius="16dp"
+                    android:alpha="0.8"
+                    app:cardBackgroundColor="@color/white"
+                    android:foreground="?attr/selectableItemBackground"
                     app:cardElevation="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center"
                         android:orientation="vertical"
+                        android:gravity="center"
                         android:padding="16dp">
-
                         <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@android:drawable/ic_menu_myplaces"
-                            app:tint="@color/primary_green" />
-
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            app:srcCompat="@drawable/student_group" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:text="Teacher &amp; Student List"
+                            android:gravity="center"
+                            android:text="Teacher &amp; Student\nList"
                             android:textColor="@color/text_dark"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -245,29 +321,28 @@
                     android:layout_margin="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
+                    android:background="@drawable/bg_cream_task_card"
                     app:cardBackgroundColor="@color/white"
+                    android:alpha="0.8"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center"
                         android:orientation="vertical"
+                        android:gravity="center"
                         android:padding="16dp">
-
                         <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@android:drawable/ic_menu_edit"
-                            app:tint="@color/primary_green" />
-
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            app:srcCompat="@drawable/question_approvals" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:text="Question Approvals"
+                            android:gravity="center"
+                            android:text="Question\nApprovals"
                             android:textColor="@color/text_dark"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -284,68 +359,28 @@
                     android:layout_margin="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
+                    android:background="@drawable/bg_cream_task_card"
                     app:cardBackgroundColor="@color/white"
+                    android:alpha="0.8"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center"
                         android:orientation="vertical"
+                        android:gravity="center"
                         android:padding="16dp">
-
                         <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@android:drawable/btn_star_big_on"
-                            app:tint="@color/primary_green" />
-
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            app:srcCompat="@drawable/leaderboard" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
+                            android:gravity="center"
                             android:text="Leaderboards"
-                            android:textColor="@color/text_dark"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- Propose Question Edit Card -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardProposeEdit"
-                    android:layout_width="0dp"
-                    android:layout_height="140dp"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@android:drawable/ic_input_add"
-                            app:tint="@color/primary_green" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:text="Propose Edit"
                             android:textColor="@color/text_dark"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -362,28 +397,28 @@
                     android:layout_margin="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
+                    android:background="@drawable/bg_cream_task_card"
                     app:cardBackgroundColor="@color/white"
+                    android:alpha="0.8"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="2dp"
+                    >
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center"
                         android:orientation="vertical"
+                        android:gravity="center"
                         android:padding="16dp">
-
                         <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@android:drawable/ic_menu_today"
-                            app:tint="@color/primary_green" />
-
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            app:srcCompat="@drawable/activity_logs" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
+                            android:gravity="center"
                             android:text="Approval History"
                             android:textColor="@color/text_dark"
                             android:textSize="14sp"

@@ -2,9 +2,6 @@ package com.example.arbibleapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -16,18 +13,20 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
-
+import com.example.arbibleapp.databinding.ActivityLoginBinding;
 
 public class login extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_login);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -35,43 +34,39 @@ public class login extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        EditText etEmail = findViewById(R.id.etEmail);
-        
-        etEmail.setOnFocusChangeListener((v, hasFocus) -> {
+        binding.etEmail.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
-                String currentEmail = etEmail.getText().toString().trim();
+                String currentEmail = binding.etEmail.getText().toString().trim();
                 if (!currentEmail.isEmpty() && !currentEmail.endsWith("@gmail.com") && !currentEmail.endsWith("gmail.com")) {
                     if (currentEmail.endsWith("@")) {
-                        etEmail.setText(currentEmail + "gmail.com");
+                        binding.etEmail.setText(currentEmail + "gmail.com");
                     } else if (!currentEmail.contains("@")) {
-                        etEmail.setText(currentEmail + "@gmail.com");
+                        binding.etEmail.setText(currentEmail + "@gmail.com");
                     }
                 } else if (!currentEmail.isEmpty() && currentEmail.endsWith("gmail.com") && !currentEmail.endsWith("@gmail.com")) {
-                     etEmail.setText(currentEmail.substring(0, currentEmail.length() - 9) + "@gmail.com");
+                     binding.etEmail.setText(currentEmail.substring(0, currentEmail.length() - 9) + "@gmail.com");
                 }
             }
         });
-        EditText etPassword = findViewById(R.id.etPassword);
-        Button btnLogin = findViewById(R.id.btnLogin);
-        TextView tvRegister = findViewById(R.id.tvRegister);
-        TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
         LoginModel model = new ViewModelProvider(this).get(LoginModel.class);
-        etPassword.setSaveEnabled(false);
-        if (savedInstanceState == null) etEmail.setText(getIntent().getStringExtra(VerifiedAccountFlow.EXTRA_EMAIL));
+        binding.etPassword.setSaveEnabled(false);
+        if (savedInstanceState == null) binding.etEmail.setText(getIntent().getStringExtra(VerifiedAccountFlow.EXTRA_EMAIL));
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
                 if (!model.busy) { FirebaseAuth.getInstance().signOut(); finish(); }
             }
         });
         model.changes.observe(this, ignored -> {
-            btnLogin.setEnabled(!model.busy); tvRegister.setEnabled(!model.busy); tvForgotPassword.setEnabled(!model.busy);
+            binding.btnLogin.setEnabled(!model.busy); 
+            binding.tvRegister.setEnabled(!model.busy); 
+            binding.tvForgotPassword.setEnabled(!model.busy);
             if (model.error != null) { Toast.makeText(this, model.error, Toast.LENGTH_LONG).show(); model.error = null; }
             if (model.destination != null) VerifiedAccountFlow.open(this, model.destination);
         });
-        btnLogin.setOnClickListener(v -> {
-            String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
+        binding.btnLogin.setOnClickListener(v -> {
+            String email = binding.etEmail.getText().toString().trim();
+            String password = binding.etPassword.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
@@ -81,14 +76,14 @@ public class login extends AppCompatActivity {
             model.signIn(email, password);
         });
 
-        tvRegister.setOnClickListener(v -> {
+        binding.tvRegister.setOnClickListener(v -> {
             Intent intent = new Intent(login.this, Register.class);
             startActivity(intent);
         });
 
-        tvForgotPassword.setOnClickListener(v->{
+        binding.tvForgotPassword.setOnClickListener(v->{
             Intent intent = new Intent(login.this, ForgotPassword.class)
-                    .putExtra(VerifiedAccountFlow.EXTRA_EMAIL, etEmail.getText().toString().trim());
+                    .putExtra(VerifiedAccountFlow.EXTRA_EMAIL, binding.etEmail.getText().toString().trim());
             startActivity(intent);
         });
     }
