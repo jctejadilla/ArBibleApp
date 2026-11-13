@@ -1,11 +1,9 @@
 package com.example.arbibleapp;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import android.widget.TextView;
@@ -15,7 +13,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -320,13 +317,11 @@ public class TeacherDashboard extends AppCompatActivity {
 
         Calendar calAtt = Calendar.getInstance();
         calAtt.set(Calendar.DAY_OF_MONTH, 1);
+        int todayDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
         int sundaysSoFar = 0;
-        Calendar today = Calendar.getInstance();
-        while (calAtt.before(today) || calAtt.equals(today)) {
-            if (calAtt.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-                sundaysSoFar++;
-            }
-            calAtt.add(Calendar.DAY_OF_MONTH, 1);
+        for (int date = 1; date <= todayDate; date++) {
+            calAtt.set(Calendar.DAY_OF_MONTH, date);
+            if (calAtt.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) sundaysSoFar++;
         }
         if (sundaysSoFar == 0) sundaysSoFar = 1;
 

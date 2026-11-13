@@ -16,14 +16,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
-import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -173,6 +171,8 @@ public class Attendance extends AppCompatActivity {
     }
 
     private void markAttendance(String studentUid) {
+        String teacherUid = mAuth.getCurrentUser().getUid();
+
         Calendar calendar = Calendar.getInstance();
         if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
             Toast.makeText(this, "Attendance can only be recorded on Sundays.", Toast.LENGTH_LONG).show();
@@ -201,6 +201,7 @@ public class Attendance extends AppCompatActivity {
 
                                         Map<String, Object> attendanceData = new HashMap<>();
                                         attendanceData.put("studentUid", studentUid);
+                                        attendanceData.put("teacherUid", teacherUid);
                                         attendanceData.put("username", username);
                                         attendanceData.put("date", date);
                                         attendanceData.put("timestamp", timestamp);
@@ -209,8 +210,23 @@ public class Attendance extends AppCompatActivity {
                                         String finalUsername = username;
                                         db.collection("attendance").add(attendanceData)
                                                 .addOnSuccessListener(documentReference -> {
-                                                    Toast.makeText(this, "Attendance recorded for: " + finalUsername, Toast.LENGTH_LONG).show();
-                                                    finish();
+                                                    // Automatically enroll them in the class if they aren't already
+                                                    db.collection("enrollments")
+                                                        .whereEqualTo("teacherUid", teacherUid)
+                                                        .whereEqualTo("studentUid", studentUid)
+                                                        .get()
+                                                        .addOnSuccessListener(enrollQuery -> {
+                                                            if (enrollQuery.isEmpty()) {
+                                                                Map<String, Object> enrollmentData = new HashMap<>();
+                                                                enrollmentData.put("teacherUid", teacherUid);
+                                                                enrollmentData.put("studentUid", studentUid);
+                                                                enrollmentData.put("studentName", finalUsername);
+                                                                enrollmentData.put("enrolledAt", Timestamp.now());
+                                                                db.collection("enrollments").add(enrollmentData);
+                                                            }
+                                                            Toast.makeText(this, "Attendance recorded for: " + finalUsername, Toast.LENGTH_LONG).show();
+                                                            finish();
+                                                        });
                                                 })
                                                 .addOnFailureListener(e -> {
                                                     Toast.makeText(this, "Failed to record attendance", Toast.LENGTH_SHORT).show();

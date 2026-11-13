@@ -262,6 +262,9 @@ public class StudentDashboard extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (!VerifiedAccountFlow.guard(this)) return;
+        
+        OfflineQuizManager.syncOfflineQuizzes(this);
+        
         fetchUserData();
         fetchAttendanceData();
         checkSingleSignOn();

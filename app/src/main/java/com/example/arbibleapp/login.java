@@ -2,6 +2,7 @@ package com.example.arbibleapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -58,7 +59,9 @@ public class login extends AppCompatActivity {
             }
         });
         model.changes.observe(this, ignored -> {
-            binding.btnLogin.setEnabled(!model.busy); 
+            binding.btnLogin.setEnabled(!model.busy);
+            binding.btnLogin.setText(model.busy ? "" : "Login");
+            binding.pbLogin.setVisibility(model.busy ? View.VISIBLE : View.GONE);
             binding.tvRegister.setEnabled(!model.busy); 
             binding.tvForgotPassword.setEnabled(!model.busy);
             if (model.error != null) { Toast.makeText(this, model.error, Toast.LENGTH_LONG).show(); model.error = null; }

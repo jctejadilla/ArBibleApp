@@ -49,7 +49,7 @@
                 android:alpha="0.6"
                 android:background="@drawable/bg_rounded_card"
                 android:backgroundTint="#FFEBEE"
-                app:layout_constraintBottom_toBottomOf="@+id/tvTeacherName"
+                app:layout_constraintBottom_toBottomOf="@+id/tvAdminName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvWelcomeBack" />
 

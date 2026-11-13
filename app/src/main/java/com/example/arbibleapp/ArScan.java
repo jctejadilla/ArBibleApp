@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -93,7 +92,6 @@ public class ArScan extends AppCompatActivity {
         if (current == activity) unityActivity.clear();
     }
 
-    // Unity's Done button opens the existing quiz flow, then closes AR.
     public static void finishARAndOpenQuiz() {
         new Handler(Looper.getMainLooper()).post(() -> {
             Activity unity = unityActivity.get();
@@ -112,7 +110,6 @@ public class ArScan extends AppCompatActivity {
         });
     }
 
-    // Unity runs in its own process, so finishing it leaves the host dashboard alive.
     public static void exitUnityAR() {
         new Handler(Looper.getMainLooper()).post(() -> {
             Activity unity = unityActivity.get();

@@ -59,7 +59,7 @@
                 android:clickable="true"
                 android:elevation="2dp"
                 android:focusable="true"
-                android:tint="#1B4235"
+                app:tint="#1B4235"
                 app:layout_constraintBottom_toBottomOf="@+id/view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/view"

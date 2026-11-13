@@ -1,21 +1,42 @@
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep standard line number information for crashlytics/debugging
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Firebase Firestore rules (Important: Firestore uses reflection for POJOs)
+-keepclassmembers class * {
+    @com.google.firebase.firestore.PropertyName <fields>;
+}
+-keep class com.google.firebase.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Firebase Auth
+-keep class com.google.firebase.auth.** { *; }
+
+# Preserve custom views for XML inflation
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public void set*(...);
+}
+
+# ZXing / Barcode scanner rules
+-keep class com.journeyapps.barcodescanner.** { *; }
+-keep class com.google.zxing.** { *; }
+
+# Shimmer
+-keep class com.facebook.shimmer.** { *; }
+
+# MPAndroidChart
+-keep class com.github.mikephil.charting.** { *; }
+
+# Unity Library Interop
+-keep class com.unity3d.player.** { *; }
+
+# Prevent R8 warnings for optional Java/Javax dependencies
+-dontwarn java.sql.JDBCType
+-dontwarn javax.lang.model.**
+-dontwarn javax.annotation.**

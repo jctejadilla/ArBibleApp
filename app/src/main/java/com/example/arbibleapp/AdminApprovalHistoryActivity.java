@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -17,7 +16,6 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,7 +27,6 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import android.widget.ImageView;
 
 import com.example.arbibleapp.databinding.ActivityAdminApprovalHistoryBinding;
 import com.example.arbibleapp.databinding.ItemAdminHistoryBinding;

@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -265,13 +262,13 @@ public class StudentDetailsActivity extends AppCompatActivity {
     private int countSundaysInMonth(Calendar currentDate) {
         Calendar day = (Calendar) currentDate.clone();
         day.set(Calendar.DAY_OF_MONTH, 1);
-        int daysInMonth = day.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int todayDate = currentDate.get(Calendar.DAY_OF_MONTH);
         int sundayCount = 0;
-        for (int date = 1; date <= daysInMonth; date++) {
+        for (int date = 1; date <= todayDate; date++) {
             day.set(Calendar.DAY_OF_MONTH, date);
             if (day.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) sundayCount++;
         }
-        return sundayCount;
+        return sundayCount == 0 ? 1 : sundayCount; // Avoid division by 0 / "0/0"
     }
 
     private boolean isSundayDate(String value) {

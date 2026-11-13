@@ -8,8 +8,8 @@
     android:layout_height="match_parent"
     tools:context=".ArScan">
 
-    <io.github.sceneview.ar.ArSceneView
-        android:id="@+id/sceneView"
+    <FrameLayout
+        android:id="@+id/unityFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

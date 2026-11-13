@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -26,8 +25,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -38,7 +35,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -228,35 +224,35 @@ public class QuizAdamEve extends AppCompatActivity {
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
-        
+
         TextView tvTitle = dialog.findViewById(R.id.tvInstructionTitle);
         TextView tvMessage = dialog.findViewById(R.id.tvInstructionMessage);
-        
+
         tvTitle.setText("Quiz 1 Instructions");
         tvMessage.setText("Read each question carefully and select the correct answer out of the 4 choices!\n\nScore points for every correct answer to earn XP and level up!");
-        
+
         dialog.findViewById(R.id.btnInstructionGotIt).setOnClickListener(v -> {
             dialog.dismiss();
             resumeTimer();
         });
         dialog.setOnCancelListener(d -> resumeTimer());
-        
+
         dialog.show();
     }
-    
+
     private void confirmExit() {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_confirm_exit);
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
-        
+
         dialog.findViewById(R.id.btnExitStay).setOnClickListener(v -> dialog.dismiss());
         dialog.findViewById(R.id.btnExitLeave).setOnClickListener(v -> {
             dialog.dismiss();
             finish();
         });
-        
+
         dialog.show();
     }
 
@@ -269,7 +265,7 @@ public class QuizAdamEve extends AppCompatActivity {
         rbOptionC.setText(currentQuestion.options[2]);
         rbOptionD.setText(currentQuestion.options[3]);
         tvQuestionCount.setText("Question " + (currentQuestionIndex + 1) + " of " + questionList.size());
-        
+
         progressBar.setMax(questionList.size());
         progressBar.setProgress(currentQuestionIndex + 1);
 
@@ -427,37 +423,32 @@ public class QuizAdamEve extends AppCompatActivity {
                 result.put("selectedAnswers", selectedAnswers);
                 result.put("isSunday", isSunday);
 
-                db.collection("quiz_results").add(result)
-                        .addOnSuccessListener(documentReference -> {
-                            boolean leveledUp = false;
-                            int newLevel = 1;
+                db.collection("quiz_results").add(result);
 
-                            if (isSunday) {
-                                Long currentXpLong = (documentSnapshot.exists() && documentSnapshot.contains("totalXP")) ? documentSnapshot.getLong("totalXP") : null;
-                                long currentXP = currentXpLong != null ? currentXpLong : 0;
-                                int oldLevel = (int) (currentXP / 250) + 1;
-                                long newXP = currentXP + xpGained;
-                                newLevel = (int) (newXP / 250) + 1;
-                                if (newLevel > 10) newLevel = 10;
-                                leveledUp = newLevel > oldLevel && oldLevel < 10;
+                boolean leveledUp = false;
+                int newLevel = 1;
 
-                                Map<String, Object> updates = new HashMap<>();
-                                updates.put("totalXP", newXP);
-                                updates.put("level", newLevel);
+                if (isSunday) {
+                    Long currentXpLong = (documentSnapshot.exists() && documentSnapshot.contains("totalXP")) ? documentSnapshot.getLong("totalXP") : null;
+                    long currentXP = currentXpLong != null ? currentXpLong : 0;
+                    int oldLevel = (int) (currentXP / 250) + 1;
+                    long newXP = currentXP + xpGained;
+                    newLevel = (int) (newXP / 250) + 1;
+                    if (newLevel > 10) newLevel = 10;
+                    leveledUp = newLevel > oldLevel && oldLevel < 10;
 
-                                db.collection("users").document(uid).update(updates);
-                            }
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("totalXP", newXP);
+                    updates.put("level", newLevel);
 
-                            endQuizSession();
-                            isQuizFinished = true;
-                            clearProgress();
+                    db.collection("users").document(uid).update(updates);
+                }
 
-                            returnToDashboard(isSunday, finalScore, questionList.size(), (int)xpGained, leveledUp, newLevel);
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(this, "Error saving result", Toast.LENGTH_SHORT).show();
-                            finish();
-                        });
+                endQuizSession();
+                isQuizFinished = true;
+                clearProgress();
+
+                returnToDashboard(isSunday, finalScore, questionList.size(), (int)xpGained, leveledUp, newLevel);
             });
         } else {
             endQuizSession();
@@ -481,3 +472,4 @@ public class QuizAdamEve extends AppCompatActivity {
         finish();
     }
 }
+

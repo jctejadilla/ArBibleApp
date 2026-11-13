@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import com.example.arbibleapp.databinding.ActivityAdminQuestionApprovalBinding;
-import com.example.arbibleapp.databinding.ItemAdminProposalBinding;
 import androidx.recyclerview.widget.DiffUtil;
 import java.util.Map;
 
