@@ -263,7 +263,13 @@ public class QuizExodus extends AppCompatActivity {
                 timeLeftInMillis = 0;
                 tvTimer.setText("00:00");
                 Toast.makeText(QuizExodus.this, "Time's Up!", Toast.LENGTH_SHORT).show();
+                
+                wrongAnswers.add("Step " + (currentStepIndex + 1) + " of the Exodus sequence");
+                correctAnswers.add("Selected the wrong event in the timeline");
+                selectedAnswers.add("Ran out of time");
+                
                 currentStepIndex++;
+                quizReady = true;
                 updateUI();
             }
         }.start();
@@ -298,6 +304,7 @@ public class QuizExodus extends AppCompatActivity {
             cardOption1.setCardBackgroundColor(Color.WHITE);
             cardOption2.setCardBackgroundColor(Color.WHITE);
             currentStepIndex++;
+            quizReady = true;
             updateUI();
         }, 1000);
     }
@@ -333,17 +340,22 @@ public class QuizExodus extends AppCompatActivity {
     }
     
     private void confirmExit() {
+        pauseTimer();
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_confirm_exit);
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
         
-        dialog.findViewById(R.id.btnExitStay).setOnClickListener(v -> dialog.dismiss());
+        dialog.findViewById(R.id.btnExitStay).setOnClickListener(v -> {
+            dialog.dismiss();
+            resumeTimer();
+        });
         dialog.findViewById(R.id.btnExitLeave).setOnClickListener(v -> {
             dialog.dismiss();
             finish();
         });
+        dialog.setOnCancelListener(d -> resumeTimer());
         
         dialog.show();
     }
