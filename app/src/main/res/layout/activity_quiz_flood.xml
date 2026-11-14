@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
-        android:text="Noah's Ark Word Search"
+        android:text="Word Search Quiz"
         android:textColor="@color/text_dark"
         android:textSize="20sp"
         android:textStyle="bold"

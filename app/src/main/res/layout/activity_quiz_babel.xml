@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Tower of Babel Quiz"
+        android:text="Fill-in-the-Blanks Quiz"
         android:textColor="@color/text_dark"
         android:textSize="24sp"
         android:textStyle="bold"

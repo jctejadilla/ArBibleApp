@@ -702,20 +702,40 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Logout Action Button -->
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnLogout"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/bg_pill_btn_yellow"
-                android:elevation="3dp"
-                android:text="Logout"
-                android:textAllCaps="false"
-                android:textColor="#1D3B2E"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/cardAccountDetails" />
+                app:layout_constraintTop_toBottomOf="@+id/cardAccountDetails">
+
+                <!-- Logout Action Button -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnLogout"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_pill_btn_yellow"
+                    android:elevation="3dp"
+                    android:text="Logout"
+                    android:textAllCaps="false"
+                    android:textColor="#1D3B2E"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <!-- Logout Loading Spinner -->
+                <ProgressBar
+                    android:id="@+id/pbLogout"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:visibility="gone"
+                    android:elevation="4dp"
+                    android:indeterminateTint="#1D3B2E"
+                    app:layout_constraintTop_toTopOf="@+id/btnLogout"
+                    app:layout_constraintBottom_toBottomOf="@+id/btnLogout"
+                    app:layout_constraintStart_toStartOf="@+id/btnLogout"
+                    app:layout_constraintEnd_toEndOf="@+id/btnLogout" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

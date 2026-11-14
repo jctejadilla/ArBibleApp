@@ -3,6 +3,8 @@ package com.example.arbibleapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -164,12 +166,18 @@ public class StudentProfile extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
 
         btnLogout.setOnClickListener(v -> {
-            mAuth.signOut();
-            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(StudentProfile.this, login.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+            ProgressBar pbLogout = findViewById(R.id.pbLogout);
+            btnLogout.setText("");
+            pbLogout.setVisibility(View.VISIBLE);
+            
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                mAuth.signOut();
+                Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(StudentProfile.this, login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }, 1000);
         });
         
         btnCancelChanges.setOnClickListener(v -> restoreOriginalAccountDetails());

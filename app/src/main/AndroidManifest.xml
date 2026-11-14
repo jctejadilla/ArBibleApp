@@ -142,12 +142,6 @@
             android:name=".login"
             android:exported="false" />
         <activity
-            android:name=".intro3"
-            android:exported="false" />
-        <activity
-            android:name=".intro2"
-            android:exported="false" />
-        <activity
             android:name=".intro1"
             android:exported="true">
             <intent-filter>

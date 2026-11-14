@@ -9,7 +9,11 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+import android.view.View;
 import android.view.ViewGroup;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -81,12 +85,18 @@ public class TeacherProfile extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
 
         btnLogout.setOnClickListener(v -> {
-            mAuth.signOut();
-            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(TeacherProfile.this, login.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+            ProgressBar pbLogout = findViewById(R.id.pbLogout);
+            btnLogout.setText("");
+            pbLogout.setVisibility(View.VISIBLE);
+            
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                mAuth.signOut();
+                Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(TeacherProfile.this, login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }, 1000); // Small 1-second delay for smooth animation
         });
         
         btnCancelChanges.setOnClickListener(v -> restoreOriginalAccountDetails());

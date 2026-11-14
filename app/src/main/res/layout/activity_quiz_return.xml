@@ -18,7 +18,7 @@
                 android:src="@android:drawable/ic_menu_revert"
                 app:tint="@color/text_dark" />
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:layout_marginStart="16dp" android:layout_marginEnd="8dp" android:text="@string/return_title"
+                android:layout_weight="1" android:layout_marginStart="16dp" android:layout_marginEnd="8dp" android:text="Tile Matching Quiz"
                 android:textColor="@color/text_dark" android:textSize="24sp" android:textStyle="bold" />
         </LinearLayout>
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"

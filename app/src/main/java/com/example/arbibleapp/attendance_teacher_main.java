@@ -1,6 +1,9 @@
 package com.example.arbibleapp;
 
+import android.app.AlertDialog;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -142,11 +146,11 @@ public class attendance_teacher_main extends AppCompatActivity {
         boolean presentSelected = currentFilter.equals("Present");
         boolean absentSelected = currentFilter.equals("Absent");
 
-        btnFilterAll.setBackgroundTintList(android.content.res.ColorStateList.valueOf(allSelected ? forestGreen : white));
+        btnFilterAll.setBackgroundTintList(ColorStateList.valueOf(allSelected ? forestGreen : white));
         btnFilterAll.setTextColor(allSelected ? white : forestGreen);
-        btnFilterPresent.setBackgroundTintList(android.content.res.ColorStateList.valueOf(presentSelected ? presentGreen : white));
+        btnFilterPresent.setBackgroundTintList(ColorStateList.valueOf(presentSelected ? presentGreen : white));
         btnFilterPresent.setTextColor(presentSelected ? white : presentGreen);
-        btnFilterAbsent.setBackgroundTintList(android.content.res.ColorStateList.valueOf(absentSelected ? absentRed : white));
+        btnFilterAbsent.setBackgroundTintList(ColorStateList.valueOf(absentSelected ? absentRed : white));
         btnFilterAbsent.setTextColor(absentSelected ? white : absentRed);
     }
     private void filterList() {
@@ -270,6 +274,28 @@ public class attendance_teacher_main extends AppCompatActivity {
         }
     }
 
+    private void promptDeleteAttendance(EnrolledStudent student) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Attendance")
+                .setMessage("Are you sure you want to delete today's attendance record for " + student.name + "?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    db.collection("attendance")
+                            .whereEqualTo("date", todayDate)
+                            .whereEqualTo("studentUid", student.uid)
+                            .get()
+                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                                    doc.getReference().delete();
+                                }
+                                Toast.makeText(this, "Attendance deleted for " + student.name, Toast.LENGTH_SHORT).show();
+                                checkAttendanceForToday(); // Refresh the list
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(this, "Failed to delete attendance", Toast.LENGTH_SHORT).show());
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -310,10 +336,14 @@ public class attendance_teacher_main extends AppCompatActivity {
                 holder.status.setText("Status: Present");
                 holder.status.setTextColor(Color.parseColor("#1B4235"));
                 holder.indicator.setBackgroundColor(ContextCompat.getColor(attendance_teacher_main.this, R.color.primary_green));
+                holder.btnDelete.setVisibility(View.VISIBLE);
+                holder.btnDelete.setOnClickListener(v -> promptDeleteAttendance(student));
             } else {
                 holder.status.setText("Status: Absent");
                 holder.status.setTextColor(ContextCompat.getColor(attendance_teacher_main.this, R.color.red));
                 holder.indicator.setBackgroundColor(ContextCompat.getColor(attendance_teacher_main.this, R.color.red));
+                holder.btnDelete.setVisibility(View.GONE);
+                holder.btnDelete.setOnClickListener(null);
             }
         }
 
@@ -323,12 +353,14 @@ public class attendance_teacher_main extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             TextView name, status, time;
             View indicator;
+            ImageView btnDelete;
             ViewHolder(View v) {
                 super(v);
                 name = v.findViewById(R.id.tvStudentName);
                 status = v.findViewById(R.id.tvAttendanceStatus);
                 time = v.findViewById(R.id.tvTime);
                 indicator = v.findViewById(R.id.viewStudentStatus);
+                btnDelete = v.findViewById(R.id.ivDeleteAttendance);
             }
         }
     }

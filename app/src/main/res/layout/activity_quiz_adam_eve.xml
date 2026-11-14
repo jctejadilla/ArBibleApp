@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
-        android:text="Adam and Eve Quiz"
+        android:text="Multiple Choice Quiz"
         android:textColor="@color/text_dark"
         android:textSize="24sp"
         android:textStyle="bold"

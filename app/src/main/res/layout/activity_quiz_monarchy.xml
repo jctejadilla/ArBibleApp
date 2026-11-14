@@ -17,7 +17,7 @@
                 android:foreground="?attr/selectableItemBackgroundBorderless"
                 app:tint="@color/text_dark" />
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:layout_marginStart="16dp" android:layout_marginEnd="8dp" android:text="@string/monarchy_title"
+                android:layout_weight="1" android:layout_marginStart="16dp" android:layout_marginEnd="8dp" android:text="Sequence Sorting Quiz"
                 android:textColor="@color/text_dark" android:textSize="24sp" android:textStyle="bold" />
         </LinearLayout>
         <TextView android:id="@+id/tvMonarchyScenario" android:layout_width="match_parent"
